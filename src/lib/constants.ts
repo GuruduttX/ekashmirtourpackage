@@ -1,8 +1,8 @@
 export const NAV_LINKS = [
   { label: "Home",        href: "/",            dropdown: null },
-  { label: "Packages",    href: "#packages",    dropdown: "packages" },
-  { label: "Services",    href: "#services",    dropdown: "services" },
-  { label: "About",       href: "#about",       dropdown: null },
+  { label: "Packages",    href: "/packages",    dropdown: "packages" },
+  { label: "Services",    href: "/services",    dropdown: "services" },
+  { label: "About",       href: "/about",       dropdown: null },
   { label: "Why Kashmir", href: "#why-kashmir", dropdown: null },
   { label: "Contact",     href: "#contact",     dropdown: null },
 ] as const;
