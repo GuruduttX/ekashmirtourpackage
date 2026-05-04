@@ -1,0 +1,474 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+
+type Snowflake = {
+  id: number;
+  x: number;
+  size: number;
+  delay: number;
+  dur: number;
+  opacity: number;
+  drift: number;
+};
+
+const STATS = [
+  { value: "4,200+", label: "Happy Travelers" },
+  { value: "15 yrs", label: "Of Experience" },
+  { value: "40+", label: "Curated Routes" },
+];
+
+export default function HeroSection() {
+  const [snowflakes, setSnowflakes] = useState<Snowflake[]>([]);
+
+  useEffect(() => {
+    setSnowflakes(
+      Array.from({ length: 60 }, (_, i) => ({
+        id: i,
+        x: Math.random() * 100,
+        size: 1.0 + Math.random() * 2.8,
+        delay: Math.random() * 16,
+        dur: 11 + Math.random() * 15,
+        opacity: 0.12 + Math.random() * 0.38,
+        drift: (Math.random() - 0.5) * 70,
+      }))
+    );
+  }, []);
+
+  return (
+    <section className="relative flex h-[92vh] min-h-175 flex-col">
+
+      {/* ── Kashmir hero image ── */}
+      <Image
+        src="/Home/kashmir-hero.webp"
+        alt="Kashmir landscape — snow-capped mountains and frozen lake"
+        fill
+        priority
+        className="object-cover object-center"
+        sizes="100vw"
+      />
+
+      {/* ── Base mood overlay — deepens image slightly for premium feel ── */}
+      <div
+        className="absolute inset-0"
+      // style={{
+      //   background:"linear-gradient(135deg, rgba(4,12,32,0.45) 0%, rgba(10,30,65,0.22) 50%, rgba(4,12,32,0.08) 100%)"
+      //     // "linear-gradient(135deg, rgba(4,12,32,0.72) 0%, rgba(10,30,65,0.38) 42%, rgba(4,12,32,0.18) 100%)",
+      // }}
+      />
+
+      {/* ── Left reading lane — keeps text crisp without hiding the right scenery ── */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(95deg, rgba(4,10,28,0.82) 0%, rgba(4,10,28,0.55) 32%, rgba(4,10,28,0.12) 60%, transparent 78%)",
+        }}
+      />
+
+      {/* ── Top vignette — subtle darkness at very top ── */}
+      <div
+        className="absolute inset-x-0 top-0 h-32"
+        style={{
+          background: "linear-gradient(180deg, rgba(4,10,28,0.55) 0%, transparent 100%)",
+        }}
+      />
+
+      {/* ── Bottom gradient — grounds the stats strip ── */}
+      <div
+        className="absolute inset-x-0 bottom-0 h-56"
+        style={{
+          background:
+            "linear-gradient(180deg, transparent 0%, rgba(4,10,28,0.42) 55%, rgba(4,10,28,0.72) 100%)",
+        }}
+      />
+
+      {/* ── Cold blue atmosphere — thin color wash that ties image to the brand ── */}
+      <div
+        className="aurora-glow absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse 70% 50% at 75% 30%, rgba(56,189,248,0.12) 0%, transparent 60%)",
+        }}
+      />
+
+      {/* ════════════════════════════════════════
+          SNOW ACCUMULATION — piled at hero bottom
+          ════════════════════════════════════════ */}
+      <div
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-2"
+        style={{ height: "148px" }}
+        aria-hidden="true"
+      >
+        <svg
+          viewBox="0 0 1440 148"
+          preserveAspectRatio="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-full w-full"
+        >
+          {/* Far back snow bank — diffuse, blue-tinted */}
+          <path
+            className="snow-pile-grow"
+            style={{ animationDelay: "600ms" }}
+            d="M0,148 L0,108 C55,96 115,88 190,82 C265,76 330,80 410,76 C490,72 555,60 640,56 C720,52 800,58 880,63 C960,68 1035,65 1115,58 C1190,51 1270,55 1355,65 C1395,70 1425,78 1440,84 L1440,148 Z"
+            fill="rgba(186,230,253,0.45)"
+          />
+
+          {/* Mid snow bank */}
+          <path
+            className="snow-pile-grow snow-settle"
+            style={{ animationDelay: "400ms" }}
+            d="M0,148 L0,120 C70,110 138,100 218,96 C295,92 365,98 440,94 C515,90 572,78 652,73 C728,68 804,74 882,80 C958,86 1028,82 1108,76 C1185,70 1270,74 1355,82 C1400,86 1428,92 1440,96 L1440,148 Z"
+            fill="rgba(219,234,254,0.65)"
+          />
+
+          {/* Front snow pile — the main visible mound, natural bumpy edge */}
+          <path
+            className="snow-pile-grow snow-settle"
+            style={{ animationDelay: "200ms" }}
+            d="M0,148 L0,132
+               C30,127 58,122 88,118
+               C114,114 138,112 162,114
+               C186,116 206,122 228,120
+               C250,118 268,112 292,106
+               C314,100 336,96 360,93
+               C386,90 410,92 435,96
+               C458,100 478,104 500,102
+               C524,100 544,94 568,90
+               C590,86 612,84 636,82
+               C660,80 682,82 706,86
+               C730,90 752,96 778,100
+               C802,104 824,106 848,104
+               C872,102 892,96 916,92
+               C938,88 960,86 984,88
+               C1010,90 1034,96 1060,100
+               C1084,104 1106,106 1130,104
+               C1156,102 1178,96 1204,92
+               C1228,88 1252,86 1278,89
+               C1305,92 1335,98 1368,106
+               C1398,114 1424,122 1440,128
+               L1440,148 Z"
+            fill="rgba(248,250,252,0.88)"
+          />
+
+          {/* Topmost thin crust — bright white ridge catching light */}
+          <path
+            className="snow-pile-grow"
+            style={{ animationDelay: "300ms" }}
+            d="M0,132
+               C30,127 58,122 88,118
+               C114,114 138,112 162,114
+               C186,116 206,122 228,120
+               C250,118 268,112 292,106
+               C314,100 336,96 360,93
+               C386,90 410,92 435,96
+               C458,100 478,104 500,102
+               C524,100 544,94 568,90
+               C590,86 612,84 636,82
+               C660,80 682,82 706,86
+               C730,90 752,96 778,100
+               C802,104 824,106 848,104
+               C872,102 892,96 916,92
+               C938,88 960,86 984,88
+               C1010,90 1034,96 1060,100
+               C1084,104 1106,106 1130,104
+               C1156,102 1178,96 1204,92
+               C1228,88 1252,86 1278,89
+               C1305,92 1335,98 1368,106
+               C1398,114 1424,122 1440,128"
+            stroke="rgba(255,255,255,0.95)"
+            strokeWidth="2.5"
+            fill="none"
+            strokeLinecap="round"
+          />
+
+          {/* Surface shimmer highlights — short bright strokes on pile top */}
+          <path d="M90,118 C115,114 138,112 160,114" stroke="white" strokeWidth="1.2" fill="none" opacity="0.7" />
+          <path d="M295,106 C318,100 338,96 358,93" stroke="white" strokeWidth="1.2" fill="none" opacity="0.65" />
+          <path d="M500,102 C525,100 545,94 568,90" stroke="white" strokeWidth="1.2" fill="none" opacity="0.7" />
+          <path d="M706,86 C730,90 752,96 776,100" stroke="white" strokeWidth="1.2" fill="none" opacity="0.65" />
+          <path d="M916,92 C940,88 962,86 984,88" stroke="white" strokeWidth="1.2" fill="none" opacity="0.7" />
+          <path d="M1130,104 C1156,102 1178,96 1202,92" stroke="white" strokeWidth="1.2" fill="none" opacity="0.65" />
+          <path d="M1368,106 C1395,113 1422,121 1440,127" stroke="white" strokeWidth="1.2" fill="none" opacity="0.6" />
+
+          {/* Tiny sparkle dots scattered on the pile surface */}
+          {[
+            [145, 113], [230, 120], [310, 102], [395, 92], [475, 101],
+            [555, 89], [640, 82], [720, 87], [800, 101], [870, 103],
+            [945, 90], [1025, 97], [1105, 103], [1185, 91], [1270, 89], [1380, 110],
+          ].map(([cx, cy], i) => (
+            <circle key={i} cx={cx} cy={cy} r="1.8" fill="white" opacity="0.75" />
+          ))}
+        </svg>
+      </div>
+
+      {/* ── Snowflakes ── */}
+      <div
+        className="pointer-events-none absolute inset-0 z-3 overflow-hidden"
+        aria-hidden="true"
+      >
+        {snowflakes.map((flake) => (
+          <div
+            key={flake.id}
+            className="snow-fall absolute rounded-full bg-white"
+            style={
+              {
+                left: `${flake.x}%`,
+                top: "-8px",
+                width: `${flake.size}px`,
+                height: `${flake.size}px`,
+                opacity: flake.opacity,
+                filter: "blur(0.3px)",
+                "--snow-drift": `${flake.drift}px`,
+                "--snow-dur": `${flake.dur}s`,
+                "--snow-delay": `${flake.delay}s`,
+              } as React.CSSProperties
+            }
+          />
+        ))}
+      </div>
+
+      {/* ════════════════════════════════════════
+          HERO CONTENT — left-aligned, editorial
+          ════════════════════════════════════════ */}
+      <div className="relative z-10 flex flex-1 items-center">
+        <div className="mx-auto w-full max-w-7xl px-6 pb-4 pt-24 lg:px-14">
+          <div className="text-center">
+
+            {/* Overline pill */}
+            <div
+              className="mb-7 inline-flex items-center gap-2.5 rounded-full px-4 py-1.5 anim-fade-in"
+              style={{
+                animationDelay: "100ms",
+                background: "rgba(255,255,255,0.10)",
+                backdropFilter: "blur(12px)",
+                WebkitBackdropFilter: "blur(12px)",
+                border: "1px solid rgba(255,255,255,0.22)",
+              }}
+            >
+              <span className="h-1.5 w-1.5 rounded-full bg-sky-300 float-orb" />
+              <span className="text-[0.68rem] font-medium tracking-[0.30em] text-white uppercase">
+                Premium Kashmir Experiences
+              </span>
+            </div>
+
+            {/* Heading */}
+            <h1
+              className="hero-line mb-5 font-heading font-bold leading-[1.10] text-white"
+              style={{
+                animationDelay: "200ms",
+                fontSize: "clamp(1.75rem, 5.5vw, 4.8rem)",
+                textShadow: "0 2px 24px rgba(4,10,28,0.55)",
+              }}
+            >
+              Discover the{" "}
+              <span
+                className="font-medium"
+                style={{
+                  background:
+                    "linear-gradient(120deg, #F59E0B 0%, #FBBF24 50%, #F59E0B 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                  filter: "drop-shadow(0 4px 18px rgba(255, 200, 50, 0.65))",
+                  textShadow: "0 0 3px rgba(255,215,120,0.2)",
+                }}
+              >
+                Cold Beauty
+              </span>{" "}
+              of Kashmir
+            </h1>
+
+            {/* Subtext */}
+            <p
+              className="anim-fade-in-up mb-9 mx-auto max-w-xl text-[1rem] font-light leading-[1.88] text-white/78 sm:text-[1.06rem]"
+              style={{
+                animationDelay: "590ms",
+                textShadow: "0 1px 10px rgba(4,10,28,0.50)",
+              }}
+            >
+              Silent mountains. Frozen lakes. The kind of stillness that reaches
+              into you and{" "}
+              <span className="font-normal text-sky-200">rearranges things.</span>
+            </p>
+
+            {/* CTAs */}
+            <div className="flex w-full flex-col items-center gap-3 sm:flex-row sm:justify-center sm:gap-4">
+              <Link
+                href="#packages"
+                className="pop-in w-full rounded-2xl py-3.5 text-center text-[0.92rem] font-medium text-white transition-all duration-300 hover:-translate-y-0.5 sm:w-auto sm:px-8"
+                style={{
+                  animationDelay: "720ms",
+                  background: "rgba(56,189,248,0.85)",
+                  backdropFilter: "blur(18px)",
+                  WebkitBackdropFilter: "blur(18px)",
+                  border: "1px solid rgba(255,255,255,0.38)",
+                  boxShadow: "0 4px 20px rgba(4,10,28,0.20), inset 0 1px 0 rgba(255,255,255,0.20)",
+                }}
+              >
+                Explore Packages
+              </Link>
+
+              <Link
+                href="#packages"
+                className="pop-in w-full rounded-2xl py-3.5 text-center text-[0.92rem] font-semibold transition-all duration-300 hover:-translate-y-0.5 sm:w-auto sm:px-8"
+                style={{
+                  animationDelay: "840ms",
+                  background: "linear-gradient(120deg, #F59E0B 0%, #FBBF24 50%, #F59E0B 100%)",
+                  color: "#1C1917",
+                  boxShadow: "0 4px 20px rgba(245,158,11,0.45), 0 1px 0 rgba(255,255,255,0.20) inset",
+                  border: "1px solid rgba(245,158,11,0.60)",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "linear-gradient(120deg, #FBBF24 0%, #FCD34D 50%, #FBBF24 100%)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "linear-gradient(120deg, #F59E0B 0%, #FBBF24 50%, #F59E0B 100%)";
+                }}
+              >
+                Book Now →
+              </Link>
+            </div>
+
+            {/* Trust badge row */}
+            <div
+              className="mt-6 flex flex-wrap items-center justify-center gap-3 anim-fade-in"
+              style={{ animationDelay: "960ms" }}
+            >
+              <div className="flex -space-x-2">
+                {["bg-sky-400", "bg-amber-400", "bg-emerald-400", "bg-violet-400"].map(
+                  (col, i) => (
+                    <div
+                      key={i}
+                      className={`h-6 w-6 rounded-full border-2 border-white/30 ${col} flex items-center justify-center text-[0.55rem] font-bold text-white`}
+                    >
+                      {["A", "S", "R", "P"][i]}
+                    </div>
+                  )
+                )}
+              </div>
+              <span className="text-[0.7rem] text-white/55 font-light">
+                Trusted by{" "}
+                <span className="text-amber-300 font-medium">4,200+ travelers</span>{" "}
+                from across India
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ════════════════════════════════════════
+          STATS STRIP — half on hero, half on next section
+          ════════════════════════════════════════ */}
+      <div
+        className="absolute inset-x-0 bottom-0 z-30 px-4 sm:px-6 lg:px-14"
+        style={{ transform: "translateY(50%)" }}
+      >
+        <div className="mx-auto max-w-7xl">
+          <div
+            className="relative grid grid-cols-3 overflow-hidden rounded-2xl"
+            style={{
+              background:
+                "linear-gradient(135deg, rgba(8,18,42,0.88) 0%, rgba(14,28,58,0.92) 100%)",
+              backdropFilter: "blur(28px)",
+              WebkitBackdropFilter: "blur(28px)",
+              border: "1px solid rgba(255,255,255,0.13)",
+              boxShadow:
+                "0 8px 32px rgba(4,10,28,0.45), inset 0 1px 0 rgba(255,255,255,0.10)",
+            }}
+          >
+            {/* Colored top accent bar */}
+            <div
+              className="absolute inset-x-0 top-0 h-0.5 rounded-t-2xl"
+              style={{
+                background:
+                  "linear-gradient(90deg, #38BDF8 0%, #FBBF24 50%, #34D399 100%)",
+              }}
+            />
+
+            {[
+              {
+                value: "4,200+",
+                label: "Happy Travelers",
+                icon: "✈",
+                color: "#38BDF8",
+                glow: "rgba(56,189,248,0.20)",
+                gradient: "linear-gradient(120deg, #BAE6FD 0%, #38BDF8 60%, #0EA5E9 100%)",
+              },
+              {
+                value: "15 yrs",
+                label: "Of Experience",
+                icon: "🏔",
+                color: "#FBBF24",
+                glow: "rgba(251,191,36,0.20)",
+                gradient: "linear-gradient(120deg, #FDE68A 0%, #FBBF24 60%, #F59E0B 100%)",
+              },
+              {
+                value: "40+",
+                label: "Curated Routes",
+                icon: "🗺",
+                color: "#34D399",
+                glow: "rgba(52,211,153,0.20)",
+                gradient: "linear-gradient(120deg, #A7F3D0 0%, #34D399 60%, #10B981 100%)",
+              },
+            ].map((s, i, arr) => (
+              <div
+                key={s.label}
+                className="stat-rise relative flex flex-col items-center justify-center gap-1.5 px-2 py-4 text-center sm:flex-row sm:gap-4 sm:px-6 sm:py-5 sm:text-left"
+                style={{
+                  borderRight: i < arr.length - 1 ? "1px solid rgba(255,255,255,0.08)" : "none",
+                  animationDelay: `${940 + i * 110}ms`,
+                }}
+              >
+                {/* Icon dot */}
+                <div
+                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[0.65rem] sm:h-9 sm:w-9 sm:text-sm"
+                  style={{
+                    background: s.glow,
+                    border: `1px solid ${s.color}55`,
+                  }}
+                >
+                  {s.icon}
+                </div>
+
+                {/* Value + label stacked */}
+                <div>
+                  <div
+                    className="font-heading text-base font-bold leading-none sm:text-xl md:text-2xl"
+                    style={{
+                      background: s.gradient,
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                      backgroundClip: "text",
+                    }}
+                  >
+                    {s.value}
+                  </div>
+                  <div className="mt-1 text-[0.55rem] font-light tracking-wide text-white/50 uppercase sm:text-[0.65rem] sm:tracking-widest">
+                    {s.label}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ── Scroll hint ── */}
+      <div
+        className="absolute bottom-28 right-8 z-10 hidden flex-col items-center gap-3 anim-fade-in lg:flex md:right-14"
+        style={{ animationDelay: "1100ms" }}
+      >
+        <span
+          className="text-[0.58rem] tracking-[0.26em] text-white/40 uppercase"
+          style={{ writingMode: "vertical-rl" }}
+        >
+          Scroll to explore
+        </span>
+        <div className="anim-scroll-pulse h-14 w-px bg-linear-to-b from-white/45 to-transparent" />
+      </div>
+    </section>
+  );
+}

@@ -1,26 +1,282 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: #ffffff;
+  --color-foreground: #0F172A;
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-heading: var(--font-playfair), "Georgia", serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* ─── Base ─────────────────────────────────────────────── */
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: #ffffff;
+  color: #0F172A;
+  font-family: var(--font-inter), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Typography ────────────────────────────────────────── */
+
+.font-heading {
+  font-family: var(--font-playfair), "Georgia", serif;
+}
+
+/* ─── Glassmorphism ─────────────────────────────────────── */
+
+.glass {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.glass-dark {
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-light {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+/* ─── Text Gradients ────────────────────────────────────── */
+
+.text-gradient {
+  background: linear-gradient(135deg, #3B82F6 0%, #93C5FD 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Glow Effects ──────────────────────────────────────── */
+
+.glow-blue {
+  box-shadow: 0 0 20px rgba(59,130,246,0.35), 0 0 40px rgba(59,130,246,0.12);
+}
+
+.glow-blue-hover:hover {
+  box-shadow: 0 0 28px rgba(59,130,246,0.5), 0 0 56px rgba(59,130,246,0.18);
+}
+
+/* ══════════════════════════════════════════════════════════
+   SVG HERO ANIMATIONS
+   ══════════════════════════════════════════════════════════ */
+
+/* Mountains rise up from below on load */
+@keyframes mountainRise1 {
+  from { opacity: 0; transform: translateY(40px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes mountainRise2 {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes mountainRise3 {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.mountain-layer-1 { animation: mountainRise1 1.6s cubic-bezier(0.22,1,0.36,1) both; }
+.mountain-layer-2 { animation: mountainRise2 1.8s cubic-bezier(0.22,1,0.36,1) 150ms both; }
+.mountain-layer-3 { animation: mountainRise3 2.0s cubic-bezier(0.22,1,0.36,1) 300ms both; }
+
+/* Snow falls and drifts sideways (uses --snow-drift CSS var per flake) */
+@keyframes snowFall {
+  0%   { transform: translateY(-8px) translateX(0) rotate(0deg); opacity: 0; }
+  8%   { opacity: 1; }
+  92%  { opacity: 1; }
+  100% {
+    transform: translateY(105vh) translateX(var(--snow-drift, 20px)) rotate(360deg);
+    opacity: 0;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.snow-fall {
+  animation: snowFall var(--snow-dur, 12s) linear var(--snow-delay, 0s) infinite;
 }
+
+/* Stars occasionally twinkle */
+@keyframes starTwinkle {
+  0%, 100% { opacity: var(--star-base-opacity, 0.2); }
+  50%       { opacity: calc(var(--star-base-opacity, 0.2) * 3.5); }
+}
+
+.star-twinkle {
+  animation: starTwinkle ease-in-out infinite;
+  animation-duration: var(--twinkle-dur, 3s);
+  animation-delay: var(--twinkle-delay, 0s);
+}
+
+/* Aurora ripples slowly across the sky */
+@keyframes auroraGlow {
+  0%, 100% { opacity: 0.12; transform: scaleX(1)   scaleY(1); }
+  50%       { opacity: 0.22; transform: scaleX(1.06) scaleY(1.08); }
+}
+
+.aurora-glow {
+  animation: auroraGlow 6s ease-in-out infinite;
+  transform-origin: center;
+}
+
+/* Thin horizontal aurora band shimmers */
+@keyframes auroraBand {
+  0%, 100% { opacity: 0.06; transform: translateX(-3%); }
+  50%       { opacity: 0.14; transform: translateX(3%);  }
+}
+
+.aurora-band {
+  animation: auroraBand 8s ease-in-out infinite;
+}
+
+/* Blue glow pulses softly behind each peak */
+@keyframes peakGlow {
+  0%, 100% { opacity: 0.10; r: 55; }
+  50%       { opacity: 0.28; r: 62; }
+}
+
+.peak-glow {
+  animation: peakGlow 4s ease-in-out infinite;
+}
+
+/* Moon drifts imperceptibly — barely there, dreamlike */
+@keyframes moonFloat {
+  0%, 100% { transform: translateY(0)   translateX(0); }
+  33%       { transform: translateY(-4px) translateX(2px); }
+  66%       { transform: translateY(2px) translateX(-2px); }
+}
+
+.moon-float {
+  animation: moonFloat 12s ease-in-out infinite;
+  transform-origin: center;
+}
+
+/* Moon reflection shimmers in the frozen lake */
+@keyframes moonReflection {
+  0%, 100% { opacity: 0.20; rx: 16; }
+  50%       { opacity: 0.38; rx: 22; }
+}
+
+.moon-reflection {
+  animation: moonReflection 5s ease-in-out infinite;
+}
+
+/* Floating atmospheric orbs */
+@keyframes floatOrb {
+  0%, 100% { transform: translateY(0)   scale(1);    }
+  50%       { transform: translateY(-18px) scale(1.05); }
+}
+
+.float-orb      { animation: floatOrb 7s ease-in-out infinite; }
+.float-orb-slow { animation: floatOrb 10s ease-in-out 2s infinite; }
+
+/* ══════════════════════════════════════════════════════════
+   GENERAL PAGE ANIMATIONS
+   ══════════════════════════════════════════════════════════ */
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(26px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scrollPulse {
+  0%, 100% { opacity: 0.3; transform: scaleY(1); }
+  50%       { opacity: 0.7; transform: scaleY(0.82); }
+}
+
+.anim-fade-in     { animation: fadeIn    0.7s  ease both; }
+.anim-fade-in-up  { animation: fadeInUp  0.85s ease both; }
+.anim-scroll-pulse { animation: scrollPulse 2.2s ease-in-out infinite; }
+
+/* Hero heading — each line slides up with blur wipe */
+@keyframes heroLine {
+  from {
+    opacity: 0;
+    transform: translateY(36px);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+.hero-line {
+  animation: heroLine 0.95s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Button pop-in with spring overshoot */
+@keyframes popIn {
+  0%   { opacity: 0; transform: scale(0.82) translateY(14px); }
+  65%  { opacity: 1; transform: scale(1.04) translateY(-2px); }
+  100% { opacity: 1; transform: scale(1)    translateY(0);    }
+}
+.pop-in {
+  animation: popIn 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* Stat counter slide-up */
+@keyframes statRise {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.stat-rise {
+  animation: statRise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ─── Scroll-driven section reveals ────────────────────── */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.75s ease, transform 0.75s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-28px);
+  transition: opacity 0.9s ease, transform 0.9s ease;
+}
+.reveal-left.visible { opacity: 1; transform: translateX(0); }
+
+.reveal-right {
+  opacity: 0;
+  transform: translateX(28px);
+  transition: opacity 0.9s ease, transform 0.9s ease;
+}
+.reveal-right.visible { opacity: 1; transform: translateX(0); }
+
+/* ─── Snow accumulation settle ──────────────────────── */
+
+@keyframes snowSettle {
+  0%, 100% { transform: translateY(0) scaleY(1); }
+  40%       { transform: translateY(-3px) scaleY(1.01); }
+  70%       { transform: translateY(-1px) scaleY(1.005); }
+}
+
+@keyframes snowPileGrow {
+  from { opacity: 0; transform: scaleY(0.6) translateY(20px); }
+  to   { opacity: 1; transform: scaleY(1)   translateY(0);    }
+}
+
+.snow-settle       { animation: snowSettle   9s ease-in-out infinite; transform-origin: bottom center; }
+.snow-pile-grow    { animation: snowPileGrow 1.8s cubic-bezier(0.22,1,0.36,1) both; }
+
+/* ─── Infinite carousel scrollbar hide ──────────────────── */
+
+.scroll-hide::-webkit-scrollbar { display: none; }
+.scroll-hide { -ms-overflow-style: none; scrollbar-width: none; }
