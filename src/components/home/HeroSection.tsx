@@ -234,7 +234,7 @@ export default function HeroSection() {
           HERO CONTENT — left-aligned, editorial
           ════════════════════════════════════════ */}
       <div className="relative z-10 flex flex-1 items-center">
-        <div className="mx-auto w-full max-w-7xl px-6 pb-4 pt-24 lg:px-14">
+        <div className="mx-auto w-full max-w-7xl px-6 pb-4 pt-5 lg:px-14">
           <div className="text-center">
 
             {/* Overline pill */}
