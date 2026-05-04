@@ -221,7 +221,7 @@ function PackagesDropdown({ onClose }: { onClose: () => void }) {
             {visible.slice(0, 2).map((pkg) => (
               <Link
                 key={pkg.key}
-                href="#packages"
+                href="/package/slug"
                 onClick={onClose}
                 className="group overflow-hidden rounded-xl transition-all duration-250 hover:-translate-y-0.5"
                 style={{
@@ -526,7 +526,7 @@ export default function Navbar() {
           {/* Desktop right */}
           <div className="hidden shrink-0 items-center gap-3 md:flex">
             <Link
-              href="#packages"
+              href="/package"
               className="rounded-4xl px-5 py-2.5 text-[0.83rem] font-semibold text-white transition-all duration-300 hover:-translate-y-px"
               style={{
                 background: "linear-gradient(135deg, #0EA5E9 0%, #38BDF8 100%)",
