@@ -1,6 +1,6 @@
 export const NAV_LINKS = [
   { label: "Home",        href: "/",            dropdown: null },
-  { label: "Packages",    href: "/packages",    dropdown: "packages" },
+  { label: "Packages",    href: "/package",    dropdown: "packages" },
   { label: "Services",    href: "/services",    dropdown: "services" },
   { label: "About",       href: "/about",       dropdown: null },
   { label: "Why Kashmir", href: "#why-kashmir", dropdown: null },
@@ -22,6 +22,106 @@ export const NAV_SERVICES = [
   { icon: "⛷️", title: "Ski & Snow Sports",  desc: "Gulmarg's world-class slopes & gondola" },
   { icon: "🍽️", title: "Kashmiri Cuisine",   desc: "Authentic Wazwan & local dining experiences" },
 ] as const;
+
+
+import {
+  Waves,
+  Car,
+  Users,
+  Utensils,
+  Snowflake,
+  Map,
+  Camera,
+  Tent,
+  LucideIcon,
+} from "lucide-react";
+
+export interface ServiceData {
+  id: string;
+  title: string;
+  icon: LucideIcon;
+  image: string;
+  features: string[];
+}
+
+export const servicesData: ServiceData[] = [
+  {
+    id: "s1",
+    title: "Premium Shikara Rides",
+    icon: Waves,
+    image:
+      "https://images.unsplash.com/photo-1566837945700-30057527ade0?auto=format&fit=crop&q=80&w=150&h=150",
+    features: ["Luxury Houseboats", "Sunset Lake Views", "Floating Markets"],
+  },
+  {
+    id: "s2",
+    title: "Luxury Transport",
+    icon: Car,
+    image:
+      "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&q=80&w=150&h=150",
+    features: ["Chauffeur-driven comfort", "Local Tours", "Airport Transfers"],
+  },
+  {
+    id: "s3",
+    title: "Certified Local Guides",
+    icon: Users,
+    image:
+      "https://images.unsplash.com/photo-1593181629936-11c609b8db9b?auto=format&fit=crop&q=80&w=150&h=150",
+    features: [
+      "Expert history knowledge",
+      "Trekking routes",
+      "Multilingual guides",
+    ],
+  },
+  {
+    id: "s4",
+    title: "Kashmir cuisine",
+    icon: Utensils,
+    image:
+      "https://upload.wikimedia.org/wikipedia/commons/b/be/Kashmiri_cuisine_waazwan.jpg",
+    features: ["Traditional Wazwan", "Local Art & Craft", "Cultural Heritage"],
+  },
+  {
+    id: "s5",
+    title: "Gulmarg Skiing",
+    icon: Snowflake,
+    image:
+      "https://images.unsplash.com/photo-1606298855672-3efb63017be8?auto=format&fit=crop&q=80&w=150&h=150",
+    features: [
+      "Professional Instructors",
+      "Premium Gear Rentals",
+      "Gondola Tickets",
+    ],
+  },
+  {
+    id: "s6",
+    title: "Pahalgam Valley Tour",
+    icon: Map,
+    image:
+      "https://images.unsplash.com/photo-1595815771614-ade9d652a65d?auto=format&fit=crop&q=80&w=150&h=150",
+    features: ["Betaab & Aru Valley", "Scenic Pony Rides", "River Rafting"],
+  },
+  {
+    id: "s7",
+    title: "Photography Services",
+    icon: Camera,
+    image:
+      "https://images.unsplash.com/photo-1516724562728-afc824a36e84?auto=format&fit=crop&q=80&w=150&h=150",
+    features: [
+      "Professional Shoots",
+      "Traditional Attire",
+      "Drone Cinematography",
+    ],
+  },
+  {
+    id: "s8",
+    title: "Adventure & Camping",
+    icon: Tent,
+    image:
+      "https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?auto=format&fit=crop&q=80&w=150&h=150",
+    features: ["Alpine Lake Treks", "Luxury Glamping", "Bonfire Nights"],
+  },
+];
 
 export const PACKAGES = [
   {

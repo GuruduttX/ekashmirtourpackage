@@ -160,6 +160,7 @@ const TABS = [
 ];
 
 type Pkg = (typeof PACKAGES)[number];
+const CARD_HEIGHT = "430px";
 
 /* ════════════════════════════════════════════════════════════
    SECTION
@@ -174,7 +175,7 @@ export default function TourCategories() {
       : PACKAGES.filter((p) => p.days === parseInt(activeTab));
 
   return (
-    <section className="py-20 lg:py-28 bg-white" id="tour-categories">
+    <section className="py-10 lg:py-28 bg-white" id="tour-categories">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
 
         {/* ── Header ── */}
@@ -333,10 +334,22 @@ export default function TourCategories() {
             <p className="text-slate-400 text-sm">No packages found for this duration.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filtered.map((pkg, i) => (
-              <TourCard key={pkg.id} pkg={pkg} index={i} />
-            ))}
+          <div
+            className="overflow-y-auto overflow-x-hidden pr-1 sm:pr-2"
+            style={{
+              height: `calc(${CARD_HEIGHT} * 2 + 24px)`,
+            }}
+          >
+            <div
+              className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+              style={{
+                gridAutoRows: CARD_HEIGHT,
+              }}
+            >
+              {filtered.map((pkg, i) => (
+                <TourCard key={pkg.id} pkg={pkg} index={i} />
+              ))}
+            </div>
           </div>
         )}
       </div>
@@ -353,7 +366,7 @@ function TourCard({ pkg, index }: { pkg: Pkg; index: number }) {
   return (
     <article
       ref={ref}
-      className={`group flex flex-col rounded-2xl overflow-hidden bg-white cursor-pointer transition-all duration-600 hover:-translate-y-1.5 ${
+      className={`group flex h-full flex-col overflow-hidden rounded-2xl bg-white cursor-pointer transition-all duration-600 hover:-translate-y-1.5 ${
         inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
       }`}
       style={{

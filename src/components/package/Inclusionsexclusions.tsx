@@ -1,110 +1,74 @@
-"use client";
+import { CheckCircle, XCircle } from "lucide-react";
 
-import { Check, X } from "lucide-react";
+// Dummy data for independent use
+const dummyData = {
+  inclusions: [
+    { description: "Round-trip flights and private airport transfers" },
+    { description: "Premium hotel accommodation for 4 nights and 5 days" },
+    { description: "Daily complimentary breakfast and dinner buffet" },
+    { description: "Guided city tour with an English-speaking professional" },
+  ],
+  exclusions: [
+    { description: "Visa fees, processing charges, and travel insurance" },
+    { description: "Personal expenses such as laundry, tips, and phone calls" },
+    { description: "Lunch and alcoholic beverages outside of the buffet" },
+    {
+      description: "Optional activities, spa treatments, and extra excursions",
+    },
+  ],
+};
 
-const inclusions = [
-  "Premium AC Accommodation (Hotel / Houseboat)",
-  "Daily Breakfast & Dinner",
-  "Dedicated Air-conditioned Transport",
-  "Expert Local Guide Throughout",
-  "Airport & Railway Station Transfers",
-  "All Toll Taxes & Parking Charges",
-  "Shikara Ride on Dal Lake (1 hr)",
-  "Gondola Ticket at Gulmarg (Phase 1)",
-];
-
-const exclusions = [
-  "Airfare or Train Tickets",
-  "Lunch & Personal Meals",
-  "Entry Fees to Monuments & Parks",
-  "Gondola Phase 2 (Apharwat Peak)",
-  "Pony / Horse Rides at Pahalgam",
-  "Personal Travel Insurance",
-  "Tips, Porterage & Laundry",
-  "Anything Not Mentioned in Inclusions",
-];
-
-export default function InclusionsExclusions() {
+export default function InclusionExclusion() {
   return (
-    <div className="w-full">
-      {/* Section header */}
-      <div className="mb-8">
-        <span className="text-[0.65rem] font-bold tracking-[0.25em] uppercase text-sky-500 mb-1.5 block">
-          Package Details
-        </span>
-        <h2 className="text-2xl md:text-3xl font-bold text-slate-900">
-          Inclusions &amp; Exclusions
+    <section className="py-0 sm:py-6 md:py-12 px-6 sm:px-0">
+      <div className="max-w-7xl mx-auto">
+        {/* SECTION TITLE */}
+        <h2 className="text-2xl font-bold text-gray-900 mb-8">
+          What’s Included & Excluded
         </h2>
-      </div>
 
-      {/* Two column layout on desktop, stacked on mobile */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* ── INCLUSIONS ── */}
-        <div className="rounded-2xl border border-slate-100 bg-white shadow-sm overflow-hidden">
-          {/* Column header */}
-          <div className="flex items-center gap-2.5 px-5 py-3.5 bg-emerald-50 border-b border-emerald-100">
-            <div className="w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center flex-shrink-0">
-              <Check className="w-3 h-3 text-white" strokeWidth={3} />
-            </div>
-            <span className="text-sm font-semibold text-emerald-700 tracking-wide">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* INCLUSIONS (Cyan & White Theme) */}
+          <div className="rounded-2xl border border-cyan-100 bg-green-50/50 p-6 shadow-sm">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
               Inclusions
-            </span>
+            </h3>
+
+            <ul className="space-y-3">
+              {dummyData.inclusions.map((item, index) => (
+                <li key={index} className="flex items-start gap-3">
+                  <span>
+                    <CheckCircle className="w-5 h-5 text-cyan-500 mt-0.5" />
+                  </span>
+                  <p className="text-gray-800 leading-relaxed">
+                    {item.description}
+                  </p>
+                </li>
+              ))}
+            </ul>
           </div>
 
-          {/* Items */}
-          <ul className="divide-y divide-slate-50">
-            {inclusions.map((item, i) => (
-              <li
-                key={i}
-                className="group flex items-center gap-3.5 px-5 py-3.5 hover:bg-emerald-50/50 transition-colors duration-200 cursor-default"
-              >
-                <div className="flex-shrink-0 w-6 h-6 rounded-full border-2 border-emerald-200 flex items-center justify-center transition-all duration-200 group-hover:border-emerald-500 group-hover:bg-emerald-500 group-hover:shadow-md group-hover:shadow-emerald-200">
-                  <Check
-                    className="w-3 h-3 text-emerald-400 transition-colors duration-200 group-hover:text-white"
-                    strokeWidth={3}
-                  />
-                </div>
-                <span className="text-sm text-slate-600 font-medium group-hover:text-slate-800 transition-colors duration-200">
-                  {item}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* ── EXCLUSIONS ── */}
-        <div className="rounded-2xl border border-slate-100 bg-white shadow-sm overflow-hidden">
-          {/* Column header */}
-          <div className="flex items-center gap-2.5 px-5 py-3.5 bg-rose-50 border-b border-rose-100">
-            <div className="w-5 h-5 rounded-full bg-rose-500 flex items-center justify-center flex-shrink-0">
-              <X className="w-3 h-3 text-white" strokeWidth={3} />
-            </div>
-            <span className="text-sm font-semibold text-rose-700 tracking-wide">
+          {/* EXCLUSIONS (Sky & White Theme) */}
+          <div className="rounded-2xl border border-sky-100 bg-red-50/50 p-6 shadow-sm">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
               Exclusions
-            </span>
-          </div>
+            </h3>
 
-          {/* Items */}
-          <ul className="divide-y divide-slate-50">
-            {exclusions.map((item, i) => (
-              <li
-                key={i}
-                className="group flex items-center gap-3.5 px-5 py-3.5 hover:bg-rose-50/50 transition-colors duration-200 cursor-default"
-              >
-                <div className="flex-shrink-0 w-6 h-6 rounded-full border-2 border-rose-200 flex items-center justify-center transition-all duration-200 group-hover:border-rose-500 group-hover:bg-rose-500 group-hover:shadow-md group-hover:shadow-rose-200">
-                  <X
-                    className="w-3 h-3 text-rose-400 transition-colors duration-200 group-hover:text-white"
-                    strokeWidth={3}
-                  />
-                </div>
-                <span className="text-sm text-slate-600 font-medium group-hover:text-slate-800 transition-colors duration-200">
-                  {item}
-                </span>
-              </li>
-            ))}
-          </ul>
+            <ul className="space-y-3">
+              {dummyData.exclusions.map((item, index) => (
+                <li key={index} className="flex items-start gap-3">
+                  <span>
+                    <XCircle className="w-5 h-5 text-sky-500 mt-0.5" />
+                  </span>
+                  <span className="text-gray-800 leading-relaxed">
+                    {item.description}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }
