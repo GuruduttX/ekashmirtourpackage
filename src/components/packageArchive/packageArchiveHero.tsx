@@ -164,50 +164,6 @@ export default function PackagesArchiveHero({
         ref={containerRef}
         className="relative w-full overflow-hidden bg-white"
       >
-        {/* ══════════ BACKGROUND ATMOSPHERE ══════════ */}
-
-        {/* Giant sky radial — top right */}
-        <div
-          className="pointer-events-none absolute -top-48 -right-48 w-[800px] h-[800px] rounded-full"
-          style={{
-            background:
-              "radial-gradient(circle, rgba(14,165,233,0.06) 0%, transparent 65%)",
-          }}
-        />
-        {/* Cyan radial — bottom left */}
-        <div
-          className="pointer-events-none absolute -bottom-32 -left-32 w-[560px] h-[560px] rounded-full"
-          style={{
-            background:
-              "radial-gradient(circle, rgba(34,211,238,0.05) 0%, transparent 65%)",
-          }}
-        />
-        {/* Sky radial — centre */}
-        <div
-          className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full"
-          style={{
-            background:
-              "radial-gradient(circle, rgba(186,230,253,0.12) 0%, transparent 70%)",
-          }}
-        />
-
-        {/* Fine dot texture — right half only */}
-        <div
-          className="pointer-events-none absolute inset-0"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle, rgba(14,165,233,0.12) 1px, transparent 1px)",
-            backgroundSize: "28px 28px",
-            maskImage:
-              "radial-gradient(ellipse 55% 90% at 88% 40%, black 0%, transparent 100%)",
-            WebkitMaskImage:
-              "radial-gradient(ellipse 55% 90% at 88% 40%, black 0%, transparent 100%)",
-          }}
-        />
-
-        {/* Top hairline gradient */}
-        <div className="pointer-events-none absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-sky-200 to-transparent" />
-
         {/* ══════════ HERO CONTENT GRID ══════════ */}
         <div className="relative z-10 max-w-7xl mx-auto px-5 sm:px-8 lg:px-14 pt-24 sm:pt-28 pb-10 grid grid-cols-1 lg:grid-cols-[1fr_1.1fr] gap-12 lg:gap-6 items-start">
           {/* ────── LEFT — Editorial text block ────── */}
@@ -340,7 +296,7 @@ export default function PackagesArchiveHero({
 
           {/* ────── RIGHT — Image collage ────── */}
           <motion.div style={{ y: parallaxY }}>
-            <div className="hidden md:relative h-[520px] sm:h-[600px] lg:h-[680px] w-full">
+            <div className="hidden md:block md:relative h-[520px] sm:h-[600px] lg:h-[680px] w-full">
               {/* ── 1. Tall hero image — center-right, dominant ── */}
               <ImageCard
                 src={imgs[0]}

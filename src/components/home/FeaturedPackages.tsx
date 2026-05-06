@@ -223,7 +223,7 @@ export default function FeaturedPackages() {
       {/* ── View All CTA ── */}
       <div className="max-w-7xl mx-auto px-6 lg:px-12 mt-12 text-center">
         <Link
-          href="#packages"
+          href="package"
           className="inline-flex items-center gap-2.5 rounded-full px-8 py-3 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5"
           style={{
             background: "linear-gradient(120deg, #0284C7 0%, #38BDF8 100%)",
