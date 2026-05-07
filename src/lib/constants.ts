@@ -3,8 +3,8 @@ export const NAV_LINKS = [
   { label: "Packages",    href: "/package",    dropdown: "packages" },
   { label: "Services",    href: "/services",    dropdown: "services" },
   { label: "About",       href: "/about",       dropdown: null },
-  { label: "Why Kashmir", href: "#why-kashmir", dropdown: null },
-  { label: "Contact",     href: "#contact",     dropdown: null },
+  { label: "Why Kashmir", href: "/whyKashmir", dropdown: null },
+  { label: "Contact",     href: "/contact",     dropdown: null },
 ] as const;
 
 export const NAV_PACKAGES = [

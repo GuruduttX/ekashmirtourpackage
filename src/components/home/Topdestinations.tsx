@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, Variants } from "framer-motion";
 import {
   MapPin,
   Star,
@@ -96,7 +96,7 @@ const destinations: Destination[] = [
 /* ─────────────────────────────────────────
    Animation Variants
 ───────────────────────────────────────── */
-const fadeUp = {
+const fadeUp: Variants = {
   hidden: { opacity: 0, y: 24 },
   visible: (d: number) => ({
     opacity: 1,
@@ -105,7 +105,7 @@ const fadeUp = {
   }),
 };
 
-const cardReveal = {
+const cardReveal: Variants = {
   hidden: { opacity: 0, y: 28, scale: 0.97 },
   visible: (d: number) => ({
     opacity: 1,

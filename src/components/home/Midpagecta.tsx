@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, Variants } from "framer-motion";
 import { ArrowRight, Compass, Sparkles, ShieldCheck } from "lucide-react";
 import { useRef } from "react";
 
@@ -39,7 +39,7 @@ const defaultProps: Required<CTAProps> = {
 /* ─────────────────────────────────────────
    Animation Variants
 ───────────────────────────────────────── */
-const fadeUp = {
+const fadeUp: Variants = {
   hidden: { opacity: 0, y: 24 },
   visible: (d: number) => ({
     opacity: 1,
@@ -48,7 +48,7 @@ const fadeUp = {
   }),
 };
 
-const containerVariants = {
+const containerVariants: Variants = {
   hidden: { opacity: 0, y: 32, scale: 0.98 },
   visible: {
     opacity: 1,
@@ -58,7 +58,7 @@ const containerVariants = {
   },
 };
 
-const floatVariants = {
+const floatVariants: Variants = {
   animate: {
     y: [0, -10, 0],
     transition: {

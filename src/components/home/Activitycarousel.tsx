@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, Variants } from "framer-motion";
 import {
   Clock,
   MapPin,
@@ -139,7 +139,7 @@ const tagColors: Record<string, string> = {
 /* ─────────────────────────────────────────
    Framer Motion Variants
 ───────────────────────────────────────── */
-const headerVariants = {
+const headerVariants: Variants = {
   hidden: { opacity: 0, y: 24 },
   visible: (d: number) => ({
     opacity: 1,
@@ -148,7 +148,7 @@ const headerVariants = {
   }),
 };
 
-const cardVariants = {
+const cardVariants: Variants = {
   hidden: { opacity: 0, y: 32, scale: 0.96 },
   visible: (d: number) => ({
     opacity: 1,

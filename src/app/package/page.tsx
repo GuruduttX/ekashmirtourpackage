@@ -6,6 +6,7 @@ import PackageFaqSection from '@/components/package/PackageFaqSection'
 import PackageTestimonials from '@/components/package/PackageTestimonial'
 import KashmirTrustStats from '@/components/packageArchive/Kashmirtruststats'
 import PackagesArchiveHero from '@/components/packageArchive/packageArchiveHero'
+import PremiumTravelAssistance from '@/components/packageArchive/PremiumTravelAssistance'
 import React from 'react'
 
 const page = () => {
@@ -15,8 +16,9 @@ const page = () => {
       <PackagesArchiveHero />
       <TourCategories />
       <KashmirTrustStats />
+      <PremiumTravelAssistance />
       <PackageTestimonials />
-      <div className="px-27">
+      <div className="px-3 md:px-27">
       <PackageCTA />
       <PackageFaqSection />
       </div>

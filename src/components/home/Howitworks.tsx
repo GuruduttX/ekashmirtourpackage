@@ -1,7 +1,13 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useInView, useScroll, useTransform } from "framer-motion";
+import {
+  motion,
+  useInView,
+  useScroll,
+  useTransform,
+  Variants,
+} from "framer-motion";
 import { Search, FileText, PhoneCall, Plane } from "lucide-react";
 
 /* ─────────────────────────────────────────
@@ -24,7 +30,8 @@ const steps: Step[] = [
     id: 1,
     number: "01",
     title: "Explore Packages",
-    description: "Browse curated Kashmir tours and activities tailored to every kind of traveller.",
+    description:
+      "Browse curated Kashmir tours and activities tailored to every kind of traveller.",
     icon: <Search className="w-5 h-5" />,
     position: "top",
   },
@@ -32,7 +39,8 @@ const steps: Step[] = [
     id: 2,
     number: "02",
     title: "Submit Your Details",
-    description: "Fill out a quick form with your travel dates, group size, and preferences.",
+    description:
+      "Fill out a quick form with your travel dates, group size, and preferences.",
     icon: <FileText className="w-5 h-5" />,
     position: "bottom",
   },
@@ -40,7 +48,8 @@ const steps: Step[] = [
     id: 3,
     number: "03",
     title: "We Plan & Contact You",
-    description: "Our team crafts your ideal itinerary and reaches out with a personalised plan.",
+    description:
+      "Our team crafts your ideal itinerary and reaches out with a personalised plan.",
     icon: <PhoneCall className="w-5 h-5" />,
     position: "top",
   },
@@ -48,7 +57,8 @@ const steps: Step[] = [
     id: 4,
     number: "04",
     title: "Travel & Enjoy",
-    description: "Confirm your trip and experience Kashmir seamlessly from arrival to farewell.",
+    description:
+      "Confirm your trip and experience Kashmir seamlessly from arrival to farewell.",
     icon: <Plane className="w-5 h-5" />,
     position: "bottom",
   },
@@ -57,7 +67,7 @@ const steps: Step[] = [
 /* ─────────────────────────────────────────
    Animation Variants
 ───────────────────────────────────────── */
-const fadeUp = {
+const fadeUp: Variants = {
   hidden: { opacity: 0, y: 28 },
   visible: (d: number) => ({
     opacity: 1,
@@ -66,7 +76,7 @@ const fadeUp = {
   }),
 };
 
-const cardVariants = {
+const cardVariants: Variants = {
   hidden: { opacity: 0, y: 36, scale: 0.95 },
   visible: (d: number) => ({
     opacity: 1,
@@ -76,7 +86,7 @@ const cardVariants = {
   }),
 };
 
-const dotVariants = {
+const dotVariants: Variants = {
   hidden: { scale: 0, opacity: 0 },
   visible: (d: number) => ({
     scale: 1,
@@ -124,7 +134,10 @@ function StepCard({
       {/* Glass card */}
       <div
         className="relative rounded-3xl border border-white/70 bg-white/60 backdrop-blur-xl px-6 py-7 shadow-xl shadow-sky-100/60 transition-all duration-300 group-hover:shadow-2xl group-hover:shadow-sky-200/70 group-hover:bg-white/80 group-hover:border-sky-200/60"
-        style={{ boxShadow: "0 8px 32px -8px rgba(14,165,233,0.12), 0 0 0 1px rgba(255,255,255,0.8) inset" }}
+        style={{
+          boxShadow:
+            "0 8px 32px -8px rgba(14,165,233,0.12), 0 0 0 1px rgba(255,255,255,0.8) inset",
+        }}
       >
         {/* Icon container */}
         <motion.div
@@ -229,10 +242,8 @@ export default function HowItWorks() {
       />
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12">
-
         {/* ══ SECTION HEADER ══════════════════════════ */}
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-16 lg:mb-20">
-
           {/* Left */}
           <div>
             <motion.p
@@ -285,10 +296,8 @@ export default function HowItWorks() {
 
         {/* ══ DESKTOP ZIG-ZAG TIMELINE ═════════════════════════ */}
         <div className="hidden lg:block">
-
           {/* Timeline track */}
           <div className="relative">
-
             {/* ── Animated connecting line ── */}
             <div
               ref={lineRef}
@@ -337,7 +346,10 @@ export default function HowItWorks() {
                     }`}
                   >
                     {/* Outer glow ring */}
-                    <div className="absolute w-7 h-7 rounded-full bg-sky-400/20 animate-ping" style={{ animationDuration: "2.5s" }} />
+                    <div
+                      className="absolute w-7 h-7 rounded-full bg-sky-400/20 animate-ping"
+                      style={{ animationDuration: "2.5s" }}
+                    />
                     {/* Mid ring */}
                     <div className="absolute w-5 h-5 rounded-full bg-sky-400/30" />
                     {/* Core dot */}
@@ -367,7 +379,6 @@ export default function HowItWorks() {
         <div className="lg:hidden flex flex-col gap-0">
           {steps.map((step, index) => (
             <div key={step.id} className="relative flex gap-5">
-
               {/* Left spine */}
               <div className="flex flex-col items-center flex-shrink-0">
                 {/* Dot */}
@@ -378,7 +389,10 @@ export default function HowItWorks() {
                   animate={isInView ? "visible" : "hidden"}
                   className="relative flex items-center justify-center mt-8"
                 >
-                  <div className="absolute w-6 h-6 rounded-full bg-sky-400/20 animate-ping" style={{ animationDuration: "2.5s" }} />
+                  <div
+                    className="absolute w-6 h-6 rounded-full bg-sky-400/20 animate-ping"
+                    style={{ animationDuration: "2.5s" }}
+                  />
                   <div
                     className="relative w-3.5 h-3.5 rounded-full border-2 border-white z-10"
                     style={{
@@ -394,9 +408,14 @@ export default function HowItWorks() {
                     className="flex-1 w-px mt-2"
                     initial={{ scaleY: 0, originY: 0 }}
                     animate={isInView ? { scaleY: 1 } : { scaleY: 0 }}
-                    transition={{ duration: 0.6, delay: 0.3 + index * 0.12, ease: [0.22, 1, 0.36, 1] }}
+                    transition={{
+                      duration: 0.6,
+                      delay: 0.3 + index * 0.12,
+                      ease: [0.22, 1, 0.36, 1],
+                    }}
                     style={{
-                      background: "linear-gradient(180deg, #0ea5e9, rgba(6,182,212,0.3))",
+                      background:
+                        "linear-gradient(180deg, #0ea5e9, rgba(6,182,212,0.3))",
                     }}
                   />
                 )}
@@ -431,8 +450,7 @@ export default function HowItWorks() {
                   style={{
                     width: i === 0 ? 20 : 8,
                     height: 8,
-                    background:
-                      "linear-gradient(90deg, #0ea5e9, #06b6d4)",
+                    background: "linear-gradient(90deg, #0ea5e9, #06b6d4)",
                     opacity: i === 0 ? 1 : 0.3,
                   }}
                 />
@@ -445,7 +463,10 @@ export default function HowItWorks() {
 
           <motion.a
             href="#packages"
-            whileHover={{ y: -3, boxShadow: "0 20px 40px -8px rgba(14,165,233,0.40)" }}
+            whileHover={{
+              y: -3,
+              boxShadow: "0 20px 40px -8px rgba(14,165,233,0.40)",
+            }}
             whileTap={{ scale: 0.97 }}
             className="inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl text-white text-sm font-semibold cursor-pointer"
             style={{
@@ -457,7 +478,6 @@ export default function HowItWorks() {
             <Search className="w-4 h-4" />
           </motion.a>
         </motion.div>
-
       </div>
     </section>
   );
