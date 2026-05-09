@@ -36,7 +36,7 @@ const packageFaqs: PackageFAQ[] = [
 export default function PackageFaqSection() {
   return (
     <section className="py-6 sm:py-12 md:py-20">
-      <div className="max-w-5xl mx-auto px-6">
+      <div className="max-w-5xl mx-auto px-3">
         {/* HEADER */}
         <div className="mb-12">
           <span

@@ -171,7 +171,7 @@ function ReviewCard({ testimonial }: { testimonial: Testimonial }) {
         y: -6,
         transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] },
       }}
-      className="group relative flex-shrink-0 w-[270px] sm:w-[300px] rounded-3xl cursor-grab active:cursor-grabbing overflow-hidden"
+      className="group relative flex-shrink-0 w-[270px] sm:w-[300px] rounded-3xl cursor-grab active:cursor-grabbing"
       style={{
         background: "rgba(255,255,255,0.72)",
         backdropFilter: "blur(20px)",
@@ -183,17 +183,16 @@ function ReviewCard({ testimonial }: { testimonial: Testimonial }) {
     >
       {/* Hover glow overlay */}
       <div
-        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-400 pointer-events-none"
+        className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-400 pointer-events-none"
         style={{
           background:
             "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(186,230,253,0.25) 0%, transparent 100%)",
-          boxShadow: "0 16px 40px -8px rgba(14,165,233,0.18)",
         }}
       />
 
       {/* Top accent line */}
       <div
-        className="absolute top-0 inset-x-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-400"
+        className="absolute top-0 inset-x-0 h-px rounded-t-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-400"
         style={{
           background:
             "linear-gradient(90deg, transparent, rgba(14,165,233,0.5), rgba(34,211,238,0.5), transparent)",
@@ -260,17 +259,21 @@ export default function CustomerReviews() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef<number>(0);
   const isPausedRef = useRef(false);
+  const isTouchingRef = useRef(false);
   const manualPauseTimer = useRef<ReturnType<typeof setTimeout>>();
 
   const isInView = useInView(sectionRef, { once: true });
   const [isHovered, setIsHovered] = useState(false);
+  const [scrollState, setScrollState] = useState<"scrolling" | "paused">(
+    "scrolling",
+  );
 
   const doubled = [...TESTIMONIALS, ...TESTIMONIALS];
 
   /* ── Auto-scroll RAF loop ── */
   const tick = useCallback(() => {
     const el = scrollRef.current;
-    if (!el || isPausedRef.current) {
+    if (!el || isPausedRef.current || isTouchingRef.current) {
       rafRef.current = requestAnimationFrame(tick);
       return;
     }
@@ -286,19 +289,35 @@ export default function CustomerReviews() {
     return () => cancelAnimationFrame(rafRef.current);
   }, [tick]);
 
-  /* ── Hover pause ── */
+  /* ── Hover pause (desktop) ── */
   const handleMouseEnter = () => {
     isPausedRef.current = true;
     setIsHovered(true);
+    setScrollState("paused");
   };
   const handleMouseLeave = () => {
     isPausedRef.current = false;
     setIsHovered(false);
+    setScrollState("scrolling");
   };
 
-  /* ── Manual scroll with temporary pause ── */
+  /* ── Touch handlers (mobile) ── */
+  const handleTouchStart = () => {
+    isTouchingRef.current = true;
+    setScrollState("paused");
+  };
+  const handleTouchEnd = () => {
+    // Delay lets momentum scrolling settle before RAF resumes
+    setTimeout(() => {
+      isTouchingRef.current = false;
+      setScrollState("scrolling");
+    }, 1000);
+  };
+
+  /* ── Manual scroll ── */
   const manualScroll = (dir: "left" | "right") => {
     isPausedRef.current = true;
+    setScrollState("paused");
     scrollRef.current?.scrollBy({
       left: dir === "left" ? -320 : 320,
       behavior: "smooth",
@@ -306,6 +325,7 @@ export default function CustomerReviews() {
     clearTimeout(manualPauseTimer.current);
     manualPauseTimer.current = setTimeout(() => {
       isPausedRef.current = false;
+      setScrollState("scrolling");
     }, MANUAL_PAUSE_DURATION);
   };
 
@@ -314,7 +334,11 @@ export default function CustomerReviews() {
     visible: (d: number) => ({
       opacity: 1,
       y: 0,
-      transition: { duration: 0.75, ease: [0.22, 1, 0.36, 1] as any, delay: d },
+      transition: {
+        duration: 0.75,
+        ease: [0.22, 1, 0.36, 1] as any,
+        delay: d,
+      },
     }),
   };
 
@@ -365,7 +389,7 @@ export default function CustomerReviews() {
                 "0 12px 40px -8px rgba(14,165,233,0.10), 0 0 0 1px rgba(255,255,255,0.7) inset",
             }}
           >
-            {/* Top bar */}
+            {/* Top accent bar */}
             <div
               className="absolute top-0 inset-x-0 h-px"
               style={{
@@ -425,16 +449,18 @@ export default function CustomerReviews() {
               ))}
             </div>
 
-            {/* Arrow controls */}
+            {/* Desktop arrow controls */}
             <div className="hidden lg:flex items-center gap-2 mt-8 pt-6 border-t border-sky-100/60">
               <button
                 onClick={() => manualScroll("left")}
+                aria-label="Scroll left"
                 className="w-9 h-9 rounded-full bg-white border border-sky-100 flex items-center justify-center text-sky-500 hover:bg-sky-50 hover:border-sky-200 transition-all hover:-translate-y-0.5 shadow-sm"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
               <button
                 onClick={() => manualScroll("right")}
+                aria-label="Scroll right"
                 className="w-9 h-9 rounded-full flex items-center justify-center text-white hover:-translate-y-0.5 transition-all shadow-md"
                 style={{
                   background: "linear-gradient(135deg, #0ea5e9, #06b6d4)",
@@ -444,14 +470,19 @@ export default function CustomerReviews() {
                 <ChevronRight className="w-4 h-4" />
               </button>
               <span className="text-[10px] text-gray-400 ml-1">
-                {isHovered ? "Paused" : "Auto-scrolling"}
+                {scrollState === "paused" ? "Paused" : "Auto-scrolling"}
               </span>
             </div>
           </div>
         </motion.div>
 
         {/* ══ RIGHT — Infinite carousel ══ */}
-        <div className="flex-1 overflow-hidden min-w-0">
+        {/*
+          KEY FIX: was "flex-1 overflow-hidden min-w-0"
+          overflow-hidden clips the mobile arrow row and blocks touch events.
+          Use min-w-0 only — the scroll track handles its own overflow internally.
+        */}
+        <div className="flex-1 min-w-0">
           {/* Section heading */}
           <motion.div
             custom={0.1}
@@ -461,7 +492,7 @@ export default function CustomerReviews() {
             className="mb-8"
           >
             <h2
-              className="text-3xl sm:text-4xl font-bold text-gray-900 leading-tight tracking-tight"
+              className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 leading-tight tracking-tight"
               style={{ fontFamily: "'Georgia', 'Times New Roman', serif" }}
             >
               What Our{" "}
@@ -481,16 +512,16 @@ export default function CustomerReviews() {
             </p>
           </motion.div>
 
-          {/* Carousel wrapper */}
+          {/* Carousel wrapper — no overflow-hidden here */}
           <div className="relative">
-            {/* Left edge fade */}
+            {/* Left edge fade — desktop only */}
             <div
               className="hidden lg:block pointer-events-none absolute left-0 top-0 bottom-0 w-16 z-20"
               style={{
                 background: "linear-gradient(to right, #e0f2fe, transparent)",
               }}
             />
-            {/* Right edge fade */}
+            {/* Right edge fade — desktop only */}
             <div
               className="hidden lg:block pointer-events-none absolute right-0 top-0 bottom-0 w-16 z-20"
               style={{
@@ -503,6 +534,8 @@ export default function CustomerReviews() {
               ref={scrollRef}
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
+              onTouchStart={handleTouchStart}
+              onTouchEnd={handleTouchEnd}
               className="flex gap-5 overflow-x-auto pb-4"
               style={{
                 scrollbarWidth: "none",
@@ -516,19 +549,26 @@ export default function CustomerReviews() {
             </div>
 
             {/* Mobile arrow row */}
-            <div className="flex lg:hidden items-center justify-center gap-3 mt-5">
+            {/*
+              KEY FIX: added "relative z-10" so this renders above the scroll
+              track in paint order and isn't clipped by any ancestor.
+              Added active:scale-95 for tactile press feedback on touch devices.
+            */}
+            <div className="flex lg:hidden items-center justify-center gap-3 mt-5 relative z-10">
               <button
                 onClick={() => manualScroll("left")}
-                className="w-10 h-10 rounded-full bg-white border border-sky-100 shadow-sm flex items-center justify-center text-sky-500 hover:bg-sky-50 transition-all"
+                aria-label="Scroll left"
+                className="w-10 h-10 rounded-full bg-white border border-sky-100 shadow-sm flex items-center justify-center text-sky-500 active:scale-95 transition-all"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
-              <span className="text-[10px] text-gray-400 tracking-widest uppercase">
-                {isHovered ? "Paused" : "Scrolling"}
+              <span className="text-[10px] text-gray-400 tracking-widest uppercase min-w-[60px] text-center">
+                {scrollState === "paused" ? "Paused" : "Scrolling"}
               </span>
               <button
                 onClick={() => manualScroll("right")}
-                className="w-10 h-10 rounded-full flex items-center justify-center text-white shadow-md"
+                aria-label="Scroll right"
+                className="w-10 h-10 rounded-full flex items-center justify-center text-white shadow-md active:scale-95 transition-all"
                 style={{
                   background: "linear-gradient(135deg, #0ea5e9, #06b6d4)",
                 }}
@@ -540,9 +580,7 @@ export default function CustomerReviews() {
         </div>
       </div>
 
-      <style>{`
-        div::-webkit-scrollbar { display: none; }
-      `}</style>
+      <style>{`div::-webkit-scrollbar { display: none; }`}</style>
     </section>
   );
 }

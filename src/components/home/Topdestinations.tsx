@@ -364,19 +364,7 @@ export default function TopDestinations() {
 
         {/* ══ MOBILE / TABLET — HORIZONTAL SCROLL ══ */}
         <div className="lg:hidden relative">
-          {/* Edge fades */}
-          <div
-            className="pointer-events-none absolute left-0 top-0 bottom-0 w-8 z-20"
-            style={{
-              background: "linear-gradient(to right, white, transparent)",
-            }}
-          />
-          <div
-            className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 z-20"
-            style={{
-              background: "linear-gradient(to left, white, transparent)",
-            }}
-          />
+          
 
           <div
             ref={scrollRef}
