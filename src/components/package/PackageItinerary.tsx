@@ -1,136 +1,138 @@
 "use client";
 
 import { useState } from "react";
+import { ChevronDown, MapPin, Clock } from "lucide-react";
 
-const ITINERARY_DATA = [
-  {
-    day: 1,
-    title: "Arrival in Srinagar & Houseboat Stay",
-    description:
-      "Welcome to the Venice of the East. Upon arrival at Srinagar airport, our representative will greet you. Transfer to your premium cedar-wood houseboat on Dal Lake. In the late afternoon, enjoy a peaceful Shikara ride as the sun sets over the Pir Panjal range.",
-  },
-  {
-    day: 2,
-    title: "Srinagar Local Sightseeing",
-    description:
-      "After breakfast, explore the famous Mughal Gardens — Nishat Bagh (The Garden of Pleasure) and Shalimar Bagh (Abode of Love). Visit the Shankaracharya Temple and take a stroll through the old city's bustling markets. Return to the houseboat for dinner.",
-  },
-  {
-    day: 3,
-    title: "Day Trip to Gulmarg",
-    description:
-      "Drive to Gulmarg, the Meadow of Flowers. Experience the world-highest cable car, the Gulmarg Gondola, reaching Phase 1 and Phase 2 (weather permitting). Enjoy the breathtaking snowscapes and return to Srinagar in the evening.",
-  },
-  {
-    day: 4,
-    title: "Pahalgam Valley Excursion",
-    description:
-      "Embark on a scenic drive to Pahalgam, the Valley of Shepherds. En route, visit the saffron fields of Pampore. Spend the day exploring Betaab Valley and Aru Valley. Enjoy the serene Lidder river before heading back to your accommodation.",
-  },
-  {
-    day: 5,
-    title: "Departure with Memories",
-    description:
-      "Enjoy your final Kashmiri breakfast. Depending on your flight schedule, you may have time for some last-minute shopping for Pashmina shawls and walnut wood crafts. Transfer to the airport for your onward journey.",
-  },
-];
+const defaultPackageData = {
+  itinerary: [
+    {
+      day: 1,
+      title: "Arrival in Srinagar",
+      description: `<p>Arrive at Sheikh ul-Alam International Airport and transfer to your houseboat on Dal Lake. Settle in and enjoy a welcome Kahwa tea as you take in the lake views.</p><p>In the evening, take a leisurely shikara ride to watch the sun set over the Zabarwan mountains.</p>`,
+    },
+    {
+      day: 2,
+      title: "Srinagar City & Mughal Gardens",
+      description: `<p>After breakfast, visit the stunning Mughal Gardens — Nishat Bagh, Shalimar Bagh, and Chashme Shahi. Each garden offers terraced lawns, fountains, and breathtaking views of the Dal Lake.</p><p>Afternoon visit to the old city, Jama Masjid, and the famous Shah Hamdan shrine.</p>`,
+    },
+    {
+      day: 3,
+      title: "Day Trip to Gulmarg",
+      description: `<p>Drive to Gulmarg, the 'Meadow of Flowers', around 50 km from Srinagar. Board the Gondola — one of Asia's highest cable cars — for panoramic Himalayan views.</p><p>Enjoy the snow-covered slopes and crisp mountain air before returning to Srinagar by evening.</p>`,
+    },
+    {
+      day: 4,
+      title: "Pahalgam — Valley of Shepherds",
+      description: `<p>Head to Pahalgam, a scenic valley town set along the Lidder River. Explore Betab Valley and Aru Valley, famous for their lush meadows and pine forests.</p><p>Optional pony ride to Baisaran meadow for sweeping views of the surrounding peaks.</p>`,
+    },
+    {
+      day: 5,
+      title: "Sonamarg Excursion",
+      description: `<p>Full-day excursion to Sonamarg, the 'Meadow of Gold'. The drive itself is spectacular, winding through pine forests and glacier-fed streams.</p><p>Visit the Thajiwas Glacier and enjoy a packed lunch surrounded by alpine scenery.</p>`,
+    },
+    {
+      day: 6,
+      title: "Leisure Day & Wazwan Dinner",
+      description: `<p>A relaxed morning at your own pace — browse the local markets for Pashmina shawls, saffron, and dry fruits. Visit the Hazratbal Shrine overlooking Dal Lake.</p><p>In the evening, enjoy a traditional Wazwan dinner — a royal Kashmiri multi-course feast featuring Rogan Josh, Dum Aloo, and Gushtaba.</p>`,
+    },
+    {
+      day: 7,
+      title: "Departure",
+      description: `<p>After a final breakfast on the houseboat, check out and transfer to Srinagar Airport for your onward journey. Depart with memories of Kashmir's timeless beauty.</p>`,
+    },
+  ],
+};
 
-export default function PackageItinerary() {
-  const [expandedDay, setExpandedDay] = useState<number | null>(1);
-
-  const toggleDay = (day: number) => {
-    setExpandedDay(expandedDay === day ? null : day);
-  };
+export default function ItineraryAccordion({
+  PackageData = defaultPackageData,
+}) {
+  const [active, setActive] = useState<number | null>(null);
 
   return (
-    <div>
-      <h2 className="text-3xl font-bold text-slate-900 mb-8 font-heading">
-        Itinerary Highlights
-      </h2>
-      <div className="space-y-4">
-        {ITINERARY_DATA.map((item) => {
-          const isExpanded = expandedDay === item.day;
+    <section className="w-full max-w-4xl px-5 space-y-3 sm:space-y-4">
+      <h2 className="text-2xl font-bold">Itinerary</h2>
 
-          return (
+      {PackageData.itinerary.map((item, index) => {
+        const isOpen = active === index;
+
+        return (
+          <div
+            key={index}
+            className={`group rounded-2xl border transition-all duration-300 ${
+              isOpen
+                ? "border-cyan-500 bg-sky-50 shadow-lg shadow-cyan-100"
+                : "border-gray-200 bg-white hover:border-cyan-300"
+            }`}
+          >
+            {/* Header */}
+            <button
+              onClick={() => setActive(isOpen ? null : index)}
+              className="flex w-full items-center justify-between px-6 py-5 text-left cursor-pointer"
+            >
+              <div className="flex items-center gap-4">
+                {/* Day Badge */}
+                <span className="flex gap-2 rounded-full bg-gradient-to-r from-sky-500 to-cyan-500 px-4 py-1 text-xs md:text-sm font-bold text-white shadow">
+                  <span>Day</span>
+                  {item.day}
+                </span>
+
+                {/* Title */}
+                <h3 className="text-lg font-semibold text-gray-900">
+                  {item.title}
+                </h3>
+              </div>
+
+              {/* Arrow */}
+              <ChevronDown
+                className={`h-6 w-6 text-cyan-500 transition-transform duration-300 ${
+                  isOpen ? "rotate-180" : ""
+                }`}
+              />
+            </button>
+
+            {/* Content */}
             <div
-              key={item.day}
-              className={`rounded-2xl border transition-all duration-300 overflow-hidden ${
-                isExpanded
-                  ? "border-sky-200 bg-white shadow-[0_8px_30px_rgba(14,165,233,0.06)]"
-                  : "border-slate-100 bg-slate-50/50 hover:bg-slate-50"
+              className={`overflow-hidden transition-all duration-500 ${
+                isOpen ? "max-h-full opacity-100" : "max-h-0 opacity-0"
               }`}
             >
-              <button
-                onClick={() => toggleDay(item.day)}
-                className="w-full flex items-center gap-4 sm:gap-6 p-5 sm:p-6 text-left focus:outline-none"
-              >
-                <div
-                  className={`flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-bold text-sm sm:text-base transition-colors duration-300 ${
-                    isExpanded
-                      ? "bg-gradient-to-tr from-[#0EA5E9] to-[#38BDF8] text-white shadow-md shadow-sky-200"
-                      : "bg-white text-slate-400 border border-slate-200"
-                  }`}
-                >
-                  {item.day}
-                </div>
-                <div className="flex-grow">
-                  <span
-                    className={`block text-xs font-semibold tracking-wider uppercase mb-1 transition-colors ${
-                      isExpanded ? "text-sky-500" : "text-slate-400"
-                    }`}
-                  >
-                    Day {item.day}
-                  </span>
-                  <h3
-                    className={`text-lg sm:text-xl font-bold transition-colors ${
-                      isExpanded ? "text-slate-900" : "text-slate-700"
-                    }`}
-                  >
-                    {item.title}
-                  </h3>
-                </div>
-                <div
-                  className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-transform duration-300 ${
-                    isExpanded
-                      ? "rotate-180 bg-sky-50 text-sky-500"
-                      : "bg-white text-slate-400 border border-slate-200"
-                  }`}
-                >
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
-                </div>
-              </button>
-
-              <div
-                className={`grid transition-all duration-300 ease-in-out ${
-                  isExpanded
-                    ? "grid-rows-[1fr] opacity-100"
-                    : "grid-rows-[0fr] opacity-0"
-                }`}
-              >
-                <div className="overflow-hidden">
-                  <div className="p-5 sm:p-6 pt-0 sm:pt-0 pl-[4.5rem] sm:pl-[5.5rem]">
-                    <p className="text-slate-600 leading-relaxed font-light text-[0.95rem] sm:text-base">
-                      {item.description}
-                    </p>
+              <div className="px-6 pb-6 pt-2 text-gray-700 space-y-4">
+                {/* Meta Info */}
+                <div className="flex items-center gap-6 text-sm text-gray-500">
+                  <div className="flex items-center gap-2">
+                    <Clock size={16} />
+                    <span>Full Day</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <MapPin size={16} />
+                    <span>Guided Experience</span>
                   </div>
                 </div>
+
+                {/* Description */}
+                <section className="mx-auto px-4 py-4">
+                  <div
+                    className="ItineraryContent
+                      prose prose-slate max-w-none
+                      prose-ul:list-disc prose-ul:pl-6
+                      prose-ol:list-decimal prose-ol:pl-6
+                      prose-li:my-1
+                      prose-li:marker:text-slate-500
+                      prose-p:leading-7
+                    "
+                    dangerouslySetInnerHTML={{
+                      __html: item?.description ?? "",
+                    }}
+                  />
+                </section>
+
+                {/* Accent Line */}
+                <div className="h-1 w-24 rounded-full bg-gradient-to-r from-sky-400 to-cyan-500" />
               </div>
             </div>
-          );
-        })}
-      </div>
-    </div>
+          </div>
+        );
+      })}
+    </section>
   );
 }

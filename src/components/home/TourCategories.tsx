@@ -1,8 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useInView } from "@/hooks/useInView";
+import Link from "next/link";
 
 /* ── Icons ───────────────────────────────────────────────── */
 const PinIcon = () => (
@@ -159,7 +160,8 @@ const TABS = [
   ...Array.from({ length: 10 }, (_, i) => `${i + 1} ${i === 0 ? "Day" : "Days"}`),
 ];
 
-type Pkg = (typeof PACKAGES)[number];
+type Pkg = (typeof PACKAGES)[number]; 
+const CARD_HEIGHT = "430px";
 
 /* ════════════════════════════════════════════════════════════
    SECTION
@@ -167,16 +169,41 @@ type Pkg = (typeof PACKAGES)[number];
 export default function TourCategories() {
   const { ref: headRef, inView: headVisible } = useInView();
   const [activeTab, setActiveTab] = useState("All");
+  const [expanded, setExpanded] = useState(false);
+  const [collapsedCount, setCollapsedCount] = useState(6);
 
   const filtered =
     activeTab === "All"
       ? PACKAGES
       : PACKAGES.filter((p) => p.days === parseInt(activeTab));
 
-  return (
-    <section className="py-20 lg:py-28 bg-white" id="tour-categories">
-      <div className="max-w-7xl mx-auto px-6 lg:px-12">
+  useEffect(() => {
+    const updateCollapsedCount = () => {
+      if (window.innerWidth >= 1024) {
+        setCollapsedCount(6);
+        return;
+      }
 
+      if (window.innerWidth >= 640) {
+        setCollapsedCount(4);
+        return;
+      }
+
+      setCollapsedCount(2);
+    };
+
+    updateCollapsedCount();
+    window.addEventListener("resize", updateCollapsedCount);
+
+    return () => window.removeEventListener("resize", updateCollapsedCount);
+  }, []);
+
+  const hasMorePackages = filtered.length > collapsedCount;
+  const visiblePackages = expanded ? filtered : filtered.slice(0, collapsedCount);
+
+  return (
+    <section className="py-10 lg:py-28 bg-white" id="tour-categories">
+      <div className="max-w-7xl mx-auto px-6 lg:px-12">
         {/* ── Header ── */}
         <div
           ref={headRef}
@@ -185,7 +212,9 @@ export default function TourCategories() {
           <div>
             <div
               className={`flex items-center gap-2.5 mb-3 transition-all duration-700 ${
-                headVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-5"
+                headVisible
+                  ? "opacity-100 translate-x-0"
+                  : "opacity-0 -translate-x-5"
               }`}
             >
               <div className="h-px w-8 bg-sky-500" />
@@ -196,14 +225,17 @@ export default function TourCategories() {
             </div>
             <h2
               className={`font-heading font-bold text-slate-900 leading-none sm:whitespace-nowrap transition-all duration-700 delay-100 ${
-                headVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"
+                headVisible
+                  ? "opacity-100 translate-y-0"
+                  : "opacity-0 translate-y-5"
               }`}
               style={{ fontSize: "clamp(1.6rem, 3.8vw, 2.8rem)" }}
             >
               Find Your{" "}
               <span
                 style={{
-                  background: "linear-gradient(120deg, #0284C7 0%, #0EA5E9 45%, #38BDF8 100%)",
+                  background:
+                    "linear-gradient(120deg, #0284C7 0%, #0EA5E9 45%, #38BDF8 100%)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
                   backgroundClip: "text",
@@ -215,10 +247,13 @@ export default function TourCategories() {
           </div>
           <p
             className={`text-slate-400 text-sm leading-relaxed sm:max-w-[230px] sm:text-right transition-all duration-700 delay-200 ${
-              headVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"
+              headVisible
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-5"
             }`}
           >
-            Filter by trip length and discover the Kashmir experience that fits your schedule perfectly.
+            Filter by trip length and discover the Kashmir experience that fits
+            your schedule perfectly.
           </p>
         </div>
 
@@ -226,29 +261,38 @@ export default function TourCategories() {
         <div className="-mx-6 px-6 sm:mx-0 sm:px-0 mb-10 overflow-x-auto scroll-hide sm:overflow-visible pt-3 pb-1">
           <div className="flex gap-2.5 sm:w-full">
             {TABS.map((tab) => {
-              const active   = tab === activeTab;
-              const isAll    = tab === "All";
-              const num      = isAll ? null : parseInt(tab);
+              const active = tab === activeTab;
+              const isAll = tab === "All";
+              const num = isAll ? null : parseInt(tab);
               const dayLabel = num === 1 ? "Day" : "Days";
 
               return (
                 <button
                   key={tab}
-                  onClick={() => setActiveTab(tab)}
+                  onClick={() => {
+                    setActiveTab(tab);
+                    setExpanded(false);
+                  }}
                   className="min-w-24 sm:min-w-0 sm:flex-1 flex flex-col items-center justify-center rounded-2xl transition-all duration-300 select-none relative overflow-hidden cursor-pointer group/tab"
                   style={{
                     height: "76px",
-                    ...(active ? {
-                      background: "linear-gradient(145deg, #075985 0%, #0284C7 40%, #0EA5E9 75%, #38BDF8 100%)",
-                      boxShadow: "0 10px 32px rgba(14,165,233,0.55), 0 4px 12px rgba(2,132,199,0.35), inset 0 1px 0 rgba(255,255,255,0.25)",
-                      transform: "translateY(-5px) scale(1.04)",
-                      border: "1px solid rgba(125,211,252,0.4)",
-                    } : {
-                      background: "linear-gradient(160deg, #FFFFFF 0%, #F0F9FF 60%, #E0F2FE 100%)",
-                      border: "1.5px solid rgba(125,211,252,0.55)",
-                      boxShadow: "0 3px 12px rgba(56,189,248,0.14), 0 1px 3px rgba(0,0,0,0.05)",
-                      transform: "translateY(0) scale(1)",
-                    }),
+                    ...(active
+                      ? {
+                          background:
+                            "linear-gradient(145deg, #075985 0%, #0284C7 40%, #0EA5E9 75%, #38BDF8 100%)",
+                          boxShadow:
+                            "0 10px 32px rgba(14,165,233,0.55), 0 4px 12px rgba(2,132,199,0.35), inset 0 1px 0 rgba(255,255,255,0.25)",
+                          transform: "translateY(-5px) scale(1.04)",
+                          border: "1px solid rgba(125,211,252,0.4)",
+                        }
+                      : {
+                          background:
+                            "linear-gradient(160deg, #FFFFFF 0%, #F0F9FF 60%, #E0F2FE 100%)",
+                          border: "1.5px solid rgba(125,211,252,0.55)",
+                          boxShadow:
+                            "0 3px 12px rgba(56,189,248,0.14), 0 1px 3px rgba(0,0,0,0.05)",
+                          transform: "translateY(0) scale(1)",
+                        }),
                   }}
                 >
                   {/* Top shimmer line — always, intensity differs */}
@@ -276,14 +320,22 @@ export default function TourCategories() {
                   {isAll ? (
                     <>
                       {/* Compass / all-directions icon */}
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        strokeWidth="1.8" strokeLinecap="round"
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.8"
+                        strokeLinecap="round"
                         className="w-4.5 h-4.5 mb-1"
-                        style={{ color: active ? "rgba(255,255,255,0.95)" : "#0EA5E9" }}
+                        style={{
+                          color: active ? "rgba(255,255,255,0.95)" : "#0EA5E9",
+                        }}
                       >
                         <circle cx="12" cy="12" r="10" />
-                        <polygon points="16.24,7.76 14.12,14.12 7.76,16.24 9.88,9.88"
-                          strokeLinejoin="round" />
+                        <polygon
+                          points="16.24,7.76 14.12,14.12 7.76,16.24 9.88,9.88"
+                          strokeLinejoin="round"
+                        />
                       </svg>
                       <span
                         className="font-bold tracking-[0.18em] uppercase"
@@ -330,14 +382,45 @@ export default function TourCategories() {
         {filtered.length === 0 ? (
           <div className="py-24 text-center">
             <div className="text-4xl mb-3">🏔</div>
-            <p className="text-slate-400 text-sm">No packages found for this duration.</p>
+            <p className="text-slate-400 text-sm">
+              No packages found for this duration.
+            </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filtered.map((pkg, i) => (
-              <TourCard key={pkg.id} pkg={pkg} index={i} />
-            ))}
-          </div>
+          <>
+            <div
+              className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+              style={{
+                gridAutoRows: CARD_HEIGHT,
+              }}
+            >
+              {visiblePackages.map((pkg, i) => (
+                <TourCard key={pkg.id} pkg={pkg} index={i} />
+              ))}
+            </div>
+
+            {hasMorePackages && (
+              <div
+                className={`z-20 mt-8 flex justify-center ${
+                  expanded ? "sticky bottom-4" : ""
+                }`}
+              >
+                <button
+                  type="button"
+                  onClick={() => setExpanded((prev) => !prev)}
+                  className="rounded-full px-6 py-3 text-sm font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
+                  style={{
+                    background: "linear-gradient(120deg,#0284C7,#38BDF8)",
+                    boxShadow: expanded
+                      ? "0 8px 24px rgba(14,165,233,0.28)"
+                      : "0 5px 18px rgba(14,165,233,0.22)",
+                  }}
+                >
+                  {expanded ? "View Less" : "View More"}
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
     </section>
@@ -353,67 +436,69 @@ function TourCard({ pkg, index }: { pkg: Pkg; index: number }) {
   return (
     <article
       ref={ref}
-      className={`group flex flex-col rounded-2xl overflow-hidden bg-white cursor-pointer transition-all duration-600 hover:-translate-y-1.5 ${
+      className={`group flex h-full flex-col overflow-hidden rounded-2xl bg-white cursor-pointer transition-all duration-600 hover:-translate-y-1.5 ${
         inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
       }`}
       style={{
         transitionDelay: `${(index % 3) * 90}ms`,
         border: "1px solid #e8f0f8",
-        boxShadow: "0 4px 20px rgba(14,165,233,0.07), 0 1px 4px rgba(0,0,0,0.05)",
+        boxShadow:
+          "0 4px 20px rgba(14,165,233,0.07), 0 1px 4px rgba(0,0,0,0.05)",
       }}
     >
       {/* ── 5-image block ── */}
-      <div className="flex overflow-hidden" style={{ height: "195px" }}>
-        {/* Main image (57%) */}
-        <div className="relative overflow-hidden" style={{ flex: "0 0 57%" }}>
-          <Image
-            src={pkg.images[0]}
-            alt={pkg.title}
-            fill
-            unoptimized
-            className="object-cover transition-transform duration-700 group-hover:scale-[1.07]"
-          />
-          {/* Days badge */}
+      <Link href="/package/slug">
+        <div className="flex overflow-hidden" style={{ height: "195px" }}>
+          {/* Main image (57%) */}
+          <div className="relative overflow-hidden" style={{ flex: "0 0 57%" }}>
+            <Image
+              src={pkg.images[0]}
+              alt={pkg.title}
+              fill
+              unoptimized
+              className="object-cover transition-transform duration-700 group-hover:scale-[1.07]"
+            />
+            {/* Days badge */}
+            <div
+              className="absolute top-3 left-3 rounded-full px-2.5 py-1 text-[0.6rem] font-bold text-white leading-none"
+              style={{
+                background: "linear-gradient(120deg,#0284C7,#38BDF8)",
+                boxShadow: "0 2px 10px rgba(14,165,233,0.55)",
+              }}
+            >
+              {pkg.days} {pkg.days === 1 ? "Day" : "Days"}
+            </div>
+          </div>
+
+          {/* 2 × 2 grid (43%) */}
           <div
-            className="absolute top-3 left-3 rounded-full px-2.5 py-1 text-[0.6rem] font-bold text-white leading-none"
-            style={{
-              background: "linear-gradient(120deg,#0284C7,#38BDF8)",
-              boxShadow: "0 2px 10px rgba(14,165,233,0.55)",
-            }}
+            className="grid grid-cols-2 grid-rows-2 gap-0.5 pl-0.5 overflow-hidden"
+            style={{ flex: "0 0 43%" }}
           >
-            {pkg.days} {pkg.days === 1 ? "Day" : "Days"}
+            {pkg.images.slice(1).map((src, i) => (
+              <div key={i} className="relative overflow-hidden">
+                <Image
+                  src={src}
+                  alt=""
+                  fill
+                  unoptimized
+                  className="object-cover transition-transform duration-700 group-hover:scale-[1.07]"
+                />
+                {i === 3 && (
+                  <div className="absolute inset-0 bg-black/38 flex items-center justify-center">
+                    <span className="text-white text-[0.62rem] font-semibold tracking-wide">
+                      More +
+                    </span>
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         </div>
-
-        {/* 2 × 2 grid (43%) */}
-        <div
-          className="grid grid-cols-2 grid-rows-2 gap-0.5 pl-0.5 overflow-hidden"
-          style={{ flex: "0 0 43%" }}
-        >
-          {pkg.images.slice(1).map((src, i) => (
-            <div key={i} className="relative overflow-hidden">
-              <Image
-                src={src}
-                alt=""
-                fill
-                unoptimized
-                className="object-cover transition-transform duration-700 group-hover:scale-[1.07]"
-              />
-              {i === 3 && (
-                <div className="absolute inset-0 bg-black/38 flex items-center justify-center">
-                  <span className="text-white text-[0.62rem] font-semibold tracking-wide">
-                    More +
-                  </span>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
+      </Link>
 
       {/* ── Card body ── */}
       <div className="flex flex-col flex-1 p-4">
-
         {/* Title */}
         <h3 className="font-bold text-slate-900 text-[0.92rem] leading-snug mb-3 line-clamp-2 group-hover:text-sky-700 transition-colors duration-200">
           {pkg.title}
@@ -441,7 +526,10 @@ function TourCard({ pkg, index }: { pkg: Pkg; index: number }) {
         {/* Inclusions — 2 × 2 grid */}
         <div className="grid grid-cols-2 gap-x-3 gap-y-2 mb-4">
           {pkg.inclusions.map((item) => (
-            <div key={item} className="flex items-center gap-1.5 text-[0.71rem] text-slate-600 font-medium">
+            <div
+              key={item}
+              className="flex items-center gap-1.5 text-[0.71rem] text-slate-600 font-medium"
+            >
               <CheckIcon />
               <span className="truncate">{item}</span>
             </div>
@@ -457,23 +545,27 @@ function TourCard({ pkg, index }: { pkg: Pkg; index: number }) {
             <div className="text-[0.58rem] text-slate-400 uppercase tracking-widest leading-none mb-0.5">
               Starting from
             </div>
-            <div className="font-bold text-[1.12rem] leading-none" style={{ color: "#0284C7" }}>
+            <div
+              className="font-bold text-[1.12rem] leading-none"
+              style={{ color: "#0284C7" }}
+            >
               {pkg.price}
             </div>
             <div className="text-slate-300 text-[0.65rem] line-through mt-0.5">
               {pkg.originalPrice}
             </div>
           </div>
-
-          <button
-            className="shrink-0 rounded-full px-5 py-2.5 text-[0.75rem] font-semibold text-white transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
-            style={{
-              background: "linear-gradient(120deg,#0284C7,#38BDF8)",
-              boxShadow: "0 3px 12px rgba(14,165,233,0.32)",
-            }}
-          >
-            Book Now
-          </button>
+          <Link href="/package/slug">
+            <button
+              className="shrink-0 rounded-full px-5 py-2.5 text-[0.75rem] font-semibold text-white transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
+              style={{
+                background: "linear-gradient(120deg,#0284C7,#38BDF8)",
+                boxShadow: "0 3px 12px rgba(14,165,233,0.32)",
+              }}
+            >
+              Book Now
+            </button>
+          </Link>
         </div>
       </div>
     </article>

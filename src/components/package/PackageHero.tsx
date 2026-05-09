@@ -1,51 +1,58 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useEffect, useState, useCallback } from "react";
 import {
   Clock,
   MapPin,
   Users,
   Star,
-  Snowflake,
-  ChevronLeft,
-  ChevronRight,
   Tag,
   Sparkles,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 
-const images = [
+/* ─── Data ─────────────────────────────────────────────── */
+
+const heroImage = {
+  src: "https://images.unsplash.com/photo-1598091383021-15ddea10925d?w=1600&auto=format&fit=crop&q=80",
+  alt: "Dal Lake Kashmir",
+};
+
+const cards = [
   {
-    src: "https://images.unsplash.com/photo-1598091383021-15ddea10925d?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8a2FzaG1pcnxlbnwwfHwwfHx8MA%3D%3D",
-    label: "Dal Lake",
+    title: "Dal Lake",
+    subtitle: "Iconic shikaras at dawn",
+    image:
+      "https://images.unsplash.com/photo-1598091383021-15ddea10925d?w=900&auto=format&fit=crop&q=60",
   },
   {
-    src: "https://images.unsplash.com/photo-1593417376544-4c4201061e22?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8a2FzaG1pcnxlbnwwfHwwfHx8MA%3D%3D",
-    label: "Gulmarg Slopes",
+    title: "Gulmarg Slopes",
+    subtitle: "World-class ski terrain",
+    image:
+      "https://images.unsplash.com/photo-1593417376544-4c4201061e22?w=900&auto=format&fit=crop&q=60",
   },
   {
-    src: "https://images.unsplash.com/photo-1561287437-c69a30664793?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8a2FzaG1pciUyMHZhbGx5fGVufDB8fDB8fHww",
-    label: "Pahalgam Valley",
+    title: "Pahalgam Valley",
+    subtitle: "Emerald highland meadows",
+    image:
+      "https://images.unsplash.com/photo-1561287437-c69a30664793?w=900&auto=format&fit=crop&q=60",
   },
   {
-    src: "https://images.unsplash.com/photo-1677123419103-785c917c4a58?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGthc2htaXIlMjB2YWxseXxlbnwwfHwwfHx8MA%3D%3D",
-    label: "Shikara Sunrise",
+    title: "Shikara Sunrise",
+    subtitle: "Golden-hour lake magic",
+    image:
+      "https://images.unsplash.com/photo-1677123419103-785c917c4a58?w=900&auto=format&fit=crop&q=60",
   },
 ];
 
-const pkg = {
-  tag: "Premium Package",
-  title: "Kashmir — Heaven on Earth",
-  subtitle: `A curated journey through India's most breathtaking highland paradise.
-Explore hidden trails winding through ancient forests and pristine lakes.
-Reconnect with serenity while experiencing the region's raw, untouched beauty.
-Step out of the ordinary and into an unforgettable elevated adventure.`,
-  duration: "7 Days / 6 Nights",
-  groupSize: "2 – 12 People",
-  rating: "4.9",
-  reviews: "340+ Reviews",
-};
+const stats = [
+  { icon: Clock, text: "7 Days / 6 Nights" },
+  { icon: MapPin, text: "Jammu & Kashmir" },
+  { icon: Users, text: "2 – 12 People" },
+  { icon: Star, text: "4.9 · 340+ Reviews" },
+];
 
 const marqueeItems = [
   { icon: Tag, text: "Early Bird Offer — 25% Off" },
@@ -58,7 +65,9 @@ const marqueeItems = [
   { icon: Sparkles, text: "Limited Seats Available" },
 ];
 
-const INTERVAL = 3000;
+const INTERVAL = 3500;
+
+/* ─── Component ─────────────────────────────────────────── */
 
 export default function PackageHero() {
   const [active, setActive] = useState(0);
@@ -81,242 +90,130 @@ export default function PackageHero() {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      goTo((active + 1) % images.length);
+      goTo((active + 1) % cards.length);
     }, INTERVAL);
     return () => clearInterval(timer);
   }, [active, goTo]);
 
   return (
     <div className="flex flex-col">
-      <section className="relative h-[90vh] min-h-[580px] overflow-hidden font-sans flex flex-col">
-        {/* ── Background images ── */}
-        {images.map((img, i) => (
-          <div
-            key={i}
-            className="absolute inset-0 transition-opacity duration-700"
-            style={{
-              opacity: i === active ? 1 : i === prev && fading ? 0 : 0,
-              zIndex: i === active ? 1 : i === prev ? 2 : 0,
-            }}
-          >
-            <Image
-              src={img.src}
-              alt={img.label}
-              fill
-              className="object-cover object-center"
-              priority={i === 0}
-              unoptimized
-            />
-          </div>
-        ))}
-
-        {/* ── Overlays ── */}
-        <div className="absolute inset-0 z-10 bg-gradient-to-b from-slate-950/80 via-slate-900/20 to-slate-950/90" />
-        <div className="absolute inset-0 z-10 bg-gradient-to-r from-slate-950/70 via-slate-950/30 to-transparent" />
-
-
-        {/* ══════════ TOP — Breadcrumb + Heading ══════════ */}
-        <div className="relative z-20 w-full max-w-7xl mx-auto px-6 lg:px-12 pt-28 md:pt-32">
-          {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-xs text-white/45 font-light tracking-wide mb-5">
-            <Link href="/" className="hover:text-white transition-colors">
-              Home
-            </Link>
-            <span>/</span>
-            <Link
-              href="/packages"
-              className="hover:text-white transition-colors"
-            >
-              Packages
-            </Link>
-            <span>/</span>
-            <span className="text-white/75">Kashmir</span>
-          </nav>
-
-          {/* Tag badge */}
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 text-[0.65rem] uppercase tracking-widest font-bold text-white bg-sky-500/70 backdrop-blur-sm rounded-full mb-4 border border-sky-400/30">
-            <Snowflake className="w-3 h-3" />
-            {pkg.tag}
-          </span>
-
-          {/* Title */}
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-[1.08] mb-3 tracking-tight max-w-3xl">
-            {pkg.title}
-          </h1>
-          <p className="text-white/55 text-sm md:text-base font-light max-w-xl leading-relaxed">
-            {pkg.subtitle}
-          </p>
-        </div>
-
-        {/* ══════════ BOTTOM — Stats + Horizontal Carousel ══════════ */}
-        <div className="relative z-20 w-full max-w-7xl mx-auto px-6 lg:px-12 mt-auto pb-7">
-          {/* Stat pills */}
-          <div className="flex flex-wrap gap-2.5 mb-5">
-            {[
-              { icon: Clock, text: pkg.duration },
-              { icon: MapPin, text: "Jammu & Kashmir, India" },
-              { icon: Users, text: pkg.groupSize },
-              { icon: Star, text: `${pkg.rating} · ${pkg.reviews}` },
-            ].map(({ icon: Icon, text }) => (
+      {/* ══ HERO SECTION ══════════════════════════════════════ */}
+      <section className="w-full bg-white px-4 pt-24 pb-6 sm:px-6 sm:pt-28 lg:px-8">
+        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-[1.08fr_0.92fr]">
+          {/* ── LEFT — Hero Card ────────────────────────────── */}
+          <div className="relative group h-[360px] overflow-hidden rounded-3xl sm:h-[440px] lg:h-[520px]">
+            {/* Crossfading background images */}
+            {cards.map((card, i) => (
               <div
-                key={text}
-                className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-white/85 text-xs font-medium"
+                key={i}
+                className="absolute inset-0 transition-opacity duration-700"
+                style={{
+                  opacity: i === active ? 1 : i === prev && fading ? 0 : 0,
+                  zIndex: i === active ? 1 : i === prev ? 2 : 0,
+                }}
               >
-                <Icon className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" />
-                {text}
+                <Image
+                  src={card.image}
+                  alt={card.title}
+                  fill
+                  priority={i === 0}
+                  unoptimized
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+              </div>
+            ))}
+
+            {/* Depth shadow */}
+            <div className="absolute inset-0 z-10 shadow-[inset_0_-140px_180px_rgba(0,0,0,0.72)]" />
+
+            {/* Glow border */}
+            <div className="absolute inset-0 z-10 rounded-3xl ring-1 ring-white/10 group-hover:ring-cyan-300/40 transition duration-500" />
+
+            {/* Content */}
+            <div className="absolute inset-x-0 bottom-0 z-20 p-5 text-white sm:p-7 lg:p-8">
+              {/* Badge */}
+              <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-cyan-300 sm:mb-3 sm:text-xs sm:tracking-[0.2em]">
+                Experience My India Exclusive
+              </p>
+              {/* Offer pill */}
+              <div className="inline-block rounded-xl border border-white/10 bg-white/10 px-4 py-2.5 backdrop-blur-md sm:px-5 sm:py-3">
+                <p className="text-xs font-medium sm:text-sm">
+                  Save ₹15,000 · Free Upgrade · 25% Early Bird
+                </p>
+              </div>
+
+              <div className="inline-block absolute -top-91 left-5 rounded-full border border-white/10 bg-white/10 px-2 py-2 backdrop-blur-md sm:px-2 sm:py-2">
+                <p className="text-xs font-medium sm:text-sm">
+                  Best Seller
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* ── RIGHT — 2×2 Grid ────────────────────────────── */}
+          <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 md:grid md:grid-cols-2 md:gap-6 md:overflow-visible md:pb-0">
+            {cards.map((card, index) => (
+              <div
+                key={index}
+                onClick={() => goTo(index)}
+                className="relative group h-[112px] min-w-[148px] snap-start cursor-pointer overflow-hidden rounded-2xl shadow-md shadow-black/10 sm:h-[132px] sm:min-w-[178px] md:h-[217px] md:min-w-0 lg:h-[250px]"
+              >
+                <Image
+                  src={card.image}
+                  alt={card.title}
+                  fill
+                  unoptimized
+                  className="object-cover transition-all duration-700 group-hover:scale-110 group-hover:brightness-110"
+                />
+
+                {/* Gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+
+                {/* Hover cyan glow */}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-cyan-400/10 transition duration-500" />
+
+                {/* Active indicator */}
+                {index === active && (
+                  <div className="absolute inset-0 ring-2 ring-inset ring-cyan-400/70 rounded-2xl" />
+                )}
+
+                {/* Border glow */}
+                <div className="absolute inset-0 rounded-2xl ring-1 ring-white/10 group-hover:ring-cyan-300/40 transition duration-500" />
+
+                {/* Content */}
+                <div className="absolute bottom-3 left-3 right-3 text-white sm:bottom-4 sm:left-4 sm:right-4">
+                  <h3 className="text-sm font-semibold leading-tight transition duration-300 group-hover:translate-y-0 md:translate-y-2 md:text-lg">
+                    {card.title}
+                  </h3>
+                  <p className="hidden md:block text-[11px] text-white/60 mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 translate-y-1 group-hover:translate-y-0">
+                    {card.subtitle}
+                  </p>
+                </div>
               </div>
             ))}
           </div>
-
-          {/* ── Horizontal thumbnail carousel ── */}
-          <div className="flex flex-col gap-3 w-full md:w-1/2">
-            {/* Row: prev arrow + thumbnails + next arrow */}
-            <div className="flex items-center gap-2 w-full">
-              {/* Prev arrow */}
-              <button
-                onClick={() =>
-                  goTo((active - 1 + images.length) % images.length)
-                }
-                className="flex-shrink-0 w-8 h-8 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white/60 hover:bg-white/25 hover:text-white transition-all"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-
-              {/* ── MOBILE: overlapping stacked thumbnails ── */}
-              <div className="flex md:hidden flex-1 items-center">
-                <div className="relative w-full" style={{ height: "52px" }}>
-                  {images.map((img, i) => {
-                    const isActive = i === active;
-                    // spread thumbnails evenly across full width
-                    const totalWidth = 100;
-                    const step = totalWidth / images.length;
-                    return (
-                      <button
-                        key={i}
-                        onClick={() => goTo(i)}
-                        className={`absolute overflow-hidden rounded-lg border-2 transition-all duration-300 ${
-                          isActive
-                            ? "border-sky-400 shadow-lg shadow-sky-500/40"
-                            : "border-white/25 opacity-55 hover:opacity-80"
-                        }`}
-                        style={{
-                          left: `${i * step}%`,
-                          width: isActive ? "60px" : "50px",
-                          height: isActive ? "52px" : "44px",
-                          top: isActive ? "0px" : "4px",
-                          zIndex: isActive ? 20 : i + 1,
-                        }}
-                      >
-                        <Image
-                          src={img.src}
-                          alt={img.label}
-                          fill
-                          className="object-cover"
-                          unoptimized
-                        />
-                        {isActive && (
-                          <div className="absolute inset-0 bg-sky-400/20 rounded-lg" />
-                        )}
-                      </button>
-                    );
-                  })}
+        </div>
+        <div className="mx-auto mt-6 max-w-7xl sm:mt-8">
+          <h2 className="max-w-4xl text-3xl font-bold leading-tight text-slate-950 sm:text-5xl lg:text-4xl">
+            Kashmir — Heaven on Earth 5 Day Tour
+          </h2>
+          <div className="-mx-4 mt-5 overflow-x-auto px-4 sm:mx-0 sm:px-0">
+            <div className="flex min-w-max flex-nowrap gap-3 pb-2 sm:pb-0">
+              {stats.map(({ icon: Icon, text }) => (
+                <div
+                  key={text}
+                  className="flex shrink-0 items-center gap-2 rounded-full  px-4 py-2.5 text-sm font-medium text-slate-700"
+                >
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-sky-600 shadow-sm">
+                    <Icon className="h-4 w-4 shrink-0" />
+                  </span>
+                  <span className="whitespace-nowrap">{text}</span>
                 </div>
-              </div>
-
-              {/* ── DESKTOP: equal-width thumbnails filling the full row ── */}
-              <div className="hidden md:flex flex-1 items-center gap-2.5">
-                {images.map((img, i) => {
-                  const isActive = i === active;
-                  return (
-                    <button
-                      key={i}
-                      onClick={() => goTo(i)}
-                      className={`relative overflow-hidden rounded-xl border-2 flex-shrink-0 flex-1 transition-all duration-300 ${
-                        isActive
-                          ? "h-[4.5rem] border-sky-400 shadow-lg shadow-sky-500/40 scale-y-105"
-                          : "h-14 border-white/20 opacity-55 hover:opacity-90"
-                      }`}
-                    >
-                      <Image
-                        src={img.src}
-                        alt={img.label}
-                        fill
-                        className="object-cover"
-                        unoptimized
-                      />
-                      {isActive && (
-                        <>
-                          <div className="absolute inset-0 bg-sky-400/15" />
-                          <span className="absolute bottom-0 inset-x-0 bg-black/60 text-white text-[8px] text-center py-0.5 font-medium truncate px-1">
-                            {img.label}
-                          </span>
-                        </>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Next arrow */}
-              <button
-                onClick={() => goTo((active + 1) % images.length)}
-                className="flex-shrink-0 w-8 h-8 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white/60 hover:bg-white/25 hover:text-white transition-all"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
-
-            {/* Dot indicators — centered below carousel */}
-            <div className="flex justify-center gap-1.5">
-              {images.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => goTo(i)}
-                  className={`rounded-full transition-all duration-300 ${
-                    i === active
-                      ? "w-5 h-1.5 bg-sky-400"
-                      : "w-1.5 h-1.5 bg-white/30 hover:bg-white/60"
-                  }`}
-                />
               ))}
             </div>
           </div>
         </div>
       </section>
-
-      {/* ══════════ MARQUEE STRIP ══════════ */}
-      <div className="relative bg-gradient-to-r from-sky-600 via-cyan-500 to-sky-500 overflow-hidden py-3">
-        {/* Edge fades */}
-        <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-sky-600 to-transparent z-10 pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-sky-500 to-transparent z-10 pointer-events-none" />
-
-        <div
-          className="flex whitespace-nowrap"
-          style={{ animation: "marquee 24s linear infinite" }}
-        >
-          {[...marqueeItems, ...marqueeItems].map(({ icon: Icon, text }, i) => (
-            <span
-              key={i}
-              className="inline-flex items-center gap-2 mx-10 text-white text-sm font-semibold tracking-wide"
-            >
-              <Icon className="w-3.5 h-3.5 text-white/80 flex-shrink-0" />
-              {text}
-              <span className="ml-8 text-white/35 text-xs">✦</span>
-            </span>
-          ))}
-        </div>
-
-        <style jsx>{`
-          @keyframes marquee {
-            0% {
-              transform: translateX(0);
-            }
-            100% {
-              transform: translateX(-50%);
-            }
-          }
-        `}</style>
-      </div>
     </div>
   );
 }
