@@ -367,12 +367,16 @@ function ServicesDropdown({ onClose }: { onClose: () => void }) {
         backdropFilter: "blur(32px)",
         WebkitBackdropFilter: "blur(32px)",
         border: "1px solid rgba(56,189,248,0.22)",
-        boxShadow: "0 24px 60px rgba(4,10,28,0.70), 0 0 0 1px rgba(56,189,248,0.08)",
+        boxShadow:
+          "0 24px 60px rgba(4,10,28,0.70), 0 0 0 1px rgba(56,189,248,0.08)",
       }}
     >
       <div
         className="h-0.5 w-full"
-        style={{ background: "linear-gradient(90deg, transparent, #38BDF8 30%, #93C5FD 60%, transparent)" }}
+        style={{
+          background:
+            "linear-gradient(90deg, transparent, #38BDF8 30%, #93C5FD 60%, transparent)",
+        }}
       />
       <div className="p-5">
         <p className="text-[0.6rem] font-semibold tracking-[0.28em] text-sky-400/70 uppercase mb-4 px-1">
@@ -382,17 +386,21 @@ function ServicesDropdown({ onClose }: { onClose: () => void }) {
           {NAV_SERVICES.map((svc) => (
             <Link
               key={svc.title}
-              href="#services"
+              href="/services"
               onClick={onClose}
               className="group flex items-center gap-3 rounded-xl px-3 py-2.5 transition-all duration-200"
               style={{ border: "1px solid rgba(255,255,255,0.06)" }}
               onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.background = "rgba(56,189,248,0.08)";
-                (e.currentTarget as HTMLElement).style.borderColor = "rgba(56,189,248,0.25)";
+                (e.currentTarget as HTMLElement).style.background =
+                  "rgba(56,189,248,0.08)";
+                (e.currentTarget as HTMLElement).style.borderColor =
+                  "rgba(56,189,248,0.25)";
               }}
               onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.background = "transparent";
-                (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.06)";
+                (e.currentTarget as HTMLElement).style.background =
+                  "transparent";
+                (e.currentTarget as HTMLElement).style.borderColor =
+                  "rgba(255,255,255,0.06)";
               }}
             >
               <span className="text-xl leading-none">{svc.icon}</span>
@@ -400,14 +408,22 @@ function ServicesDropdown({ onClose }: { onClose: () => void }) {
                 <div className="text-[0.78rem] font-semibold text-white group-hover:text-sky-300 transition-colors">
                   {svc.title}
                 </div>
-                <div className="text-[0.65rem] text-white/40 leading-tight mt-0.5">{svc.desc}</div>
+                <div className="text-[0.65rem] text-white/40 leading-tight mt-0.5">
+                  {svc.desc}
+                </div>
               </div>
             </Link>
           ))}
         </div>
         <div className="mt-4 border-t border-white/6 pt-3 flex items-center justify-between">
-          <span className="text-[0.68rem] text-white/35">All services customisable for your trip</span>
-          <Link href="#contact" onClick={onClose} className="text-[0.72rem] font-medium text-sky-400 hover:text-sky-300 transition-colors">
+          <span className="text-[0.68rem] text-white/35">
+            All services customisable for your trip
+          </span>
+          <Link
+            href="#contact"
+            onClick={onClose}
+            className="text-[0.72rem] font-medium text-sky-400 hover:text-sky-300 transition-colors"
+          >
             Talk to us →
           </Link>
         </div>
