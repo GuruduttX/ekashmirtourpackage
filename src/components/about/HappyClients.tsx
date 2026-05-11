@@ -118,7 +118,7 @@ export default function HappyClients() {
             </p>
           </div>
 
-          <div className="mt-12 rounded-[2rem] border border-sky-100 bg-gradient-to-br from-white via-sky-50/60 to-cyan-50/70 p-4 shadow-[0_18px_50px_rgba(14,165,233,0.08)] sm:p-6 lg:p-8">
+          <div className="mt-12 rounded-[2rem] border border-sky-100 bg-gradient-to-br from-white via-sky-50/60 to-cyan-50/70 md:p-4 shadow-[0_18px_50px_rgba(14,165,233,0.08)] sm:p-6 lg:p-8">
             <div className="grid gap-5 lg:grid-cols-[1.2fr_0.8fr] lg:gap-6">
               <div className="min-w-0">
                 <div

@@ -59,7 +59,7 @@ export default function BlogSearchBar({
           className="absolute inset-0 bg-gradient-to-r from-sky-400/10 via-cyan-400/5 to-sky-400/10"
         />
 
-        <div className="relative z-10 flex items-center gap-4 px-5 py-4 sm:px-6">
+        <div className="relative z-10 flex items-center gap-4 px-4 py-1 md:px-5 md:py-4 sm:px-6">
           {/* Search Icon */}
           <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-sky-100 bg-sky-50/80 shadow-[0_10px_30px_rgba(14,165,233,0.06)]">
             <Search className="h-4.5 w-4.5 text-sky-500" />

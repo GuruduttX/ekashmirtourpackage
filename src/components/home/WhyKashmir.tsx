@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { WHY_FEATURES } from "@/lib/constants";
 import { useInView } from "@/hooks/useInView";
+import Link from "next/link";
 
 export default function WhyKashmir() {
   const { ref: leftRef,  inView: leftIn  } = useInView();
@@ -17,17 +18,22 @@ export default function WhyKashmir() {
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div
           className="absolute -left-60 top-1/2 -translate-y-1/2 w-150 h-150 rounded-full"
-          style={{ background: "radial-gradient(circle, rgba(14,165,233,0.07) 0%, transparent 68%)" }}
+          style={{
+            background:
+              "radial-gradient(circle, rgba(14,165,233,0.07) 0%, transparent 68%)",
+          }}
         />
         <div
           className="absolute -right-40 bottom-0 w-100 h-100 rounded-full"
-          style={{ background: "radial-gradient(circle, rgba(56,189,248,0.05) 0%, transparent 70%)" }}
+          style={{
+            background:
+              "radial-gradient(circle, rgba(56,189,248,0.05) 0%, transparent 70%)",
+          }}
         />
       </div>
 
       <div className="max-w-7xl mx-auto px-6 lg:px-12 relative">
         <div className="grid lg:grid-cols-2 gap-10 lg:gap-20 items-center">
-
           {/* ── Left: Image composition ── */}
           <div
             ref={leftRef}
@@ -47,8 +53,12 @@ export default function WhyKashmir() {
               <div className="absolute inset-0 bg-linear-to-t from-slate-900/55 via-slate-900/10 to-transparent" />
 
               <div className="absolute bottom-0 inset-x-0 p-5">
-                <p className="text-white font-bold text-base leading-tight">The Valley of Heaven</p>
-                <p className="text-white/55 text-xs mt-0.5 tracking-wide">Jammu & Kashmir, India</p>
+                <p className="text-white font-bold text-base leading-tight">
+                  The Valley of Heaven
+                </p>
+                <p className="text-white/55 text-xs mt-0.5 tracking-wide">
+                  Jammu & Kashmir, India
+                </p>
               </div>
             </div>
 
@@ -103,7 +113,9 @@ export default function WhyKashmir() {
                 15+
               </div>
               <div className="text-slate-400 text-[0.6rem] font-medium leading-tight mt-1">
-                Years crafting<br />Kashmir journeys
+                Years crafting
+                <br />
+                Kashmir journeys
               </div>
             </div>
 
@@ -111,7 +123,8 @@ export default function WhyKashmir() {
             <div
               className="hidden sm:block pointer-events-none absolute -bottom-8 -left-8 w-24 h-24 opacity-30"
               style={{
-                backgroundImage: "radial-gradient(circle, #38BDF8 1px, transparent 1px)",
+                backgroundImage:
+                  "radial-gradient(circle, #38BDF8 1px, transparent 1px)",
                 backgroundSize: "8px 8px",
               }}
             />
@@ -141,7 +154,8 @@ export default function WhyKashmir() {
               A landscape that{" "}
               <span
                 style={{
-                  background: "linear-gradient(120deg, #0284C7 0%, #0EA5E9 50%, #38BDF8 100%)",
+                  background:
+                    "linear-gradient(120deg, #0284C7 0%, #0EA5E9 50%, #38BDF8 100%)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
                   backgroundClip: "text",
@@ -166,7 +180,8 @@ export default function WhyKashmir() {
                   key={i}
                   className="flex items-start gap-4 p-3.5 rounded-2xl transition-all duration-200 hover:shadow-sm shrink-0 min-w-57.5 lg:min-w-0"
                   style={{
-                    background: "linear-gradient(135deg, #F8FBFF 0%, #EFF6FF 100%)",
+                    background:
+                      "linear-gradient(135deg, #F8FBFF 0%, #EFF6FF 100%)",
                     border: "1px solid rgba(186,230,253,0.55)",
                   }}
                 >
@@ -193,7 +208,8 @@ export default function WhyKashmir() {
             </ul>
 
             {/* CTA */}
-            <button
+            <Link
+              href="/whyKashmir"
               className="rounded-full px-8 py-3 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5"
               style={{
                 background: "linear-gradient(120deg, #0284C7 0%, #38BDF8 100%)",
@@ -201,7 +217,7 @@ export default function WhyKashmir() {
               }}
             >
               Discover Kashmir →
-            </button>
+            </Link>
           </div>
         </div>
       </div>

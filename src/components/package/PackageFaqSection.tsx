@@ -38,7 +38,7 @@ export default function PackageFaqSection() {
     <section className="py-6 sm:py-12 md:py-20">
       <div className="max-w-5xl mx-auto px-3">
         {/* HEADER */}
-        <div className="mb-12">
+        <div className="mb-12 text-center md:text-start">
           <span
             className="inline-block px-4 py-1.5 rounded-full 
             bg-cyan-50 text-cyan-600 text-sm font-semibold mb-4 border border-cyan-100"
@@ -103,7 +103,7 @@ export default function PackageFaqSection() {
               {/* Answer */}
               <div className="px-6 pb-6 pt-0">
                 {/* pl-[52px] aligns perfectly with the text based on 36px badge + 16px gap */}
-                <div className="pl-[52px]">
+                <div className="md:pl-[52px]">
                   <div className="pl-4 border-l-2 border-cyan-100">
                     <p className="text-gray-700 leading-relaxed text-sm md:text-base">
                       {faq.answer}

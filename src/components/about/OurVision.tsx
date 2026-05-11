@@ -2,7 +2,7 @@ export default function OurVision() {
   return (
     <section className="bg-white px-5 py-10 sm:px-8 sm:py-12 lg:px-12 lg:py-14">
       <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start lg:gap-16">
-        <div className="order-2 lg:order-1 rounded-[2rem] border border-sky-100 bg-gradient-to-br from-white via-sky-50/70 to-cyan-50/80 p-6 shadow-[0_18px_50px_rgba(14,165,233,0.08)] sm:p-8 lg:p-10">
+        <div className="order-2 lg:order-1 rounded-[2rem] border border-sky-100 bg-gradient-to-br from-white via-sky-50/70 to-cyan-50/80 p-6 shadow-[0_18px_50px_rgba(14,165,233,0.08)] sm:p-8 lg:p-10 text-center md:text-start">
           <p className="text-base font-light leading-8 text-slate-600 sm:text-[1.05rem] sm:leading-9">
             Our mission is to unveil the raw beauty and rich heritage of
             Kashmir through thoughtfully curated, unforgettable travel
@@ -23,7 +23,7 @@ export default function OurVision() {
             </span>
           </div>
 
-          <h2 className="font-heading text-3xl font-bold leading-tight text-slate-900 sm:text-4xl lg:text-5xl">
+          <h2 className="font-heading text-3xl font-bold leading-tight text-slate-900 sm:text-4xl lg:text-5xl text-center md:text-start">
             A future where every Kashmir journey feels personal and timeless.
           </h2>
         </div>

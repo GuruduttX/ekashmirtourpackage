@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import {
   Sparkles,
   Send,
@@ -30,7 +30,7 @@ export default function ContactExperience() {
     },
   };
 
-  const fadeUpVariant = {
+  const fadeUpVariant: Variants = {
     hidden: { opacity: 0, y: 30 },
     visible: {
       opacity: 1,
@@ -69,7 +69,7 @@ export default function ContactExperience() {
             viewport={{ once: true, margin: "-100px" }}
             className="lg:col-span-7"
           >
-            <div className="p-8 sm:p-10 lg:p-12 rounded-[2.5rem] bg-white/65 backdrop-blur-2xl border border-sky-100 shadow-[0_20px_60px_rgba(14,165,233,0.14)] relative overflow-hidden before:absolute before:inset-0 before:rounded-[2.5rem] before:bg-gradient-to-br before:from-white/20 before:to-transparent before:pointer-events-none">
+            <div className="p-4 sm:p-10 lg:p-12 rounded-[2.5rem] bg-white/65 backdrop-blur-2xl border border-sky-100 shadow-[0_20px_60px_rgba(14,165,233,0.14)] relative overflow-hidden before:absolute before:inset-0 before:rounded-[2.5rem] before:bg-gradient-to-br before:from-white/20 before:to-transparent before:pointer-events-none">
               {/* Form Ambient Glow */}
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[1px] bg-gradient-to-r from-transparent via-sky-400/50 to-transparent" />
 
@@ -232,7 +232,7 @@ export default function ContactExperience() {
                 <motion.div variants={fadeUpVariant} className="pt-4">
                   <button
                     type="submit"
-                    className="group relative w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-gradient-to-r from-sky-500 via-cyan-400 to-sky-400 text-white font-semibold shadow-[0_20px_50px_rgba(14,165,233,0.20)] hover:shadow-[0_25px_60px_rgba(14,165,233,0.26)] hover:-translate-y-1 transition-all duration-300"
+                    className="group relative w-full sm:w-auto inline-flex items-center justify-center gap-2 md:px-8 py-4 rounded-full bg-gradient-to-r from-sky-500 via-cyan-400 to-sky-400 text-white font-semibold shadow-[0_20px_50px_rgba(14,165,233,0.20)] hover:shadow-[0_25px_60px_rgba(14,165,233,0.26)] hover:-translate-y-1 transition-all duration-300"
                   >
                     Start Planning My Journey
                     <Send className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />

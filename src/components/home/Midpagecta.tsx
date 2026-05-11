@@ -3,13 +3,13 @@
 import Link from "next/link";
 import { motion, useInView, Variants } from "framer-motion";
 import { ArrowRight, Compass, Sparkles, ShieldCheck } from "lucide-react";
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import EnquiryPopupForm from "@/utils/EnquiryPopupForm";
 
 /* ─────────────────────────────────────────
    Types
 ───────────────────────────────────────── */
 interface CTAProps {
-  headline?: string;
   subtext?: string;
   primaryLabel?: string;
   primaryHref?: string;
@@ -22,13 +22,12 @@ interface CTAProps {
    Default Content
 ───────────────────────────────────────── */
 const defaultProps: Required<CTAProps> = {
-  headline: "Not Sure Which Kashmir Trip is Right for You?",
   subtext:
     "Tell us your preferences and our travel experts will craft a personalised itinerary just for you — completely free.",
   primaryLabel: "Get Free Travel Plan",
-  primaryHref: "#enquiry",
+  primaryHref: "",
   secondaryLabel: "Explore Packages",
-  secondaryHref: "/packages",
+  secondaryHref: "/package",
   trustPoints: [
     "No commitment required",
     "Response within 2 hours",
@@ -76,10 +75,12 @@ function CTAButton({
   href,
   variant,
   children,
+  setOpen
 }: {
   href: string;
   variant: "primary" | "secondary";
   children: React.ReactNode;
+  setOpen: (bool:boolean)=> void
 }) {
   const isPrimary = variant === "primary";
 
@@ -91,6 +92,9 @@ function CTAButton({
       className="w-full sm:w-auto"
     >
       <Link
+        onClick={()=> {
+          isPrimary ?  setOpen(true) : setOpen(false)
+        }}
         href={href}
         className={`
           relative inline-flex w-full sm:w-auto items-center justify-center gap-2.5
@@ -136,7 +140,6 @@ function CTAButton({
    Main Component
 ───────────────────────────────────────── */
 export default function MidPageCTA({
-  headline = defaultProps.headline,
   subtext = defaultProps.subtext,
   primaryLabel = defaultProps.primaryLabel,
   primaryHref = defaultProps.primaryHref,
@@ -146,6 +149,7 @@ export default function MidPageCTA({
 }: CTAProps) {
   const ref = useRef<HTMLElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
+  const [isOpen, setOpen] = useState(false)
 
   return (
     <section
@@ -156,6 +160,7 @@ export default function MidPageCTA({
           "linear-gradient(160deg, #f0f9ff 0%, #e0f2fe 50%, #f0fdff 100%)",
       }}
     >
+      <EnquiryPopupForm isOpen={isOpen} onClose={()=> setOpen(false)}/>
       {/* ── Layered background atmosphere ── */}
 
       {/* Blob 1 — top left */}
@@ -298,12 +303,12 @@ export default function MidPageCTA({
                 animate={isInView ? "visible" : "hidden"}
                 className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-9"
               >
-                <CTAButton href={primaryHref} variant="primary">
+                <CTAButton href={primaryHref} variant="primary" setOpen={()=> setOpen(true)}>
                   {primaryLabel}
                   <ArrowRight className="w-4 h-4" />
                 </CTAButton>
 
-                <CTAButton href={secondaryHref} variant="secondary">
+                <CTAButton href={secondaryHref} variant="secondary" setOpen={()=> setOpen(true)}>
                   <Compass className="w-4 h-4 text-sky-500" />
                   {secondaryLabel}
                 </CTAButton>

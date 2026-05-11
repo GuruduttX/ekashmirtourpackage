@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import EnquiryPopupForm from "@/utils/EnquiryPopupForm";
 
 type Snowflake = {
   id: number;
@@ -22,6 +23,7 @@ const STATS = [
 
 export default function HeroSection() {
   const [snowflakes, setSnowflakes] = useState<Snowflake[]>([]);
+  const[isOpen, setOpen] = useState(false);
 
   useEffect(() => {
     setSnowflakes(
@@ -39,7 +41,7 @@ export default function HeroSection() {
 
   return (
     <section className="relative flex h-[92vh] min-h-175 flex-col">
-
+      <EnquiryPopupForm isOpen={isOpen} onClose={()=> setOpen(false)}/>
       {/* ── Kashmir hero image ── */}
       <Image
         src="/Home/kashmir-hero.webp"
@@ -311,8 +313,8 @@ export default function HeroSection() {
                 Explore Packages
               </Link>
 
-              <Link
-                href="#packages"
+              <button
+                onClick={()=> setOpen(true)}
                 className="pop-in w-full rounded-2xl py-3.5 text-center text-[0.92rem] font-semibold transition-all duration-300 hover:-translate-y-0.5 sm:w-auto sm:px-8"
                 style={{
                   animationDelay: "840ms",
@@ -329,7 +331,7 @@ export default function HeroSection() {
                 }}
               >
                 Book Now →
-              </Link>
+              </button>
             </div>
 
             {/* Trust badge row */}
