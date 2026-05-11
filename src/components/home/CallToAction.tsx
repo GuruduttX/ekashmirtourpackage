@@ -3,10 +3,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { useState } from "react";
+import EnquiryPopupForm from "@/utils/EnquiryPopupForm";
 
 export default function CallToAction() {
+  const [isOpen, setOpen] = useState(false);
   return (
-    <section className="relative py-16 lg:py-24 px-6 lg:px-12 bg-sky-50 overflow-hidden">
+    <section className="relative py-16 lg:py-20 px-6 lg:px-12 bg-sky-50 overflow-hidden">
+      <EnquiryPopupForm isOpen={isOpen} onClose={()=> setOpen(false)} />
       {/* Background Glow */}
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="w-[600px] h-[600px] bg-cyan-300/20 blur-3xl rounded-full" />
@@ -47,12 +51,12 @@ export default function CallToAction() {
 
             {/* Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-              <Link
-                href="#contact"
+              <button
+                onClick={()=> setOpen(true)}
                 className="bg-gradient-to-r from-sky-500 to-cyan-400 text-white px-8 py-3 rounded-xl text-sm font-medium transition-all duration-300 hover:shadow-lg hover:-translate-y-1 flex items-center justify-center gap-2"
               >
                 Get Free Travel Plan
-              </Link>
+              </button>
 
               <Link
                 href="#packages"

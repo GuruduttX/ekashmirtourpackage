@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { motion, Variants } from "framer-motion";
 import {
   MessageCircle,
@@ -11,8 +11,10 @@ import {
   Map,
   Users,
 } from "lucide-react";
+import EnquiryPopupForm from "@/utils/EnquiryPopupForm";
 
 export default function PremiumTravelAssistance() {
+  const [isOpen, setOpen] = useState(false)
   // Framer Motion Variants
   const containerVariants: Variants = {
     hidden: { opacity: 0 },
@@ -42,6 +44,7 @@ export default function PremiumTravelAssistance() {
 
   return (
     <section className="relative w-full overflow-hidden bg-sky-50 py-20 px-6 sm:px-12 lg:px-24">
+      <EnquiryPopupForm isOpen={isOpen} onClose={() => setOpen(false)} />
       {/* Subtle Background Elements */}
       <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-sky-300/20 rounded-full blur-[120px] -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
       <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-cyan-300/20 rounded-full blur-[150px] translate-x-1/3 translate-y-1/3 pointer-events-none" />
@@ -55,7 +58,7 @@ export default function PremiumTravelAssistance() {
       >
         {/* LEFT SIDE: Content & Trust */}
         <motion.div variants={itemVariants} className="flex flex-col space-y-8">
-          <div className="space-y-4">
+          <div className="space-y-4 text-center md:text-start">
             <span className="inline-block text-sky-500 uppercase tracking-widest text-sm font-bold">
               Need Something More Personal?
             </span>
@@ -74,13 +77,7 @@ export default function PremiumTravelAssistance() {
           </div>
 
           {/* Trust Row */}
-          <div className="flex flex-wrap gap-3 pt-2">
-            <div className="flex items-center gap-2 bg-white/60 backdrop-blur-md px-4 py-2 rounded-full border border-white/40 shadow-sm">
-              <Map className="w-4 h-4 text-sky-500" />
-              <span className="text-sm text-slate-700 font-medium">
-                Personalized itineraries
-              </span>
-            </div>
+          <div className="flex justify-center flex-wrap gap-3 pt-2">
             <div className="flex items-center gap-2 bg-white/60 backdrop-blur-md px-4 py-2 rounded-full border border-white/40 shadow-sm">
               <Clock className="w-4 h-4 text-cyan-500" />
               <span className="text-sm text-slate-700 font-medium">
@@ -91,6 +88,12 @@ export default function PremiumTravelAssistance() {
               <Users className="w-4 h-4 text-sky-500" />
               <span className="text-sm text-slate-700 font-medium">
                 Local travel experts
+              </span>
+            </div>
+            <div className="flex items-center gap-2 bg-white/60 backdrop-blur-md px-4 py-2 rounded-full border border-white/40 shadow-sm">
+              <Map className="w-4 h-4 text-sky-500" />
+              <span className="text-sm text-slate-700 font-medium">
+                Personalized itineraries
               </span>
             </div>
           </div>
@@ -166,7 +169,10 @@ export default function PremiumTravelAssistance() {
                   Share your preferences, and we'll create a package tailored to
                   your exact needs.
                 </p>
-                <button className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-cyan-600 border border-cyan-100 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:bg-cyan-50 hover:shadow-[0_10px_25px_rgba(34,211,238,0.15)]">
+                <button
+                  onClick={() => setOpen(true)}
+                  className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-cyan-600 border border-cyan-100 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:bg-cyan-50 hover:shadow-[0_10px_25px_rgba(34,211,238,0.15)]"
+                >
                   Open Travel Form
                   <Sparkles className="w-3.5 h-3.5" />
                 </button>

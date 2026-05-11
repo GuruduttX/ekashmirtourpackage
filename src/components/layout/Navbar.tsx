@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { NAV_LINKS, NAV_SERVICES } from "@/lib/constants";
+import EnquiryPopupForm from "@/utils/EnquiryPopupForm";
 
 /* ── Brand icon ─────────────────────────────────────────── */
 function MountainIcon() {
@@ -440,6 +441,7 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
+  const [isOpen, setOpen] = useState(false);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -460,203 +462,276 @@ export default function Navbar() {
   const closeDropdown = () => setActiveDropdown(null);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50">
+    <>
+      <EnquiryPopupForm isOpen = {isOpen} onClose={()=>setOpen(false)}/>
+      <header className="fixed top-0 left-0 right-0 z-50">
+        {/* ── Main bar ── */}
+        <div
+          className={`transition-all duration-500 ${scrolled ? "shadow-2xl shadow-black/50" : "shadow-lg shadow-black/20"}`}
+          style={{
+            background: scrolled ? "rgba(6,14,35,0.98)" : "rgba(5,12,26,0.84)",
+            backdropFilter: "blur(28px)",
+            WebkitBackdropFilter: "blur(28px)",
+            borderBottom: scrolled
+              ? "1px solid rgba(56,189,248,0.22)"
+              : "1px solid rgba(56,189,248,0.12)",
+          }}
+        >
+          <nav className="mx-auto flex h-[70px] max-w-8xl items-center px-6 lg:px-12 justify-between">
+            {/* Logo */}
+            <Link
+              href="/"
+              className="flex shrink-0 items-center gap-2.5 bg-white rounded-full px-5"
+            >
+              <Image
+                src="/Experience_my_India.webp"
+                width={120}
+                height={120}
+                alt="Experience My India Website Logo"
+                priority
+              />
+            </Link>
 
-      {/* ── Main bar ── */}
-      <div
-        className={`transition-all duration-500 ${scrolled ? "shadow-2xl shadow-black/50" : "shadow-lg shadow-black/20"}`}
-        style={{
-          background: scrolled ? "rgba(6,14,35,0.98)" : "rgba(5,12,26,0.84)",
-          backdropFilter: "blur(28px)",
-          WebkitBackdropFilter: "blur(28px)",
-          borderBottom: scrolled ? "1px solid rgba(56,189,248,0.22)" : "1px solid rgba(56,189,248,0.12)",
-        }}
-      >
-        <nav className="mx-auto flex h-[70px] max-w-8xl items-center px-6 lg:px-12 justify-between">
+            {/* Desktop nav */}
+            <ul className="hidden items-center gap-8 md:flex">
+              {NAV_LINKS.map((link) => {
+                const hasDropdown = link.dropdown !== null;
+                const isActive =
+                  hasDropdown && activeDropdown === link.dropdown;
 
-          {/* Logo */}
-          <Link href="/" className="flex shrink-0 items-center gap-2.5 bg-white rounded-full px-5">
-            <Image
-              src="/Experience_my_India.webp"
-              width={120}
-              height={120}
-              alt="Experience My India Website Logo"
-              priority
-            />
-          </Link>
+                return (
+                  <li
+                    key={link.label}
+                    className="relative"
+                    onMouseEnter={() =>
+                      hasDropdown && openDropdown(link.dropdown!)
+                    }
+                    onMouseLeave={() => hasDropdown && scheduleClose()}
+                  >
+                    <Link
+                      href={link.href}
+                      className={`group relative flex items-center gap-1 rounded-lg px-3 py-2 text-[0.83rem] font-medium tracking-wide transition-all duration-200 ${
+                        isActive
+                          ? "bg-sky-500/12 text-sky-400"
+                          : "text-white hover:bg-white/5 hover:text-white"
+                      }`}
+                    >
+                      {link.label}
+                      {hasDropdown && (
+                        <svg
+                          className={`h-3 w-3 transition-transform duration-200 ${isActive ? "rotate-180 text-sky-400" : "text-white/35"}`}
+                          viewBox="0 0 12 12"
+                          fill="currentColor"
+                        >
+                          <path
+                            d="M2 4l4 4 4-4"
+                            stroke="currentColor"
+                            strokeWidth="1.5"
+                            fill="none"
+                            strokeLinecap="round"
+                          />
+                        </svg>
+                      )}
+                      {!hasDropdown && (
+                        <span className="absolute -bottom-0.5 left-3 right-3 h-px scale-x-0 rounded-full bg-sky-400 transition-transform duration-300 group-hover:scale-x-100" />
+                      )}
+                    </Link>
 
-          {/* Desktop nav */}
-          <ul className="hidden items-center gap-8 md:flex">
+                    {/* Dropdown panels */}
+                    {isActive && link.dropdown === "packages" && (
+                      <div
+                        onMouseEnter={() => openDropdown("packages")}
+                        onMouseLeave={scheduleClose}
+                      >
+                        <PackagesDropdown onClose={closeDropdown} />
+                      </div>
+                    )}
+                    {isActive && link.dropdown === "services" && (
+                      <div
+                        onMouseEnter={() => openDropdown("services")}
+                        onMouseLeave={scheduleClose}
+                      >
+                        <ServicesDropdown onClose={closeDropdown} />
+                      </div>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+
+            {/* Desktop right */}
+            <div className="hidden shrink-0 items-center gap-3 md:flex">
+              <button
+                onClick={()=> setOpen(true)}
+                className="rounded-4xl px-5 py-2.5 text-[0.83rem] font-semibold text-white transition-all duration-300 hover:-translate-y-px"
+                style={{
+                  background:
+                    "linear-gradient(135deg, #0EA5E9 0%, #38BDF8 100%)",
+                  boxShadow:
+                    "0 0 0 1px rgba(56,189,248,0.45), 0 4px 16px rgba(14,165,233,0.35)",
+                }}
+              >
+                Let's Feel Some Snow
+              </button>
+            </div>
+
+            {/* Mobile hamburger */}
+            <button
+              onClick={() => setMobileOpen((o) => !o)}
+              className="relative flex h-9 w-9 items-center justify-center rounded-lg md:hidden"
+              style={{
+                background: "rgba(255,255,255,0.06)",
+                border: "1px solid rgba(255,255,255,0.10)",
+              }}
+              aria-label="Toggle navigation"
+            >
+              <div className="flex w-5 flex-col gap-[5px]">
+                <span
+                  className={`block h-[1.5px] rounded bg-white origin-center transition-all duration-300 ${mobileOpen ? "rotate-45 translate-y-[6.5px]" : ""}`}
+                />
+                <span
+                  className={`block h-[1.5px] rounded bg-white transition-all duration-300 ${mobileOpen ? "opacity-0 scale-x-0" : ""}`}
+                />
+                <span
+                  className={`block h-[1.5px] rounded bg-white origin-center transition-all duration-300 ${mobileOpen ? "-rotate-45 -translate-y-[6.5px]" : ""}`}
+                />
+              </div>
+            </button>
+          </nav>
+        </div>
+
+        {/* ── Sky blue gradient rule ── */}
+        <div
+          className={`h-px transition-opacity duration-500 ${scrolled ? "opacity-90" : "opacity-50"}`}
+          style={{
+            background:
+              "linear-gradient(90deg, transparent 0%, rgba(56,189,248,0.55) 20%, rgba(147,197,253,0.85) 50%, rgba(56,189,248,0.55) 80%, transparent 100%)",
+          }}
+        />
+
+        {/* ── Mobile drawer ── */}
+        <div
+          className={`md:hidden overflow-hidden transition-all duration-300 ${mobileOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"}`}
+          style={{
+            background: "rgba(5,12,28,0.98)",
+            backdropFilter: "blur(28px)",
+            WebkitBackdropFilter: "blur(28px)",
+            borderBottom: "1px solid rgba(56,189,248,0.15)",
+          }}
+        >
+          <div className="flex flex-col gap-0.5 px-5 py-4">
             {NAV_LINKS.map((link) => {
               const hasDropdown = link.dropdown !== null;
-              const isActive = hasDropdown && activeDropdown === link.dropdown;
+              const isExpanded = mobileExpanded === link.dropdown;
 
               return (
-                <li
-                  key={link.label}
-                  className="relative"
-                  onMouseEnter={() => hasDropdown && openDropdown(link.dropdown!)}
-                  onMouseLeave={() => hasDropdown && scheduleClose()}
-                >
-                  <Link
-                    href={link.href}
-                    className={`group relative flex items-center gap-1 rounded-lg px-3 py-2 text-[0.83rem] font-medium tracking-wide transition-all duration-200 ${isActive ? "bg-sky-500/12 text-sky-400" : "text-white hover:bg-white/5 hover:text-white"
-                      }`}
+                <div key={link.label}>
+                  <div
+                    className="flex cursor-pointer items-center justify-between rounded-xl px-3 py-2.5 transition-colors hover:bg-white/5"
+                    onClick={() =>
+                      hasDropdown &&
+                      setMobileExpanded(isExpanded ? null : link.dropdown!)
+                    }
                   >
-                    {link.label}
-                    {hasDropdown && (
+                    <Link
+                      href={link.href}
+                      onClick={() => !hasDropdown && setMobileOpen(false)}
+                      className="flex-1 text-[0.92rem] font-medium text-white/72 hover:text-white"
+                    >
+                      {link.label}
+                    </Link>
+                    {hasDropdown ? (
                       <svg
-                        className={`h-3 w-3 transition-transform duration-200 ${isActive ? "rotate-180 text-sky-400" : "text-white/35"}`}
-                        viewBox="0 0 12 12" fill="currentColor"
+                        className={`h-4 w-4 text-white/70 transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
+                        viewBox="0 0 12 12"
+                        fill="currentColor"
                       >
-                        <path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+                        <path
+                          d="M2 4l4 4 4-4"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                          fill="none"
+                          strokeLinecap="round"
+                        />
                       </svg>
+                    ) : (
+                      <span className="text-xs text-sky-500/60">→</span>
                     )}
-                    {!hasDropdown && (
-                      <span className="absolute -bottom-0.5 left-3 right-3 h-px scale-x-0 rounded-full bg-sky-400 transition-transform duration-300 group-hover:scale-x-100" />
-                    )}
-                  </Link>
+                  </div>
 
-                  {/* Dropdown panels */}
-                  {isActive && link.dropdown === "packages" && (
-                    <div
-                      onMouseEnter={() => openDropdown("packages")}
-                      onMouseLeave={scheduleClose}
-                    >
-                      <PackagesDropdown onClose={closeDropdown} />
-                    </div>
-                  )}
-                  {isActive && link.dropdown === "services" && (
-                    <div
-                      onMouseEnter={() => openDropdown("services")}
-                      onMouseLeave={scheduleClose}
-                    >
-                      <ServicesDropdown onClose={closeDropdown} />
-                    </div>
-                  )}
-                </li>
+                  {hasDropdown &&
+                    isExpanded &&
+                    link.dropdown === "packages" && (
+                      <div className="ml-3 mt-1 flex flex-col gap-1 border-l border-sky-500/20 pl-3">
+                        {DROPDOWN_PACKAGES.map((pkg) => (
+                          <Link
+                            key={pkg.key}
+                            href="#packages"
+                            onClick={() => setMobileOpen(false)}
+                            className="flex items-center gap-2.5 rounded-lg px-2 py-2 hover:bg-white/5"
+                          >
+                            <div className="relative h-9 w-12 shrink-0 overflow-hidden rounded-lg">
+                              <Image
+                                src={pkg.image}
+                                alt={pkg.title}
+                                fill
+                                className="object-cover"
+                                sizes="48px"
+                              />
+                            </div>
+                            <div>
+                              <div className="text-[0.78rem] font-medium text-white/85">
+                                {pkg.title}
+                              </div>
+                              <div className="text-[0.65rem] text-white/40">
+                                {pkg.duration} ·{" "}
+                                <span style={{ color: pkg.tagColor }}>
+                                  {pkg.price}
+                                </span>
+                              </div>
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+
+                  {hasDropdown &&
+                    isExpanded &&
+                    link.dropdown === "services" && (
+                      <div className="ml-3 mt-1 flex flex-col gap-1 border-l border-sky-500/20 pl-3">
+                        {NAV_SERVICES.map((svc) => (
+                          <Link
+                            key={svc.title}
+                            href="#services"
+                            onClick={() => setMobileOpen(false)}
+                            className="flex items-center gap-2.5 rounded-lg px-2 py-2 hover:bg-white/5"
+                          >
+                            <span className="text-base">{svc.icon}</span>
+                            <span className="text-[0.78rem] font-medium text-white/80">
+                              {svc.title}
+                            </span>
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                </div>
               );
             })}
-          </ul>
 
-          {/* Desktop right */}
-          <div className="hidden shrink-0 items-center gap-3 md:flex">
             <Link
-              href="/package"
-              className="rounded-4xl px-5 py-2.5 text-[0.83rem] font-semibold text-white transition-all duration-300 hover:-translate-y-px"
+              href="#packages"
+              onClick={() => setMobileOpen(false)}
+              className="mt-3 rounded-xl py-3 text-center text-sm font-semibold text-white"
               style={{
                 background: "linear-gradient(135deg, #0EA5E9 0%, #38BDF8 100%)",
-                boxShadow: "0 0 0 1px rgba(56,189,248,0.45), 0 4px 16px rgba(14,165,233,0.35)",
+                boxShadow: "0 4px 16px rgba(14,165,233,0.35)",
               }}
             >
-              Let's Feel Some Snow
+              Book Now
             </Link>
           </div>
-
-          {/* Mobile hamburger */}
-          <button
-            onClick={() => setMobileOpen((o) => !o)}
-            className="relative flex h-9 w-9 items-center justify-center rounded-lg md:hidden"
-            style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.10)" }}
-            aria-label="Toggle navigation"
-          >
-            <div className="flex w-5 flex-col gap-[5px]">
-              <span className={`block h-[1.5px] rounded bg-white origin-center transition-all duration-300 ${mobileOpen ? "rotate-45 translate-y-[6.5px]" : ""}`} />
-              <span className={`block h-[1.5px] rounded bg-white transition-all duration-300 ${mobileOpen ? "opacity-0 scale-x-0" : ""}`} />
-              <span className={`block h-[1.5px] rounded bg-white origin-center transition-all duration-300 ${mobileOpen ? "-rotate-45 -translate-y-[6.5px]" : ""}`} />
-            </div>
-          </button>
-        </nav>
-      </div>
-
-      {/* ── Sky blue gradient rule ── */}
-      <div
-        className={`h-px transition-opacity duration-500 ${scrolled ? "opacity-90" : "opacity-50"}`}
-        style={{ background: "linear-gradient(90deg, transparent 0%, rgba(56,189,248,0.55) 20%, rgba(147,197,253,0.85) 50%, rgba(56,189,248,0.55) 80%, transparent 100%)" }}
-      />
-
-      {/* ── Mobile drawer ── */}
-      <div
-        className={`md:hidden overflow-hidden transition-all duration-300 ${mobileOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"}`}
-        style={{
-          background: "rgba(5,12,28,0.98)",
-          backdropFilter: "blur(28px)",
-          WebkitBackdropFilter: "blur(28px)",
-          borderBottom: "1px solid rgba(56,189,248,0.15)",
-        }}
-      >
-        <div className="flex flex-col gap-0.5 px-5 py-4">
-          {NAV_LINKS.map((link) => {
-            const hasDropdown = link.dropdown !== null;
-            const isExpanded = mobileExpanded === link.dropdown;
-
-            return (
-              <div key={link.label}>
-                <div
-                  className="flex cursor-pointer items-center justify-between rounded-xl px-3 py-2.5 transition-colors hover:bg-white/5"
-                  onClick={() => hasDropdown && setMobileExpanded(isExpanded ? null : link.dropdown!)}
-                >
-                  <Link
-                    href={link.href}
-                    onClick={() => !hasDropdown && setMobileOpen(false)}
-                    className="flex-1 text-[0.92rem] font-medium text-white/72 hover:text-white"
-                  >
-                    {link.label}
-                  </Link>
-                  {hasDropdown ? (
-                    <svg className={`h-4 w-4 text-white/70 transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`} viewBox="0 0 12 12" fill="currentColor">
-                      <path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-                    </svg>
-                  ) : (
-                    <span className="text-xs text-sky-500/60">→</span>
-                  )}
-                </div>
-
-                {hasDropdown && isExpanded && link.dropdown === "packages" && (
-                  <div className="ml-3 mt-1 flex flex-col gap-1 border-l border-sky-500/20 pl-3">
-                    {DROPDOWN_PACKAGES.map((pkg) => (
-                      <Link
-                        key={pkg.key}
-                        href="#packages"
-                        onClick={() => setMobileOpen(false)}
-                        className="flex items-center gap-2.5 rounded-lg px-2 py-2 hover:bg-white/5"
-                      >
-                        <div className="relative h-9 w-12 shrink-0 overflow-hidden rounded-lg">
-                          <Image src={pkg.image} alt={pkg.title} fill className="object-cover" sizes="48px" />
-                        </div>
-                        <div>
-                          <div className="text-[0.78rem] font-medium text-white/85">{pkg.title}</div>
-                          <div className="text-[0.65rem] text-white/40">{pkg.duration} · <span style={{ color: pkg.tagColor }}>{pkg.price}</span></div>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                )}
-
-                {hasDropdown && isExpanded && link.dropdown === "services" && (
-                  <div className="ml-3 mt-1 flex flex-col gap-1 border-l border-sky-500/20 pl-3">
-                    {NAV_SERVICES.map((svc) => (
-                      <Link key={svc.title} href="#services" onClick={() => setMobileOpen(false)} className="flex items-center gap-2.5 rounded-lg px-2 py-2 hover:bg-white/5">
-                        <span className="text-base">{svc.icon}</span>
-                        <span className="text-[0.78rem] font-medium text-white/80">{svc.title}</span>
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-
-          <Link
-            href="#packages"
-            onClick={() => setMobileOpen(false)}
-            className="mt-3 rounded-xl py-3 text-center text-sm font-semibold text-white"
-            style={{ background: "linear-gradient(135deg, #0EA5E9 0%, #38BDF8 100%)", boxShadow: "0 4px 16px rgba(14,165,233,0.35)" }}
-          >
-            Book Now
-          </Link>
         </div>
-      </div>
-    </header>
+      </header>
+    </>
   );
 }

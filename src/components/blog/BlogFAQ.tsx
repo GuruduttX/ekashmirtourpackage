@@ -51,7 +51,7 @@ export default function BlogFAQ({ faqs = dummyFaqs }: BlogFAQProps) {
   const [activeFAQ, setActiveFAQ] = useState<string | null>(faqs[0]?.id);
 
   return (
-    <section className="relative overflow-hidden bg-[linear-gradient(to_bottom,#f0f9ff,#ffffff)] py-20 sm:py-24 lg:py-32">
+    <section className="relative overflow-hidden bg-[linear-gradient(to_bottom,#f0f9ff,#ffffff)] py-10 sm:py-24 lg:py-32">
       {/* Atmospheric Background */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute left-[-8rem] top-[10%] h-[24rem] w-[24rem] rounded-full bg-sky-400/10 blur-[150px]" />
@@ -96,64 +96,7 @@ export default function BlogFAQ({ faqs = dummyFaqs }: BlogFAQProps) {
         </motion.div>
 
         {/* FAQ Layout */}
-        <div className="mt-16 grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:gap-10 xl:gap-14">
-          {/* Left Experience Panel */}
-          <motion.div
-            initial={{ opacity: 0, x: -30, filter: "blur(10px)" }}
-            whileInView={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-            viewport={{ once: true }}
-            transition={{
-              duration: 0.8,
-              ease: [0.16, 1, 0.3, 1],
-            }}
-            className="relative overflow-hidden rounded-[2.5rem] border border-sky-100/70 bg-[linear-gradient(145deg,rgba(255,255,255,0.88),rgba(240,249,255,0.72))] p-7 sm:p-9 lg:p-10 backdrop-blur-2xl shadow-[0_25px_80px_rgba(14,165,233,0.08)]"
-          >
-            {/* Glow Layers */}
-            <div className="absolute -right-16 top-0 h-44 w-44 rounded-full bg-sky-400/10 blur-[100px]" />
-
-            <div className="absolute bottom-0 left-0 h-40 w-40 rounded-full bg-cyan-400/10 blur-[90px]" />
-
-            <div className="relative z-10 flex h-full flex-col justify-between">
-              <div>
-                <div className="flex h-16 w-16 items-center justify-center rounded-[1.7rem] border border-sky-100 bg-white/80 shadow-[0_10px_30px_rgba(14,165,233,0.08)]">
-                  <Mountain className="h-8 w-8 text-sky-500" />
-                </div>
-
-                <h3 className="mt-8 text-3xl leading-[1.05] tracking-[-0.05em] font-extralight text-slate-900 sm:text-4xl">
-                  Curated Travel Knowledge For A More
-                  <span className="block mt-2 bg-gradient-to-r from-sky-500 via-cyan-400 to-sky-400 bg-clip-text text-transparent font-medium">
-                    Immersive Kashmir Experience
-                  </span>
-                </h3>
-
-                <p className="mt-7 text-[15px] leading-8 text-slate-600 font-light">
-                  From choosing the best season to understanding local travel
-                  experiences, these insights are designed to help travelers plan
-                  meaningful and seamless Kashmir journeys.
-                </p>
-              </div>
-
-              {/* Floating Insights */}
-              <div className="mt-10 flex flex-wrap gap-3">
-                {[
-                  "Luxury Houseboats",
-                  "Alpine Landscapes",
-                  "Snow Experiences",
-                  "Scenic Valleys",
-                ].map((item) => (
-                  <motion.div
-                    key={item}
-                    whileHover={{ y: -3 }}
-                    className="inline-flex items-center gap-2 rounded-full border border-white/70 bg-white/75 px-4 py-2 text-sm text-slate-700 backdrop-blur-xl shadow-[0_10px_30px_rgba(14,165,233,0.06)]"
-                  >
-                    <Sparkles className="h-3.5 w-3.5 text-sky-500" />
-                    {item}
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-
+        <div className="mt-16 grid gap-6  lg:gap-10 xl:gap-14">
           {/* FAQ Accordion */}
           <div className="flex flex-col gap-5">
             {faqs.map((faq, index) => {
@@ -179,17 +122,17 @@ export default function BlogFAQ({ faqs = dummyFaqs }: BlogFAQProps) {
                     onClick={() =>
                       setActiveFAQ(isActive ? null : faq.id)
                     }
-                    className="relative z-10 flex w-full items-center justify-between gap-6 px-6 py-6 text-left sm:px-8 sm:py-7"
+                    className="relative z-10 flex w-full items-center justify-between gap-2 px-2 md:px-6 py-2 md:py-6 text-left sm:px-8 sm:py-7"
                   >
                     <div className="flex items-start gap-5">
-                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-sky-100 bg-sky-50/80 shadow-[0_10px_30px_rgba(14,165,233,0.06)]">
+                      <div className="hidden md:flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-sky-100 bg-sky-50/80 shadow-[0_10px_30px_rgba(14,165,233,0.06)]">
                         <span className="text-sm font-medium text-sky-600">
                           0{index + 1}
                         </span>
                       </div>
 
                       <div>
-                        <h3 className="text-lg leading-7 tracking-[-0.03em] font-medium text-slate-900 sm:text-xl">
+                        <h3 className="text-md md:text-lg leading-5 tracking-[-0.03em] md:font-medium text-slate-900 sm:text-xl">
                           {faq.question}
                         </h3>
                       </div>
@@ -218,7 +161,7 @@ export default function BlogFAQ({ faqs = dummyFaqs }: BlogFAQProps) {
                         }}
                         className="overflow-hidden"
                       >
-                        <div className="relative z-10 px-6 pb-7 pl-[5.7rem] pr-8 sm:pb-8 sm:pr-10">
+                        <div className="relative z-10 md:px-6 pb-7 md:pl-[5.7rem] md:pr-8 sm:pb-8 sm:pr-10 text-center md:text-start">
                           <div className="rounded-[1.5rem] border border-sky-100/70 bg-sky-50/50 p-5 backdrop-blur-xl">
                             <p className="text-[15px] leading-8 text-slate-600 font-light sm:text-base">
                               {faq.answer}

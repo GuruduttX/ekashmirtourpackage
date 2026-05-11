@@ -162,7 +162,7 @@ export default function KashmirJourney() {
   const opacity = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0, 1, 1, 0]);
 
   return (
-    <section className="relative w-full overflow-hidden bg-sky-50 py-24 lg:py-10">
+    <section className="relative w-full overflow-hidden bg-sky-50 py-10 lg:py-10">
       {/* Background Atmosphere */}
       <div className="absolute top-20 left-10 w-[400px] h-[400px] bg-cyan-300/20 rounded-full blur-[100px] pointer-events-none" />
       <div className="absolute bottom-40 right-10 w-[500px] h-[500px] bg-sky-400/15 rounded-full blur-[120px] pointer-events-none" />
@@ -301,7 +301,7 @@ export default function KashmirJourney() {
         </div>
 
         {/* --- MOBILE CAROUSEL (Unchanged) --- */}
-        <div className="md:hidden relative w-[100vw] -ml-6 pb-12">
+        <div className="md:hidden relative w-[100vw] -ml-6 ">
           <div className="absolute top-1/2 -translate-y-1/2 left-0 w-full h-[2px] bg-gradient-to-r from-sky-400/10 via-cyan-400/40 to-sky-400/10 z-0" />
           <div className="flex gap-6 overflow-x-auto snap-x snap-mandatory px-6 scrollbar-hide relative z-10">
             {destinations.map((dest) => (

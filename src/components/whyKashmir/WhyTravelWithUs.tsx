@@ -106,7 +106,7 @@ export default function WhyTravelWithUs() {
   };
 
   return (
-    <section className="relative w-full overflow-hidden bg-sky-50 py-24 lg:py-32">
+    <section className="relative w-full overflow-hidden bg-sky-50 py-10 lg:py-32">
       {/* Cinematic Background Atmosphere */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
         <div
@@ -128,7 +128,7 @@ export default function WhyTravelWithUs() {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, margin: "-100px" }}
-              className="flex flex-col max-w-xl mx-auto lg:mx-0"
+              className="flex flex-col max-w-xl mx-auto lg:mx-0 text-center md:text-start"
             >
               <motion.div variants={fadeUpVariant} className="mb-6">
                 <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-sky-200/60 bg-white/50 backdrop-blur-md text-sky-600 uppercase tracking-[0.2em] text-xs font-bold shadow-sm">

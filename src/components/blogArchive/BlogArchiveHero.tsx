@@ -69,12 +69,12 @@ export default function BlogArchiveHero() {
             variants={staggerContainer}
             initial="hidden"
             animate="visible"
-            className="flex flex-col items-start"
+            className="flex flex-col items-start text-center"
           >
             {/* 1. Editorial Badge */}
             <motion.div
               variants={fadeUp}
-              className="mb-8 flex items-center gap-2 rounded-full border border-sky-200/50 bg-white/40 px-4 py-1.5 shadow-[0_4px_20px_rgb(0,0,0,0.03)] backdrop-blur-md"
+              className="mb-8 flex items-center gap-2 rounded-full border border-sky-200/50 bg-white/40 px-4 py-1.5 shadow-[0_4px_20px_rgb(0,0,0,0.03)] backdrop-blur-md mx-auto mdLmx-none"
             >
               <Feather className="h-3.5 w-3.5 text-sky-500" />
               <span className="text-xs font-medium uppercase tracking-[0.2em] text-slate-700">

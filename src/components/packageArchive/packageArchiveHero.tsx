@@ -3,8 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useScroll, useTransform, Variants } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { ArrowRight, MapPin, Compass } from "lucide-react";
+import EnquiryPopupForm from "@/utils/EnquiryPopupForm";
 
 /* ─────────────────────────────────────────
    Types
@@ -135,6 +136,7 @@ export default function PackagesArchiveHero({
 }: ArchiveHeroProps) {
   const containerRef = useRef<HTMLElement>(null);
   const imgs = [...images, ...defaultData.images].slice(0, 5);
+  const [isOpen, setOpen] = useState(false);
 
   // Subtle parallax on scroll
   const { scrollYProgress } = useScroll({
@@ -164,6 +166,7 @@ export default function PackagesArchiveHero({
         ref={containerRef}
         className="relative w-full overflow-hidden bg-white"
       >
+        <EnquiryPopupForm isOpen={isOpen} onClose={()=> setOpen(false)}/>
         {/* ══════════ HERO CONTENT GRID ══════════ */}
         <div className="relative z-10 max-w-7xl mx-auto px-5 sm:px-8 lg:px-14 pt-24 sm:pt-28 pb-10 grid grid-cols-1 lg:grid-cols-[1fr_1.1fr] gap-12 lg:gap-6 items-start">
           {/* ────── LEFT — Editorial text block ────── */}
@@ -265,12 +268,12 @@ export default function PackagesArchiveHero({
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </motion.a>
 
-              <Link
-                href="/contact"
+              <button
+                onClick={()=> setOpen(true)}
                 className="text-sm text-gray-400 hover:text-sky-500 font-medium transition-colors border-b border-dashed border-gray-200 hover:border-sky-300 pb-0.5"
               >
                 Need help choosing?
-              </Link>
+              </button>
             </motion.div>
 
             {/* Stat bar */}

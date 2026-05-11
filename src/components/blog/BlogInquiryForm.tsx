@@ -47,7 +47,7 @@ export default function BlogInquiryForm() {
       whileInView="visible"
       viewport={{ once: true, amount: 0.2 }}
       variants={fadeUpVariants}
-      className="relative overflow-hidden rounded-[2rem] md:border border-sky-100/80 bg-[linear-gradient(135deg,rgba(255,255,255,0.92),rgba(240,249,255,0.82))] p-6 sm:p-7 shadow-[0_25px_80px_rgba(14,165,233,0.08)] backdrop-blur-2xl"
+      className="relative overflow-hidden rounded-[2rem] md:border border-sky-100/80 bg-[linear-gradient(135deg,rgba(255,255,255,0.92),rgba(240,249,255,0.82))] md:p-6  shadow-[0_25px_80px_rgba(14,165,233,0.08)] backdrop-blur-2xl"
     >
       {/* Ambient Glow Layers */}
       <div className="absolute -right-16 top-0 h-44 w-44 rounded-full bg-sky-400/15 blur-[100px]" />

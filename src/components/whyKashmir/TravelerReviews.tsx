@@ -150,7 +150,7 @@ export default function TravelerReviewsSection() {
   return (
     <section
       ref={containerRef}
-      className="relative w-full bg-sky-50 py-24 lg:py-32 overflow-hidden"
+      className="relative w-full bg-sky-50 py-10 lg:py-32 overflow-hidden"
     >
       {/* --- Cinematic Background Atmosphere --- */}
       <div className="absolute inset-0 z-0 pointer-events-none">
@@ -169,20 +169,21 @@ export default function TravelerReviewsSection() {
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.8 }}
+              className="text-center md:text-start"
             >
               <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-sky-200/60 bg-white/50 backdrop-blur-md text-sky-600 uppercase tracking-[0.2em] text-xs font-bold shadow-sm mb-6">
                 <Sparkles className="w-3.5 h-3.5" />
                 Traveler Stories
               </span>
 
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-light text-slate-800 leading-[1.15] tracking-tight mb-8">
+              <h2 className="text-3xl md:text-5xl lg:text-6xl font-light text-slate-800 leading-[1.15] tracking-tight mb-8">
                 Moments Travelers{" "}
                 <span className="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-cyan-400 drop-shadow-sm">
                   Took Back From Kashmir
                 </span>
               </h2>
 
-              <p className="text-slate-600 text-lg leading-relaxed font-light mb-12 max-w-md">
+              <p className="text-slate-600 text-md md:text-lg leading-relaxed font-light mb-12 max-w-md">
                 Every journey leaves a mark. Discover the quiet reflections,
                 unforgettable sunrises, and genuine human connections
                 experienced by our community of travelers.

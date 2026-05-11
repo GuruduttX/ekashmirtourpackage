@@ -77,19 +77,19 @@ export default function CinematicBlogHero() {
           <div className="absolute -left-24 top-0 h-[22rem] w-[22rem] rounded-full bg-sky-400/20 blur-[120px]" />
           <div className="absolute bottom-0 right-0 h-[18rem] w-[18rem] rounded-full bg-cyan-400/20 blur-[100px]" />
 
-          <div className="relative grid grid-cols-1 xl:grid-cols-12 gap-8 xl:gap-14 p-5 sm:p-8 md:p-10 xl:p-12 items-start xl:items-center">
+          <div className="relative grid grid-cols-1 xl:grid-cols-12 gap-5 md:gap-8 xl:gap-14 p-5 sm:p-8 md:p-10 xl:p-12 items-start xl:items-center">
             {/* LEFT CONTENT */}
             <motion.div
               initial="hidden"
               animate="visible"
-              className="xl:col-span-5 flex flex-col"
+              className="xl:col-span-5 flex flex-col  text-center md:text-start"
             >
               {/* Category */}
               <motion.div
                 variants={fadeUpVariants}
                 className="mb-8 flex items-center gap-3"
               >
-                <div className="inline-flex items-center gap-2 rounded-full border border-sky-200/80 bg-white/80 px-4 py-2 backdrop-blur-xl shadow-[0_10px_30px_rgba(14,165,233,0.08)]">
+                <div className="inline-flex items-center gap-2 rounded-full border border-sky-200/80 bg-white/80 px-4 py-2 backdrop-blur-xl shadow-[0_10px_30px_rgba(14,165,233,0.08)] mx-auto md:mx-0">
                   <BookOpen className="h-4 w-4 text-sky-500" />
                   <span className="text-[11px] font-medium uppercase tracking-[0.24em] text-sky-700">
                     {dummyBlog.category}
@@ -112,7 +112,7 @@ export default function CinematicBlogHero() {
               {/* Editorial Metadata */}
               <motion.div
                 variants={fadeUpVariants}
-                className="mt-7 flex flex-wrap items-center gap-3"
+                className="mt-7 flex flex-wrap items-center justify-center md:justify-start gap-3"
               >
                 <div className="flex items-center gap-2 rounded-full border border-sky-100/80 bg-white/80 px-4 py-2 backdrop-blur-xl shadow-[0_10px_30px_rgba(14,165,233,0.05)]">
                   <PenLine className="h-3.5 w-3.5 text-sky-500" />
@@ -148,7 +148,7 @@ export default function CinematicBlogHero() {
               initial={{ opacity: 0, y: 40, scale: 0.96 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-              className="xl:col-span-7 pb-10 sm:pb-14 xl:pb-0"
+              className="xl:col-span-7 pb-5 sm:pb-14 xl:pb-0"
             >
               <div className="relative">
                 {/* Main Image */}
@@ -195,8 +195,6 @@ export default function CinematicBlogHero() {
 
             {/* MOBILE + SHARED BOTTOM CONTENT */}
             <div className="xl:col-span-12 flex flex-col xl:flex-row xl:items-end xl:justify-between gap-10 xl:gap-16">
-             
-
               {/* CTA */}
               <motion.div
                 initial="hidden"

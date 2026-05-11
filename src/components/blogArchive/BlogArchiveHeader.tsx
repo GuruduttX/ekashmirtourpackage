@@ -39,7 +39,7 @@ export default function BlogArchiveHeader({
   };
 
   return (
-    <section className="relative w-full overflow-hidden bg-transparent pt-14 pb-10 md:pt-20 md:pb-16 lg:pt-24 lg:pb-20">
+    <section className="relative w-full overflow-hidden bg-transparent pt-10 pb-10 md:pt-20 md:pb-16 lg:pt-24 lg:pb-20">
       {/* Background Orbs */}
       <div className="pointer-events-none absolute left-0 top-0 h-full w-full overflow-hidden">
         <div className="absolute -left-1/4 top-0 h-[400px] w-[400px] rounded-full bg-sky-400/10 blur-[120px]" />

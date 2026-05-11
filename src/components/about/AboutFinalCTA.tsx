@@ -31,12 +31,12 @@ export default function AboutFinalCTA() {
       <div className="mx-auto max-w-7xl rounded-[2.25rem]">
         <div className="px-1 py-1 sm:px-2 sm:py-2 lg:px-3 lg:py-3">
           <div className="flex flex-col gap-7 lg:flex-row lg:items-start lg:justify-between">
-            <div className="max-w-3xl">
-              <span className="inline-flex rounded-full border border-sky-200 bg-sky-50 px-4 py-1.5 text-[0.72rem] font-semibold uppercase tracking-[0.28em] text-sky-600">
+            <div className="max-w-3xl text-center md:text-start">
+              <span className="inline-flex rounded-full border border-sky-200 bg-sky-50 px-4 py-1.5 text-[0.72rem] font-semibold uppercase tracking-[0.2em] md:tracking-[0.28em] text-sky-600">
                 Trusted Kashmir Travel Partner
               </span>
 
-              <h2 className="mt-4 font-heading text-center md:text-start text-[2rem] font-bold leading-tight text-slate-900 sm:text-[2rem] lg:text-[3rem] lg:leading-[1.08]">
+              <h2 className="mt-4 font-heading text-center md:text-start text-[1.3rem] font-bold leading-tight text-slate-900 sm:text-[2rem] lg:text-[3rem] lg:leading-[1.08]">
                 Plan your unforgettable journey through Kashmir with comfort,
                 calm, and local insight.
               </h2>
@@ -89,7 +89,7 @@ export default function AboutFinalCTA() {
             <div className="rounded-[1.8rem] border border-sky-100/80 bg-white px-5 py-5 shadow-[0_16px_44px_rgba(14,165,233,0.10)] sm:px-6">
               <div className="grid gap-x-6 gap-y-3 sm:grid-cols-2">
                 {BENEFITS.map((benefit) => (
-                  <div key={benefit} className="flex items-start gap-3">
+                  <div key={benefit} className="flex items-start  gap-3">
                     <div className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-sky-50 text-sky-500">
                       <BadgeCheck className="h-4 w-4" strokeWidth={2.1} />
                     </div>
