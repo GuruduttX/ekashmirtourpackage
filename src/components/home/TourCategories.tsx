@@ -211,7 +211,7 @@ export default function TourCategories() {
         >
           <div>
             <div
-              className={`flex items-center gap-2.5 mb-3 transition-all duration-700 ${
+              className={`flex items-center justify-center md:justify-start gap-2.5 mb-3 transition-all duration-700 ${
                 headVisible
                   ? "opacity-100 translate-x-0"
                   : "opacity-0 -translate-x-5"
@@ -224,7 +224,7 @@ export default function TourCategories() {
               <div className="h-px w-8 bg-sky-500" />
             </div>
             <h2
-              className={`font-heading font-bold text-slate-900 leading-none sm:whitespace-nowrap transition-all duration-700 delay-100 ${
+              className={`font-heading font-bold text-center md:text-start text-slate-900 leading-none sm:whitespace-nowrap transition-all duration-700 delay-100 ${
                 headVisible
                   ? "opacity-100 translate-y-0"
                   : "opacity-0 translate-y-5"
@@ -246,7 +246,7 @@ export default function TourCategories() {
             </h2>
           </div>
           <p
-            className={`text-slate-400 text-sm leading-relaxed sm:max-w-[230px] sm:text-right transition-all duration-700 delay-200 ${
+            className={`text-slate-400 text-sm text-center md:text-start leading-relaxed sm:max-w-[230px] sm:text-right transition-all duration-700 delay-200 ${
               headVisible
                 ? "opacity-100 translate-y-0"
                 : "opacity-0 translate-y-5"

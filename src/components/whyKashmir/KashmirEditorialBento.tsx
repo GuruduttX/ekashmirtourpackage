@@ -32,7 +32,7 @@ export default function KashmirEditorialBento() {
   };
 
   return (
-    <section className="relative w-full overflow-hidden bg-sky-50 py-24 lg:py-32 px-6 sm:px-12 lg:px-24">
+    <section className="relative w-full overflow-hidden bg-sky-50 py-10 lg:py-32 px-6 sm:px-12 lg:px-24">
       {/* Decorative Background Elements */}
       <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-sky-300/20 rounded-full blur-[120px] translate-x-1/3 -translate-y-1/3 pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-cyan-300/10 rounded-full blur-[100px] -translate-x-1/3 translate-y-1/3 pointer-events-none" />

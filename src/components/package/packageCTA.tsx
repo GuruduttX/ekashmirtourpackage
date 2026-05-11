@@ -23,37 +23,37 @@ export default function PackageCTA() {
       <div className="relative z-10 px-8 py-12 sm:px-12 sm:py-14 lg:px-16">
         <div className="max-w-xl">
           {/* Badge — inside content flow, aligns with heading & text */}
-          <span className="inline-flex items-center gap-1.5 bg-white/95 text-sky-600 px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold shadow-md border border-sky-100 mb-5">
+          <span className="inline-flex items-center gap-1.5 bg-white/95 text-sky-600 px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold shadow-md border border-sky-100 mb-5 ml-10 md:ml-0">
             ⏰ Limited-Time Group Offer
           </span>
 
           {/* Heading */}
-          <h2 className="text-2xl sm:text-3xl font-bold text-white leading-snug">
+          <h2 className="text-2xl text-center md:text-start sm:text-3xl font-bold text-white leading-snug">
             Bigger Group? Get special offers{" "}
             <span className="text-yellow-300">up to 50% Off!</span>
           </h2>
 
           {/* Subtitle */}
-          <p className="mt-3 text-sm sm:text-base text-white/80 font-light">
+          <p className="mt-3 text-sm text-center md:text-start sm:text-base text-white/80 font-light">
             Experience Kashmir & beyond with your group.
           </p>
 
           {/* CTA Buttons */}
-          <div className="mt-7 flex flex-wrap gap-4">
-            <Link
-              href="tel:+919876543210"
-              className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-bold text-sky-600 transition-all duration-200 hover:bg-sky-50 hover:shadow-lg"
-            >
-              <Phone className="h-4 w-4" />
-              Get A Callback
-            </Link>
-
+          <div className="mt-7 flex flex-wrap gap-4 justify-center md:justify-start">
             <Link
               href="https://wa.me/9999999999?text=Kashmir Jana h"
               className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-bold text-green-600 transition-all duration-200 hover:bg-sky-50 hover:shadow-lg"
             >
               <Phone className="h-4 w-4" />
               WhatsApp
+            </Link>
+
+            <Link
+              href="tel:+919876543210"
+              className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-bold text-sky-600 transition-all duration-200 hover:bg-sky-50 hover:shadow-lg"
+            >
+              <Phone className="h-4 w-4" />
+              Get A Callback
             </Link>
           </div>
         </div>

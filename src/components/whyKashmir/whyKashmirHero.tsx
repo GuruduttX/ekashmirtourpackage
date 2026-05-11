@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import {
   ArrowRight,
   ChevronDown,
@@ -11,8 +11,10 @@ import {
   Star,
   Users,
 } from "lucide-react";
+import { useState } from "react";
+import EnquiryPopupForm from "@/utils/EnquiryPopupForm";
 
-const floatingAnimation = {
+const floatingAnimation= {
   y: [0, -12, 0],
   transition: {
     duration: 6,
@@ -21,7 +23,7 @@ const floatingAnimation = {
   },
 };
 
-const fadeUp = {
+const fadeUp: Variants = {
   hidden: {
     opacity: 0,
     y: 40,
@@ -62,8 +64,10 @@ const trustCards = [
 ];
 
 export default function WhyKashmirHero() {
+  const [isOpen, setOpen] = useState(false);
   return (
     <section className="relative flex min-h-screen items-center overflow-hidden bg-black text-white">
+      <EnquiryPopupForm isOpen={isOpen} onClose={() => setOpen(false)} />
       {/* Background Image */}
       <div className="absolute inset-0">
         <Image
@@ -143,7 +147,7 @@ export default function WhyKashmirHero() {
       })}
 
       {/* Main Content */}
-      <div className="relative z-10 mx-auto flex w-full max-w-7xl px-6 pb-36 pt-40 sm:px-8 md:py-28 lg:px-12">
+      <div className="relative z-10 mx-auto flex w-full max-w-7xl px-6 pb-36 pt-25 sm:px-8 md:py-28 lg:px-12">
         <div className="max-w-3xl text-center md:text-left">
           {/* Overline */}
           <motion.div
@@ -165,7 +169,7 @@ export default function WhyKashmirHero() {
             initial="hidden"
             animate="visible"
             custom={0.2}
-            className="max-w-4xl text-5xl font-bold leading-[1.05] tracking-tight text-white sm:text-6xl md:text-7xl xl:text-[92px]"
+            className="max-w-4xl text-4xl font-bold leading-[1.05] tracking-tight text-white sm:text-6xl md:text-7xl xl:text-[92px]"
           >
             Discover the
             <br />
@@ -180,7 +184,7 @@ export default function WhyKashmirHero() {
             initial="hidden"
             animate="visible"
             custom={0.35}
-            className="mt-8 max-w-2xl text-base leading-8 text-white/75 sm:text-lg md:text-xl"
+            className="mt-8 max-w-2xl text-base leading-6 md:leading-8 text-white/75 sm:text-lg md:text-xl"
           >
             Drift through the timeless beauty of Dal Lake, wander beneath
             pine-covered valleys, and experience a land where snow mountains,
@@ -194,14 +198,14 @@ export default function WhyKashmirHero() {
             initial="hidden"
             animate="visible"
             custom={0.5}
-            className="mt-10 flex flex-col items-center gap-4 sm:flex-row md:items-start"
+            className="mt-6 md:mt-10 flex flex-col items-center gap-4 sm:flex-row md:items-start"
           >
             <motion.div
               whileHover={{ scale: 1.03, y: -2 }}
               whileTap={{ scale: 0.98 }}
             >
               <Link
-                href="/packages"
+                href="/package"
                 className="group inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-sky-400 to-cyan-400 px-7 py-4 text-sm font-semibold text-slate-950 shadow-[0_0_35px_rgba(56,189,248,0.35)] transition-all duration-300 hover:shadow-[0_0_45px_rgba(34,211,238,0.5)] sm:text-base"
               >
                 Explore Kashmir Packages
@@ -213,12 +217,12 @@ export default function WhyKashmirHero() {
               whileHover={{ scale: 1.03, y: -2 }}
               whileTap={{ scale: 0.98 }}
             >
-              <Link
-                href="/contact"
+              <button
+                onClick={() => setOpen(true)}
                 className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/10 px-7 py-4 text-sm font-medium text-white backdrop-blur-xl transition-all duration-300 hover:border-sky-300/40 hover:bg-white/15 sm:text-base"
               >
                 Plan a Custom Trip
-              </Link>
+              </button>
             </motion.div>
           </motion.div>
         </div>

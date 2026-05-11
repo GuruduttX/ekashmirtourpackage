@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import {
   motion,
   useInView,
@@ -9,6 +9,7 @@ import {
   Variants,
 } from "framer-motion";
 import { Search, FileText, PhoneCall, Plane } from "lucide-react";
+import EnquiryPopupForm from "@/utils/EnquiryPopupForm";
 
 /* ─────────────────────────────────────────
    Types
@@ -195,6 +196,7 @@ export default function HowItWorks() {
   const lineRef = useRef<HTMLDivElement>(null);
 
   const isInView = useInView(sectionRef, { once: true, margin: "-80px" });
+  const[isOpen, setOpen] = useState(false);
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -211,6 +213,7 @@ export default function HowItWorks() {
           "linear-gradient(170deg, #ffffff 0%, #f0f9ff 50%, #e0f2fe 100%)",
       }}
     >
+      <EnquiryPopupForm isOpen={isOpen} onClose={()=> setOpen(false)}/>
       {/* ── Background atmosphere ── */}
       <div
         className="pointer-events-none absolute top-0 right-0 w-[500px] h-[500px] rounded-full"
@@ -461,8 +464,8 @@ export default function HowItWorks() {
             </span>
           </div>
 
-          <motion.a
-            href="#packages"
+          <motion.button
+            onClick={()=>setOpen(true)}
             whileHover={{
               y: -3,
               boxShadow: "0 20px 40px -8px rgba(14,165,233,0.40)",
@@ -476,7 +479,7 @@ export default function HowItWorks() {
           >
             Start Planning
             <Search className="w-4 h-4" />
-          </motion.a>
+          </motion.button>
         </motion.div>
       </div>
     </section>

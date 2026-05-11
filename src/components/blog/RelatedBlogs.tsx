@@ -50,7 +50,7 @@ const dummyBlogs = [
 
 export default function RelatedBlogs() {
   return (
-    <section className="relative overflow-hidden bg-[linear-gradient(to_bottom,#ffffff,#f0f9ff)] py-16 sm:py-20 lg:py-24">
+    <section className="relative overflow-hidden bg-[linear-gradient(to_bottom,#ffffff,#f0f9ff)] py-10 sm:py-20 lg:py-24">
       {/* Atmospheric Background */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute left-[-10rem] top-[10%] h-[28rem] w-[28rem] rounded-full bg-sky-400/10 blur-[170px]" />
@@ -71,7 +71,7 @@ export default function RelatedBlogs() {
               duration: 0.8,
               ease: [0.16, 1, 0.3, 1],
             }}
-            className="max-w-2xl"
+            className="max-w-2xl text-center md:text-start"
           >
             <div className="inline-flex items-center gap-2 rounded-full border border-white/70 bg-white/70 px-4 py-2 backdrop-blur-xl shadow-[0_10px_40px_rgba(14,165,233,0.08)]">
               <Stars className="h-3.5 w-3.5 text-sky-500" />
@@ -104,7 +104,7 @@ export default function RelatedBlogs() {
               delay: 0.1,
               ease: [0.16, 1, 0.3, 1],
             }}
-            className="flex items-center gap-3"
+            className="flex items-center gap-3 justify-end"
           >
             <button className="group flex h-12 w-12 items-center justify-center rounded-full border border-white/70 bg-white/75 backdrop-blur-2xl shadow-[0_15px_40px_rgba(14,165,233,0.08)] transition-all duration-500 hover:border-sky-200 hover:bg-sky-50/80 hover:shadow-[0_25px_50px_rgba(14,165,233,0.14)]">
               <ArrowLeft className="h-4 w-4 text-slate-600 transition-colors duration-500 group-hover:text-sky-500" />

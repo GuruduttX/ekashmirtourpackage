@@ -2,8 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useInView } from "@/hooks/useInView";
+import EnquiryPopupForm from "@/utils/EnquiryPopupForm";
 
 const CAROUSEL_PACKAGES = [
   {
@@ -90,7 +91,6 @@ export default function FeaturedPackages() {
   const isDragging = useRef(false);
   const dragStartX = useRef(0);
   const dragStart  = useRef(0);
-
   useEffect(() => {
     const el = trackRef.current;
     if (!el) return;
@@ -142,7 +142,6 @@ export default function FeaturedPackages() {
 
   return (
     <section id="packages" className="pt-28 pb-5 lg:pt-36 lg:pb-8 overflow-hidden bg-sky-50">
-
       {/* ── Section Header — one row ── */}
       <div className="max-w-7xl mx-auto px-6 lg:px-12 mb-12">
         <div
@@ -243,73 +242,76 @@ function PackageCard({
 }: {
   pkg: (typeof CAROUSEL_PACKAGES)[number];
 }) {
+  const [isOpen, setOpen] = useState(false);
   return (
-    <article
-      className="group relative shrink-0 rounded-3xl overflow-hidden cursor-pointer"
-      style={{
-        width: "340px",
-        height: "500px",
-        boxShadow:
-          "0 12px 40px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.10)",
-      }}
-    >
-      {/* Card image — unoptimized so Next.js doesn't re-compress Unsplash's CDN images */}
-      <Image
-        src={pkg.image}
-        alt={pkg.title}
-        fill
-        unoptimized
-        className="object-cover transition-transform duration-700 group-hover:scale-[1.06]"
-      />
-
-      {/* Dark gradient — heavier at bottom */}
-      <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/30 to-transparent" />
-
-      {/* Tag pill */}
-      <div className="absolute top-4 left-4 z-10">
-        <span
-          className="text-white text-[0.62rem] font-semibold px-3 py-1 rounded-full"
-          style={{
-            background: pkg.tagBg,
-            backdropFilter: "blur(8px)",
-            WebkitBackdropFilter: "blur(8px)",
-          }}
-        >
-          {pkg.tag}
-        </span>
-      </div>
-
-      {/* Bottom content */}
-      <div className="absolute inset-x-0 bottom-0 z-10 p-5">
-        <h3 className="text-white font-bold text-[1.02rem] leading-snug mb-0.5 truncate">
-          {pkg.title}
-        </h3>
-        <p className="text-white/50 text-[0.7rem] mb-3">{pkg.duration}</p>
-
-        {/* Divider */}
-        <div
-          className="mb-3 h-px"
-          style={{ background: "rgba(255,255,255,0.15)" }}
+    <>
+      <EnquiryPopupForm isOpen={isOpen} onClose={()=> setOpen(false)} />
+      <article
+        className="group relative shrink-0 rounded-3xl overflow-hidden cursor-pointer"
+        style={{
+          width: "340px",
+          height: "500px",
+          boxShadow: "0 12px 40px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.10)",
+        }}
+      >
+        {/* Card image — unoptimized so Next.js doesn't re-compress Unsplash's CDN images */}
+        <Image
+          src={pkg.image}
+          alt={pkg.title}
+          fill
+          unoptimized
+          className="object-cover transition-transform duration-700 group-hover:scale-[1.06]"
         />
 
-        {/* Price + button row */}
-        <div className="flex items-center justify-between gap-3">
-          <div className="min-w-0">
-            <span className="text-white/40 text-[0.65rem] line-through block leading-none">
-              {pkg.originalPrice}
-            </span>
-            <span className="text-white font-bold text-[1.22rem] leading-tight">
-              {pkg.price}
-            </span>
-          </div>
+        {/* Dark gradient — heavier at bottom */}
+        <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/30 to-transparent" />
 
-          <button
-            className="shrink-0 rounded-full bg-white px-4 py-2 text-[0.72rem] font-semibold text-slate-900 transition-all duration-200 hover:bg-sky-50 hover:shadow-md"
+        {/* Tag pill */}
+        <div className="absolute top-4 left-4 z-10">
+          <span
+            className="text-white text-[0.62rem] font-semibold px-3 py-1 rounded-full"
+            style={{
+              background: pkg.tagBg,
+              backdropFilter: "blur(8px)",
+              WebkitBackdropFilter: "blur(8px)",
+            }}
           >
-            Get Quotes
-          </button>
+            {pkg.tag}
+          </span>
         </div>
-      </div>
-    </article>
+
+        {/* Bottom content */}
+        <div className="absolute inset-x-0 bottom-0 z-10 p-5">
+          <h3 className="text-white font-bold text-[1.02rem] leading-snug mb-0.5 truncate">
+            {pkg.title}
+          </h3>
+          <p className="text-white/50 text-[0.7rem] mb-3">{pkg.duration}</p>
+
+          {/* Divider */}
+          <div
+            className="mb-3 h-px"
+            style={{ background: "rgba(255,255,255,0.15)" }}
+          />
+
+          {/* Price + button row */}
+          <div className="flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <span className="text-white/40 text-[0.65rem] line-through block leading-none">
+                {pkg.originalPrice}
+              </span>
+              <span className="text-white font-bold text-[1.22rem] leading-tight">
+                {pkg.price}
+              </span>
+            </div>
+
+            <button
+              onClick={()=>setOpen(true)}
+             className="shrink-0 rounded-full bg-white px-4 py-2 text-[0.72rem] font-semibold text-slate-900 transition-all duration-200 hover:bg-sky-50 hover:shadow-md">
+              Get Quotes
+            </button>
+          </div>
+        </div>
+      </article>
+    </>
   );
 }

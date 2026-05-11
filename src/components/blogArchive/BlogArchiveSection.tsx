@@ -85,7 +85,7 @@ export default function BlogArchiveSection({ blogs }: BlogArchiveSectionProps) {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.35),transparent_55%)]" />
       </div>
 
-      <div className="relative z-10 space-y-6 md:space-y-8">
+      <div className="relative z-10 space-y-4 md:space-y-8">
         <BlogArchiveHeader
           searchQuery={searchQuery}
           onSearchChange={handleSearchChange}

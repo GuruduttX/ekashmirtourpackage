@@ -85,7 +85,7 @@ export default function KashmirFAQ() {
   const activeFAQ = faqs.find((f) => f.id === activeModalId);
 
   return (
-    <section className="relative overflow-hidden py-20 lg:py-32 px-6 lg:px-12 bg-sky-50 font-sans">
+    <section className="relative overflow-hidden py-10 md:py-20 lg:py-32 px-6 lg:px-12 bg-sky-50 font-sans">
       {/* --- SVG Wave Background (Desktop Only) --- */}
       <div className="absolute inset-0 hidden lg:flex items-center justify-center pointer-events-none opacity-40">
         <svg

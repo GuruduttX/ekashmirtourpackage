@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useCallback, useState } from "react";
+import { useRef, useCallback, useState } from "react";
 import Image from "next/image";
 import { motion, useInView, Variants } from "framer-motion";
 import { Star, Quote, ChevronLeft, ChevronRight, Shield } from "lucide-react";
@@ -96,7 +96,9 @@ const TESTIMONIALS: Testimonial[] = [
   },
 ];
 
-const SCROLL_SPEED = 0.45; // px per frame
+// ── FIX: animation duration replaces SCROLL_SPEED.
+// Lower = faster. 40s for 8 cards feels natural on all screen sizes.
+const ANIMATION_DURATION = 40; // seconds for one full loop
 const MANUAL_PAUSE_DURATION = 2500; // ms
 
 /* ─────────────────────────────────────────
@@ -181,7 +183,6 @@ function ReviewCard({ testimonial }: { testimonial: Testimonial }) {
           "0 4px 24px -4px rgba(14,165,233,0.08), 0 0 0 1px rgba(255,255,255,0.7) inset",
       }}
     >
-      {/* Hover glow overlay */}
       <div
         className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-400 pointer-events-none"
         style={{
@@ -189,8 +190,6 @@ function ReviewCard({ testimonial }: { testimonial: Testimonial }) {
             "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(186,230,253,0.25) 0%, transparent 100%)",
         }}
       />
-
-      {/* Top accent line */}
       <div
         className="absolute top-0 inset-x-0 h-px rounded-t-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-400"
         style={{
@@ -200,7 +199,6 @@ function ReviewCard({ testimonial }: { testimonial: Testimonial }) {
       />
 
       <div className="relative z-10 p-6 flex flex-col items-center text-center">
-        {/* Avatar */}
         <div className="relative w-14 h-14 rounded-full overflow-hidden mb-4 ring-2 ring-white shadow-lg shadow-sky-100/60">
           <Image
             src={testimonial.image}
@@ -210,36 +208,24 @@ function ReviewCard({ testimonial }: { testimonial: Testimonial }) {
             className="object-cover"
           />
         </div>
-
-        {/* Quote icon */}
         <Quote
           className="w-6 h-6 text-sky-200 mb-3 flex-shrink-0"
           style={{ transform: "scaleX(-1)" }}
         />
-
-        {/* Review text */}
         <p className="text-gray-600 text-sm leading-relaxed mb-5 line-clamp-3">
           {testimonial.text}
         </p>
-
-        {/* Divider */}
         <div
           className="w-8 h-px mb-4"
           style={{ background: "linear-gradient(90deg, #0ea5e9, #06b6d4)" }}
         />
-
-        {/* Name + location */}
         <p className="font-bold text-gray-900 text-sm leading-tight">
           {testimonial.name}
         </p>
         <p className="text-gray-400 text-[11px] mb-3">{testimonial.location}</p>
-
-        {/* Trip tag */}
         <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-sky-50 border border-sky-100 text-sky-600 text-[10px] font-semibold tracking-wide mb-4">
           {testimonial.trip}
         </span>
-
-        {/* Rating */}
         <div className="flex items-center gap-2">
           <StarDisplay rating={testimonial.rating} />
           <span className="text-xs font-bold text-gray-700">
@@ -256,78 +242,65 @@ function ReviewCard({ testimonial }: { testimonial: Testimonial }) {
 ───────────────────────────────────────── */
 export default function CustomerReviews() {
   const sectionRef = useRef<HTMLElement>(null);
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const rafRef = useRef<number>(0);
-  const isPausedRef = useRef(false);
-  const isTouchingRef = useRef(false);
+  // ── FIX: we no longer need rafRef, scrollRef drives only manual scroll
+  const trackRef = useRef<HTMLDivElement>(null); // the CSS-animated inner track
   const manualPauseTimer = useRef<ReturnType<typeof setTimeout>>();
 
   const isInView = useInView(sectionRef, { once: true });
-  const [isHovered, setIsHovered] = useState(false);
+
+  // ── FIX: isPaused controls CSS animation-play-state via inline style
+  const [isPaused, setIsPaused] = useState(false);
   const [scrollState, setScrollState] = useState<"scrolling" | "paused">(
     "scrolling",
   );
 
   const doubled = [...TESTIMONIALS, ...TESTIMONIALS];
 
-  /* ── Auto-scroll RAF loop ── */
-  const tick = useCallback(() => {
-    const el = scrollRef.current;
-    if (!el || isPausedRef.current || isTouchingRef.current) {
-      rafRef.current = requestAnimationFrame(tick);
-      return;
-    }
-    el.scrollLeft += SCROLL_SPEED;
-    if (el.scrollLeft >= el.scrollWidth / 2) {
-      el.scrollLeft = 0;
-    }
-    rafRef.current = requestAnimationFrame(tick);
-  }, []);
-
-  useEffect(() => {
-    rafRef.current = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(rafRef.current);
-  }, [tick]);
-
   /* ── Hover pause (desktop) ── */
   const handleMouseEnter = () => {
-    isPausedRef.current = true;
-    setIsHovered(true);
+    setIsPaused(true);
     setScrollState("paused");
   };
   const handleMouseLeave = () => {
-    isPausedRef.current = false;
-    setIsHovered(false);
+    setIsPaused(false);
     setScrollState("scrolling");
   };
 
   /* ── Touch handlers (mobile) ── */
+  // ── FIX: pausing the CSS animation on touch lets native momentum scroll
+  // take over the outer overflow-x container without fighting JS.
   const handleTouchStart = () => {
-    isTouchingRef.current = true;
+    setIsPaused(true);
     setScrollState("paused");
   };
   const handleTouchEnd = () => {
-    // Delay lets momentum scrolling settle before RAF resumes
     setTimeout(() => {
-      isTouchingRef.current = false;
+      setIsPaused(false);
       setScrollState("scrolling");
-    }, 1000);
+    }, 1200);
   };
 
-  /* ── Manual scroll ── */
-  const manualScroll = (dir: "left" | "right") => {
-    isPausedRef.current = true;
+  /* ── Manual arrow scroll ── */
+  // ── FIX: manual scroll now moves the outer viewport div (outerRef),
+  // not the animated inner track. The outer div is a normal overflow-x
+  // scroll container that wraps the looping inner track.
+  const outerRef = useRef<HTMLDivElement>(null);
+
+  const manualScroll = useCallback((dir: "left" | "right") => {
+    setIsPaused(true);
     setScrollState("paused");
-    scrollRef.current?.scrollBy({
+    outerRef.current?.scrollBy({
       left: dir === "left" ? -320 : 320,
       behavior: "smooth",
     });
     clearTimeout(manualPauseTimer.current);
     manualPauseTimer.current = setTimeout(() => {
-      isPausedRef.current = false;
+      // Reset scroll position to 0 so the CSS loop picks up seamlessly
+      if (outerRef.current) outerRef.current.scrollLeft = 0;
+      setIsPaused(false);
       setScrollState("scrolling");
     }, MANUAL_PAUSE_DURATION);
-  };
+  }, []);
 
   const fadeUp: Variants = {
     hidden: { opacity: 0, y: 24 },
@@ -351,6 +324,23 @@ export default function CustomerReviews() {
           "linear-gradient(160deg, #f0f9ff 0%, #e0f2fe 50%, #f0fdff 100%)",
       }}
     >
+      {/* ── CSS keyframe definition for the infinite scroll ──
+          translateX goes from 0 to -50% because we doubled the array,
+          so -50% = exactly one full set of cards → seamless loop. */}
+      <style>{`
+        @keyframes marquee {
+          0%   { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        .marquee-track {
+          animation: marquee ${ANIMATION_DURATION}s linear infinite;
+        }
+        .marquee-track.paused {
+          animation-play-state: paused;
+        }
+        div::-webkit-scrollbar { display: none; }
+      `}</style>
+
       {/* ── Background blobs ── */}
       <div
         className="pointer-events-none absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full"
@@ -389,7 +379,6 @@ export default function CustomerReviews() {
                 "0 12px 40px -8px rgba(14,165,233,0.10), 0 0 0 1px rgba(255,255,255,0.7) inset",
             }}
           >
-            {/* Top accent bar */}
             <div
               className="absolute top-0 inset-x-0 h-px"
               style={{
@@ -397,14 +386,10 @@ export default function CustomerReviews() {
                   "linear-gradient(90deg, transparent, rgba(14,165,233,0.5), rgba(34,211,238,0.4), transparent)",
               }}
             />
-
-            {/* Overline */}
             <p className="text-[0.65rem] font-bold tracking-[0.28em] uppercase text-sky-500 mb-5 flex items-center gap-2">
               <span className="w-4 h-px bg-sky-400" />
               Reviews
             </p>
-
-            {/* Average rating */}
             <div className="flex items-end gap-3 mb-2">
               <span
                 className="text-6xl font-black text-gray-900 leading-none"
@@ -416,12 +401,9 @@ export default function CustomerReviews() {
                 <p className="text-gray-400 text-xs font-medium">out of 5</p>
               </div>
             </div>
-
             <div className="mb-4">
               <StarDisplay rating={4.9} size="md" />
             </div>
-
-            {/* Trust label */}
             <div className="flex items-start gap-2 mb-7 pb-7 border-b border-sky-100/60">
               <Shield className="w-3.5 h-3.5 text-sky-400 flex-shrink-0 mt-0.5" />
               <p className="text-gray-400 text-xs leading-relaxed">
@@ -430,8 +412,6 @@ export default function CustomerReviews() {
                 reviews from real travellers
               </p>
             </div>
-
-            {/* Rating breakdown */}
             <div className="space-y-3">
               {[
                 { star: 5, percent: 82, delay: 0.3 },
@@ -477,13 +457,7 @@ export default function CustomerReviews() {
         </motion.div>
 
         {/* ══ RIGHT — Infinite carousel ══ */}
-        {/*
-          KEY FIX: was "flex-1 overflow-hidden min-w-0"
-          overflow-hidden clips the mobile arrow row and blocks touch events.
-          Use min-w-0 only — the scroll track handles its own overflow internally.
-        */}
         <div className="flex-1 min-w-0">
-          {/* Section heading */}
           <motion.div
             custom={0.1}
             variants={fadeUp}
@@ -512,16 +486,15 @@ export default function CustomerReviews() {
             </p>
           </motion.div>
 
-          {/* Carousel wrapper — no overflow-hidden here */}
+          {/* Carousel wrapper */}
           <div className="relative">
-            {/* Left edge fade — desktop only */}
+            {/* Edge fades — desktop only */}
             <div
               className="hidden lg:block pointer-events-none absolute left-0 top-0 bottom-0 w-16 z-20"
               style={{
                 background: "linear-gradient(to right, #e0f2fe, transparent)",
               }}
             />
-            {/* Right edge fade — desktop only */}
             <div
               className="hidden lg:block pointer-events-none absolute right-0 top-0 bottom-0 w-16 z-20"
               style={{
@@ -529,31 +502,46 @@ export default function CustomerReviews() {
               }}
             />
 
-            {/* Scroll track */}
+            {/*
+              ── FIX: two-layer structure ──
+
+              OUTER div (outerRef): overflow-x-auto, no animation.
+              On mobile this is the native-touch-scrollable layer.
+              On desktop the CSS animation means scrollLeft stays at 0
+              so the outer div just acts as a viewport clip.
+
+              INNER div (.marquee-track): CSS translateX animation.
+              Width is unconstrained (flex row of all doubled cards).
+              The animation shifts it left by 50% (= one full set),
+              then snaps back to 0 — perfectly seamless because the
+              second half is an identical copy of the first.
+            */}
             <div
-              ref={scrollRef}
+              ref={outerRef}
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
               onTouchStart={handleTouchStart}
               onTouchEnd={handleTouchEnd}
-              className="flex gap-5 overflow-x-auto pb-4"
+              className="overflow-x-auto pb-4"
               style={{
                 scrollbarWidth: "none",
                 msOverflowStyle: "none",
                 WebkitOverflowScrolling: "touch",
               }}
             >
-              {doubled.map((t, i) => (
-                <ReviewCard key={`${t.id}-${i}`} testimonial={t} />
-              ))}
+              <div
+                ref={trackRef}
+                className={`marquee-track flex gap-5${isPaused ? " paused" : ""}`}
+                // Ensure the track is wide enough to never wrap
+                style={{ width: "max-content" }}
+              >
+                {doubled.map((t, i) => (
+                  <ReviewCard key={`${t.id}-${i}`} testimonial={t} />
+                ))}
+              </div>
             </div>
 
             {/* Mobile arrow row */}
-            {/*
-              KEY FIX: added "relative z-10" so this renders above the scroll
-              track in paint order and isn't clipped by any ancestor.
-              Added active:scale-95 for tactile press feedback on touch devices.
-            */}
             <div className="flex lg:hidden items-center justify-center gap-3 mt-5 relative z-10">
               <button
                 onClick={() => manualScroll("left")}
@@ -579,8 +567,6 @@ export default function CustomerReviews() {
           </div>
         </div>
       </div>
-
-      <style>{`div::-webkit-scrollbar { display: none; }`}</style>
     </section>
   );
 }

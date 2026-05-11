@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import {
   Sparkles,
   ArrowRight,
@@ -14,7 +14,7 @@ import {
 
 export default function RealKashmirExperience() {
   // Entrance Animation Variants
-  const fadeUpVariant = {
+  const fadeUpVariant: Variants = {
     hidden: { opacity: 0, y: 30 },
     visible: {
       opacity: 1,
@@ -41,7 +41,7 @@ export default function RealKashmirExperience() {
   });
 
   return (
-    <section className="relative w-full overflow-hidden bg-sky-50 py-24 lg:py-32">
+    <section className="relative w-full overflow-hidden bg-sky-50 py-10 lg:py-32">
       {/* Cinematic Background Atmosphere */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
         {/* Soft Grain Texture */}
@@ -204,7 +204,7 @@ export default function RealKashmirExperience() {
 
         {/* --- MOBILE CAROUSEL (Hidden on Desktop) --- */}
         <div className="lg:hidden mt-16 -ml-6 w-[100vw] no-scrollbar">
-          <div className="flex overflow-x-auto snap-x snap-mandatory gap-5 px-6 pb-12 scrollbar-hide">
+          <div className="flex overflow-x-auto snap-x snap-mandatory gap-5 px-6 pb-6 scrollbar-hide">
             {/* Mobile Card 1 */}
             <div className="w-[85vw] max-w-[320px] shrink-0 snap-center">
               <div className="relative h-80 rounded-3xl overflow-hidden shadow-xl border border-white/20">
