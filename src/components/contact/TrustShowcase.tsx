@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import {
   ShieldCheck,
   Star,
@@ -25,7 +25,7 @@ export default function TrustShowcase() {
     },
   };
 
-  const fadeUpVariant = {
+  const fadeUpVariant:Variants = {
     hidden: { opacity: 0, y: 30 },
     visible: {
       opacity: 1,
@@ -38,7 +38,7 @@ export default function TrustShowcase() {
     "group relative rounded-3xl bg-white/65 backdrop-blur-2xl border border-sky-100 shadow-[0_20px_60px_rgba(14,165,233,0.14)] overflow-hidden transition-all duration-500 hover:border-sky-200 hover:shadow-[0_0_50px_rgba(14,165,233,0.10)] hover:-translate-y-1 before:absolute before:inset-0 before:rounded-3xl before:bg-gradient-to-br before:from-white/15 before:to-transparent before:pointer-events-none";
 
   return (
-    <section className="relative w-full py-24 lg:py-32 bg-gradient-to-b from-sky-50 via-white to-cyan-50 overflow-hidden">
+    <section className="relative w-full py-10 lg:py-32 bg-gradient-to-b from-sky-50 via-white to-cyan-50 overflow-hidden">
       {/* --- CINEMATIC BACKGROUND ATMOSPHERE --- */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         {/* Soft Ambient Orbs */}

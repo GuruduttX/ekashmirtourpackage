@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { motion, Variants } from "framer-motion";
+import { motion, Variants, TargetAndTransition } from "framer-motion";
 import {
   Sparkles,
   ArrowRight,
@@ -29,7 +29,10 @@ export default function RealKashmirExperience() {
   };
 
   // Continuous Floating Animation
-  const floatAnimation = (delay: number, duration: number = 4) => ({
+  const floatAnimation = (
+    delay: number,
+    duration: number = 4,
+  ): TargetAndTransition => ({
     y: [0, -12, 0],
     rotate: [0, 1, -1, 0],
     transition: {

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
+import { motion, Easing} from "framer-motion";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
 export interface BlogPaginationControlsProps {
@@ -26,7 +26,7 @@ export default function BlogPaginationControls({
   const isLastPage = currentPage >= totalPages;
 
   // Custom cinematic easing
-  const easeOutExpo = [0.16, 1, 0.3, 1];
+  const easeOutExpo:Easing = [0.16, 1, 0.3, 1];
 
   return (
     <motion.div

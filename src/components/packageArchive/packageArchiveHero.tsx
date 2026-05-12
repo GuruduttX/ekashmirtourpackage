@@ -168,7 +168,7 @@ export default function PackagesArchiveHero({
       >
         <EnquiryPopupForm isOpen={isOpen} onClose={()=> setOpen(false)}/>
         {/* ══════════ HERO CONTENT GRID ══════════ */}
-        <div className="relative z-10 max-w-7xl mx-auto px-5 sm:px-8 lg:px-14 pt-24 sm:pt-28 pb-10 grid grid-cols-1 lg:grid-cols-[1fr_1.1fr] gap-12 lg:gap-6 items-start">
+        <div className="relative z-10 max-w-7xl mx-auto px-5 sm:px-8 lg:px-14 pt-24 sm:pt-28 pb-0 grid grid-cols-1 lg:grid-cols-[1fr_1.1fr] gap-12 lg:gap-6 items-start">
           {/* ────── LEFT — Editorial text block ────── */}
           <motion.div
             className="flex flex-col text-center lg:text-left pt-4 lg:pt-10"

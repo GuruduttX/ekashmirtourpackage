@@ -1,5 +1,6 @@
 "use client";
 
+import EnquiryPopupForm from "@/utils/EnquiryPopupForm";
 import {
   motion,
   Variants,
@@ -9,7 +10,7 @@ import {
   animate,
 } from "framer-motion";
 import { Sparkles, Search, Compass } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface HeroStat {
   value: number;
@@ -143,10 +144,12 @@ export default function ServicesArchiveHero({
     primaryCtaLabel,
     secondaryCtaLabel,
     onPrimaryCtaClick,
-    onSecondaryCtaClick,
+    onSecondaryCtaClick = ()=> setOpen(true),
     stats,
     categories,
   } = merged;
+
+  const [isOpen, setOpen] = useState(false);
 
   // Highlight a specific word in the title (gradient text)
   const renderTitle = () => {
@@ -168,6 +171,7 @@ export default function ServicesArchiveHero({
 
   return (
     <section className="relative w-full overflow-hidden bg-white pt-10 sm:pt-12 md:pt-16">
+      <EnquiryPopupForm isOpen={isOpen} onClose={()=>setOpen(false)}/>
       {/* --- BACKGROUND ARTWORK & EFFECTS --- */}
       <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
         {/* Soft background blobs */}

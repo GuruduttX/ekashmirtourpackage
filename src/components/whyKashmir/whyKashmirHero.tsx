@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { motion, Variants } from "framer-motion";
+import { motion, TargetAndTransition, Variants } from "framer-motion";
 import {
   ArrowRight,
   ChevronDown,
@@ -14,7 +14,7 @@ import {
 import { useState } from "react";
 import EnquiryPopupForm from "@/utils/EnquiryPopupForm";
 
-const floatingAnimation= {
+const floatingAnimation: TargetAndTransition = {
   y: [0, -12, 0],
   transition: {
     duration: 6,

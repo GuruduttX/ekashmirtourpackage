@@ -245,7 +245,7 @@ export default function MidPageCTA({
             />
 
             {/* Card content */}
-            <div className="relative z-10 px-8 py-12 sm:px-12 sm:py-14 text-center">
+            <div className="relative z-10 px-4 py-12 sm:px-12 sm:py-14 text-center">
               {/* Overline badge */}
               <motion.div
                 custom={0.15}

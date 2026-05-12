@@ -255,7 +255,7 @@ export default function TopDestinations() {
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12">
         {/* ══ SECTION HEADER ══ */}
-        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-5 mb-10 lg:mb-14">
+        <div className="flex flex-col text-center md:text-start sm:flex-row sm:items-end sm:justify-between gap-5 mb-10 lg:mb-14">
           <div>
             <motion.p
               custom={0}

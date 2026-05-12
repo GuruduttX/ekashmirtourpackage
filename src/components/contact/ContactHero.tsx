@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
+import { motion, Variants, TargetAndTransition } from "framer-motion";
 import {
   Sparkles,
   Phone,
@@ -24,7 +24,7 @@ export default function ContactHero() {
     },
   };
 
-  const fadeUpVariant = {
+  const fadeUpVariant: Variants = {
     hidden: { opacity: 0, y: 30 },
     visible: {
       opacity: 1,
@@ -33,7 +33,10 @@ export default function ContactHero() {
     },
   };
 
-  const floatAnimation = (delay: number = 0, duration: number = 5) => ({
+  const floatAnimation = (
+    delay: number = 0,
+    duration: number = 5,
+  ): TargetAndTransition => ({
     y: [0, -15, 0],
     transition: {
       duration,

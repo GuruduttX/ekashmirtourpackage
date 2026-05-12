@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, Variants } from "framer-motion";
 import {
   Sparkles,
   ChevronDown,
@@ -82,7 +82,7 @@ export default function PremiumFAQ() {
     },
   };
 
-  const fadeUpVariant = {
+  const fadeUpVariant: Variants = {
     hidden: { opacity: 0, y: 30 },
     visible: {
       opacity: 1,
@@ -92,7 +92,7 @@ export default function PremiumFAQ() {
   };
 
   return (
-    <section className="relative w-full py-24 lg:py-32 bg-gradient-to-b from-sky-50 via-white to-cyan-50 overflow-hidden">
+    <section className="relative w-full py-10 lg:py-32 bg-gradient-to-b from-sky-50 via-white to-cyan-50 overflow-hidden">
       {/* --- CINEMATIC BACKGROUND ATMOSPHERE --- */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         {/* Soft Ambient Orbs */}
@@ -164,10 +164,10 @@ export default function PremiumFAQ() {
                 >
                   <button
                     onClick={() => toggleFAQ(index)}
-                    className="w-full flex items-center justify-between p-6 sm:p-8 text-left focus:outline-none"
+                    className="w-full flex items-center justify-between p-3 md:p-6 sm:p-8 text-left focus:outline-none"
                   >
                     <h3
-                      className={`text-xl sm:text-2xl font-medium tracking-tight transition-colors duration-300 pr-8 ${
+                      className={`text-sm md:text-xl sm:text-2xl font-medium tracking-tight transition-colors duration-300 pr-8 ${
                         isOpen
                           ? "text-transparent bg-clip-text bg-gradient-to-r from-sky-500 to-cyan-400 font-semibold"
                           : "text-slate-800 group-hover:text-slate-900"

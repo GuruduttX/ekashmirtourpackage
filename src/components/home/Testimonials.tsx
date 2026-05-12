@@ -148,13 +148,14 @@ function RatingBar({
   return (
     <div className="flex items-center gap-3 text-xs">
       <span className="w-4 text-right font-semibold text-gray-600">{star}</span>
-      <Star className="w-3 h-3 fill-amber-400 text-amber-400 flex-shrink-0" />
+      <Star className="w-3 h-3 fill-amber-400 text-amber-400 shrink-0" />
       <div className="flex-1 h-1.5 rounded-full bg-gray-100 overflow-hidden">
         <motion.div
           className="h-full rounded-full"
           style={{ background: "linear-gradient(90deg, #0ea5e9, #06b6d4)" }}
           initial={{ width: 0 }}
-          animate={{ width: `${percent}%` }}
+          whileInView={{ width: `${percent}%` }} // Native view trigger
+          viewport={{ once: true }} // Only animate once when scrolled into view
           transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay }}
         />
       </div>
@@ -173,7 +174,7 @@ function ReviewCard({ testimonial }: { testimonial: Testimonial }) {
         y: -6,
         transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] },
       }}
-      className="group relative flex-shrink-0 w-[270px] sm:w-[300px] rounded-3xl cursor-grab active:cursor-grabbing"
+      className="group relative shrink-0 w-67.5 sm:w-75 rounded-3xl cursor-grab active:cursor-grabbing"
       style={{
         background: "rgba(255,255,255,0.72)",
         backdropFilter: "blur(20px)",
@@ -209,7 +210,7 @@ function ReviewCard({ testimonial }: { testimonial: Testimonial }) {
           />
         </div>
         <Quote
-          className="w-6 h-6 text-sky-200 mb-3 flex-shrink-0"
+          className="w-6 h-6 text-sky-200 mb-3 shrink-0"
           style={{ transform: "scaleX(-1)" }}
         />
         <p className="text-gray-600 text-sm leading-relaxed mb-5 line-clamp-3">
@@ -244,7 +245,7 @@ export default function CustomerReviews() {
   const sectionRef = useRef<HTMLElement>(null);
   // ── FIX: we no longer need rafRef, scrollRef drives only manual scroll
   const trackRef = useRef<HTMLDivElement>(null); // the CSS-animated inner track
-  const manualPauseTimer = useRef<ReturnType<typeof setTimeout>>();
+  const manualPauseTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   const isInView = useInView(sectionRef, { once: true });
 
@@ -318,7 +319,7 @@ export default function CustomerReviews() {
   return (
     <section
       ref={sectionRef}
-      className="relative w-full py-16 lg:py-24 overflow-hidden"
+      className="relative w-full pt-16 pb-0 md:py-16 lg:py-24 overflow-hidden"
       style={{
         background:
           "linear-gradient(160deg, #f0f9ff 0%, #e0f2fe 50%, #f0fdff 100%)",
@@ -343,20 +344,20 @@ export default function CustomerReviews() {
 
       {/* ── Background blobs ── */}
       <div
-        className="pointer-events-none absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full"
+        className="pointer-events-none absolute -top-32 -right-32 w-125 h-125 rounded-full"
         style={{
           background:
             "radial-gradient(circle, rgba(14,165,233,0.07) 0%, transparent 65%)",
         }}
       />
       <div
-        className="pointer-events-none absolute -bottom-24 -left-24 w-[400px] h-[400px] rounded-full"
+        className="pointer-events-none absolute -bottom-24 -left-24 w-100 h-100 rounded-full"
         style={{
           background:
             "radial-gradient(circle, rgba(34,211,238,0.06) 0%, transparent 65%)",
         }}
       />
-      <div className="pointer-events-none absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-sky-200/60 to-transparent" />
+      <div className="pointer-events-none absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent via-sky-200/60 to-transparent" />
 
       {/* ── Two-column wrapper ── */}
       <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 flex flex-col lg:flex-row gap-10 lg:gap-14 items-start">
@@ -366,7 +367,7 @@ export default function CustomerReviews() {
           variants={fadeUp}
           initial="hidden"
           animate={isInView ? "visible" : "hidden"}
-          className="w-full lg:w-72 flex-shrink-0 lg:sticky lg:top-24"
+          className="w-full lg:w-72 shrink-0 lg:sticky lg:top-24"
         >
           <div
             className="relative rounded-3xl overflow-hidden p-7"
@@ -405,7 +406,7 @@ export default function CustomerReviews() {
               <StarDisplay rating={4.9} size="md" />
             </div>
             <div className="flex items-start gap-2 mb-7 pb-7 border-b border-sky-100/60">
-              <Shield className="w-3.5 h-3.5 text-sky-400 flex-shrink-0 mt-0.5" />
+              <Shield className="w-3.5 h-3.5 text-sky-400 shrink-0 mt-0.5" />
               <p className="text-gray-400 text-xs leading-relaxed">
                 Based on{" "}
                 <span className="font-semibold text-gray-600">10,000+</span>{" "}
@@ -484,7 +485,7 @@ export default function CustomerReviews() {
             <p className="text-gray-400 text-sm mt-2 font-light">
               Hover to pause · Swipe or use arrows to browse
             </p>
-          </motion.div>
+          </motion.div>A
 
           {/* Carousel wrapper */}
           <div className="relative">
@@ -550,7 +551,7 @@ export default function CustomerReviews() {
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
-              <span className="text-[10px] text-gray-400 tracking-widest uppercase min-w-[60px] text-center">
+              <span className="text-[10px] text-gray-400 tracking-widest uppercase min-w-15 text-center">
                 {scrollState === "paused" ? "Paused" : "Scrolling"}
               </span>
               <button

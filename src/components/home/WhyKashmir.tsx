@@ -133,17 +133,19 @@ export default function WhyKashmir() {
           {/* ── Right: Text content ── */}
           <div
             ref={rightRef}
-            className={`min-w-0 transition-all duration-1000 delay-200 ${
+            className={`min-w-0 transition-all duration-1000 delay-200 text-center md:text-start ${
               rightIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
             }`}
           >
             {/* Overline */}
             <div className="flex items-center gap-2.5 mb-4">
+              <div className="flex items-center gap-2 justify-center md:justify-start w-full">
               <div className="h-px w-8 bg-sky-500" />
               <span className="text-sky-500 text-[0.68rem] font-semibold tracking-[0.28em] uppercase">
                 Why Kashmir
               </span>
               <div className="h-px w-8 bg-sky-500" />
+              </div>
             </div>
 
             {/* Heading */}

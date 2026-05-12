@@ -1,12 +1,12 @@
 "use client";
 
 import React from "react";
-import { motion, Variants } from "framer-motion";
+import { Easing, motion, Variants } from "framer-motion";
 import { Feather, BookOpen, Clock, Sparkles, MapPin } from "lucide-react";
 
 export default function BlogArchiveHero() {
   // Framer Motion Variants for smooth, cinematic transitions (no bounce)
-  const easeOutExpo = [0.16, 1, 0.3, 1];
+  const easeOutExpo:Easing = [0.16, 1, 0.3, 1];
 
   const staggerContainer = {
     hidden: { opacity: 0 },

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import EnquiryPopupForm from "@/utils/EnquiryPopupForm";
 
 type Snowflake = {
   id: number;
@@ -27,9 +28,11 @@ const createSnowflakes = () =>
 
 export default function AboutHero() {
   const [snowflakes] = useState<Snowflake[]>(createSnowflakes);
+  const [isOpen, setOpen] = useState(false)
 
   return (
     <section className="relative flex min-h-[620px] overflow-hidden sm:min-h-[680px] lg:min-h-[760px]">
+      <EnquiryPopupForm isOpen={isOpen} onClose={()=>setOpen(false)}/>
       <Image
         src="/Home/kashmir-hero.webp"
         alt="Snow-covered Kashmir landscape"
@@ -186,19 +189,19 @@ export default function AboutHero() {
 
           <div className="mt-9 flex w-full max-w-md flex-col gap-3 sm:max-w-none sm:flex-row sm:justify-center sm:gap-4">
             <Link
-              href="/#packages"
+              href="/package"
               className="pop-in w-full rounded-2xl border border-white/30 bg-sky-500/85 px-7 py-3.5 text-center text-[0.95rem] font-medium text-white shadow-[0_10px_30px_rgba(14,165,233,0.35)] backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:bg-sky-600 sm:w-auto"
               style={{ animationDelay: "700ms" }}
             >
               Book the Tour Package
             </Link>
-            <Link
-              href="/#contact"
+            <button
+              onClick={()=>setOpen(true)}
               className="pop-in w-full rounded-2xl border border-white/22 bg-white/10 px-7 py-3.5 text-center text-[0.95rem] font-medium text-white backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/16 sm:w-auto"
               style={{ animationDelay: "820ms" }}
             >
               Get in Touch
-            </Link>
+            </button>
           </div>
         </div>
       </div>

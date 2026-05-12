@@ -14,7 +14,6 @@ import PackageItinerary from "@/components/package/PackageItinerary";
 import PackageOverview from "@/components/package/PackageOverview";
 import PackageTestimonials from "@/components/package/PackageTestimonial";
 import Policies from "@/components/package/Policies";
-import ProductRatings from "@/components/package/ProductRatings";
 import { PACKAGES } from "@/lib/constants";
 
 const toSlug = (value: string) =>
@@ -75,7 +74,9 @@ export default async function PackagePage({
           </div>
         </div>
         <KnowBeforeYouGo />
+        <div className="px-3 md:px-15">
         <PackageCTA />
+        </div>
         <PackageTestimonials />
         <PackageFaqSection />
         <Policies />

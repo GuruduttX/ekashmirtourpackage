@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { motion, Variants } from "framer-motion";
+import { Easing, motion, Variants } from "framer-motion";
 import { Feather } from "lucide-react";
 import BlogCard from "../blog/BlogCard";
 
@@ -29,7 +29,7 @@ export interface BlogGridProps {
 // ==================================================
 // ✨ ANIMATION VARIANTS
 // ==================================================
-const easeOutExpo = [0.16, 1, 0.3, 1];
+const easeOutExpo:Easing = [0.16, 1, 0.3, 1];
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },

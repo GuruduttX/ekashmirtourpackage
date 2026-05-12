@@ -49,7 +49,7 @@ export default function ContactExperience() {
   ];
 
   return (
-    <section className="relative w-full py-24 lg:py-32 bg-gradient-to-b from-sky-50 via-white to-cyan-50 overflow-hidden">
+    <section className="relative w-full py-10 lg:py-32 bg-gradient-to-b from-sky-50 via-white to-cyan-50 overflow-hidden">
       {/* --- CINEMATIC BACKGROUND ATMOSPHERE --- */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         {/* Soft Ambient Orbs */}
