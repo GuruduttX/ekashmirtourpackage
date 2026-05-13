@@ -9,12 +9,59 @@ const poppins = Poppins({
   display: "swap",
 });
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.ekashmirtourpackage.com";
+
 export const metadata: Metadata = {
-  title: "eKashmir Tour Packages | Experience the Cold Beauty of Kashmir",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "eKashmir Tour Packages | Premium Kashmir Holiday Packages",
+    template: "%s | eKashmir Tour Packages",
+  },
   description:
-    "Premium Kashmir tour packages — Gulmarg snow retreats, Dal Lake houseboats, Pahalgam valley treks. Luxury travel crafted for the discerning traveler.",
+    "Book premium Kashmir tour packages with eKashmir. Explore Gulmarg snow retreats, Dal Lake houseboats, Pahalgam valley treks & Sonamarg glaciers. Customized Kashmir holidays from ₹8,999.",
   keywords:
-    "Kashmir tour packages, Gulmarg, Dal Lake, Pahalgam, Sonamarg, snow Kashmir, luxury Kashmir travel",
+    "Kashmir tour packages, Kashmir holiday packages, Gulmarg tour, Dal Lake houseboat, Pahalgam tour, Sonamarg glacier, Kashmir honeymoon packages, Kashmir family tour, eKashmir",
+  authors: [{ name: "eKashmir Tour Packages" }],
+  creator: "eKashmir",
+  publisher: "eKashmir",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_IN",
+    url: SITE_URL,
+    siteName: "eKashmir Tour Packages",
+    title: "eKashmir Tour Packages | Premium Kashmir Holiday Packages",
+    description:
+      "Book premium Kashmir tour packages. Gulmarg snow retreats, Dal Lake houseboats, Pahalgam valley treks & Sonamarg glaciers. Expert-crafted Kashmir holidays.",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "eKashmir Tour Packages — Premium Kashmir Holidays",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "eKashmir Tour Packages | Premium Kashmir Holiday Packages",
+    description:
+      "Book premium Kashmir tour packages. Gulmarg, Dal Lake, Pahalgam & Sonamarg. Expert-crafted Kashmir holidays.",
+    images: ["/og-image.jpg"],
+  },
+  alternates: {
+    canonical: SITE_URL,
+  },
 };
 
 export default function RootLayout({
