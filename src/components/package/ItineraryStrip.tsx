@@ -3,17 +3,10 @@
 import { useRef } from "react";
 import { motion } from "framer-motion";
 
-const itinerary = [
-  { id: "1", place: "Srinagar & Dal Lake" },
-  { id: "2", place: "Gulmarg & Pahalgam" },
-  { id: "3", place: "Sonamarg" },
-  { id: "4", place: "Pahalgam & Betaab" },
-  { id: "5", place: "Doodhpathri" },
-  { id: "6", place: "Yusmarg & Pines" },
-  { id: "7", place: "Departure" },
-];
-
-const duration = "7D / 6N";
+interface ItineraryStripProps {
+  durationbreakdown?: Array<{ id?: string; days: number; place: string }>;
+  duration?: string;
+}
 
 function ordinal(n: number): { num: string; suffix: string } {
   const s = ["th", "st", "nd", "rd"];
@@ -24,8 +17,21 @@ function ordinal(n: number): { num: string; suffix: string } {
   };
 }
 
-export default function ItineraryStrip() {
+const defaultBreakdown = [
+  { id: "1", days: 1, place: "Srinagar & Dal Lake" },
+  { id: "2", days: 2, place: "Gulmarg & Pahalgam" },
+  { id: "3", days: 3, place: "Sonamarg" },
+  { id: "4", days: 4, place: "Pahalgam & Betaab" },
+  { id: "5", days: 5, place: "Departure" },
+];
+
+export default function ItineraryStrip({
+  durationbreakdown = defaultBreakdown,
+  duration = "Custom Tour",
+}: ItineraryStripProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  const items = durationbreakdown.length > 0 ? durationbreakdown : defaultBreakdown;
 
   return (
     <div className="w-full">
@@ -36,25 +42,24 @@ export default function ItineraryStrip() {
         transition={{ duration: 0.5 }}
         className="hidden md:flex items-stretch gap-0 overflow-x-auto overflow-y-hidden no-scrollbar rounded-xl border border-sky-100 bg-white shadow-sm w-full"
       >
-        {/* Duration badge cell */}
+        {/* Duration badge */}
         <div className="flex items-center shrink-0 px-5 py-4 border-r border-sky-100 bg-sky-50">
           <span
             className="inline-flex items-center rounded-full text-white px-4 py-1.5 text-sm font-bold tracking-wide whitespace-nowrap shadow-md shadow-sky-200"
             style={{
-              background:
-                "linear-gradient(120deg, #0284C7 0%, #0EA5E9 45%, #38BDF8 100%)",
+              background: "linear-gradient(120deg, #0284C7 0%, #0EA5E9 45%, #38BDF8 100%)",
             }}
           >
             {duration}
           </span>
         </div>
 
-        {/* Stop cells */}
-        {itinerary.map((item, index) => {
+        {/* Day stop cells */}
+        {items.map((item, index) => {
           const { num, suffix } = ordinal(index + 1);
           return (
             <motion.div
-              key={item.id}
+              key={item.id ?? index}
               initial={{ opacity: 0, y: 12 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: Math.min(index * 0.05, 0.35) }}
@@ -88,36 +93,31 @@ export default function ItineraryStrip() {
         transition={{ duration: 0.5 }}
         className="md:hidden rounded-2xl border border-sky-100/80 bg-white shadow-sm overflow-hidden"
       >
-        {/* Header */}
         <div className="flex items-center justify-between px-3.5 py-2.5 bg-sky-50 border-b border-sky-100/80">
           <span
             className="inline-flex items-center rounded-full text-white px-3.5 py-1 text-xs font-bold tracking-wide shadow-sm shadow-sky-200/60"
             style={{
-              background:
-                "linear-gradient(120deg, #0284C7 0%, #0EA5E9 45%, #38BDF8 100%)",
+              background: "linear-gradient(120deg, #0284C7 0%, #0EA5E9 45%, #38BDF8 100%)",
             }}
           >
             {duration}
           </span>
           <span className="text-[11px] text-sky-600 font-medium">
-            {itinerary.length} stops &nbsp;→ swipe
+            {items.length} stops &nbsp;→ swipe
           </span>
         </div>
 
-        {/* Swipeable chips */}
         <div className="relative">
           <div
             ref={scrollRef}
             className="flex overflow-x-auto overflow-y-hidden no-scrollbar scroll-smooth snap-x snap-mandatory"
-            style={{
-              WebkitOverflowScrolling: "touch",
-            }}
+            style={{ WebkitOverflowScrolling: "touch" }}
           >
-            {itinerary.map((item, index) => {
+            {items.map((item, index) => {
               const { num, suffix } = ordinal(index + 1);
               return (
                 <motion.div
-                  key={item.id}
+                  key={item.id ?? index}
                   initial={{ opacity: 0, scale: 0.88 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   transition={{
@@ -143,12 +143,9 @@ export default function ItineraryStrip() {
               );
             })}
           </div>
-
-          {/* Right fade scroll hint */}
           <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white to-transparent" />
         </div>
 
-        {/* Swipe footer */}
         <div className="flex items-center gap-1.5 px-3.5 py-2 border-t border-sky-100/80 bg-sky-50/40">
           <svg
             className="w-3 h-3 text-sky-500"

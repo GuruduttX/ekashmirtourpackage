@@ -12,10 +12,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 
-// ============================================================================
-// Types & Interfaces
-// ============================================================================
-interface Blog {
+interface BlogHeroProps {
   title: string;
   category: string;
   author: string;
@@ -26,41 +23,26 @@ interface Blog {
   readTime: string;
 }
 
-// Dummy data as requested
-const dummyBlog: Blog = {
-  title: "The Silent Echoes of Dal Lake",
-  category: "Experiential Journey",
-  author: "Aria Sterling",
-  image:
-    "https://images.unsplash.com/photo-1595815771614-ade9d652a65d?q=80&w=2070&auto=format&fit=crop",
-  alt: "Misty morning on Dal Lake with Shikaras in Kashmir",
-  subContent:
-    "As the morning mist lifts off the mirrored surface of the lake, a timeless world awakens. Discover the unspoken poetry of Kashmir's aquatic heart and the souls who navigate its serene waters.",
-  createdAt: "October 12, 2024",
-  readTime: "8 min read",
-};
-
-// ============================================================================
-// Animation Variants
-// ============================================================================
 const fadeUpVariants: Variants = {
-  hidden: {
-    opacity: 0,
-    y: 30,
-    filter: "blur(12px)",
-  },
+  hidden: { opacity: 0, y: 30, filter: "blur(12px)" },
   visible: {
     opacity: 1,
     y: 0,
     filter: "blur(0px)",
-    transition: {
-      duration: 1,
-      ease: [0.16, 1, 0.3, 1],
-    },
+    transition: { duration: 1, ease: [0.16, 1, 0.3, 1] },
   },
 };
 
-export default function CinematicBlogHero() {
+export default function CinematicBlogHero({
+  title,
+  category,
+  author,
+  image,
+  alt,
+  subContent,
+  createdAt,
+  readTime,
+}: BlogHeroProps) {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -71,7 +53,7 @@ export default function CinematicBlogHero() {
 
   return (
     <section className="relative overflow-hidden bg-[radial-gradient(circle_at_top_left,rgba(56,189,248,0.14),transparent_30%),linear-gradient(to_bottom,#f0f9ff,#ffffff)] selection:bg-sky-500/20">
-      <div className="relative mx-auto max-w-[92rem]  pb-5 pt-20 sm:px-8 lg:px-10 lg:pb-10 lg:pt-28">
+      <div className="relative mx-auto max-w-[92rem] pb-5 pt-20 sm:px-8 lg:px-10 lg:pb-10 lg:pt-28">
         <div className="relative overflow-hidden rounded-[2.5rem] border border-sky-100/80 bg-white/70 backdrop-blur-2xl shadow-[0_30px_120px_rgba(14,165,233,0.12)]">
           {/* Ambient Glow Layers */}
           <div className="absolute -left-24 top-0 h-[22rem] w-[22rem] rounded-full bg-sky-400/20 blur-[120px]" />
@@ -82,31 +64,30 @@ export default function CinematicBlogHero() {
             <motion.div
               initial="hidden"
               animate="visible"
-              className="xl:col-span-5 flex flex-col  text-center md:text-start"
+              className="xl:col-span-5 flex flex-col text-center md:text-start"
             >
               {/* Category */}
-              <motion.div
-                variants={fadeUpVariants}
-                className="mb-8 flex items-center gap-3"
-              >
+              <motion.div variants={fadeUpVariants} className="mb-8 flex items-center gap-3">
                 <div className="inline-flex items-center gap-2 rounded-full border border-sky-200/80 bg-white/80 px-4 py-2 backdrop-blur-xl shadow-[0_10px_30px_rgba(14,165,233,0.08)] mx-auto md:mx-0">
                   <BookOpen className="h-4 w-4 text-sky-500" />
                   <span className="text-[11px] font-medium uppercase tracking-[0.24em] text-sky-700">
-                    {dummyBlog.category}
+                    {category}
                   </span>
                 </div>
               </motion.div>
 
               {/* Editorial Heading */}
               <motion.div variants={fadeUpVariants}>
-                <h1 className="max-w-2xl text-[2.1rem] sm:text-[3rem] lg:text-[3rem] leading-[1] tracking-[-0.055em] font-extralight text-slate-900 text-balance">
-                  The Silent
-                  <br />
-                  Journey Across
-                  <span className="block bg-gradient-to-r from-sky-500 via-cyan-400 to-sky-400 bg-clip-text text-transparent font-medium">
-                    Dal Lake
-                  </span>
+                <h1 className="max-w-2xl text-[2.1rem] sm:text-[3rem] lg:text-[3rem] leading-[1.1] tracking-[-0.055em] font-extralight text-slate-900 text-balance">
+                  {title}
                 </h1>
+              </motion.div>
+
+              {/* Subtext */}
+              <motion.div variants={fadeUpVariants}>
+                <p className="mt-5 max-w-md text-[14px] leading-7 font-light text-slate-500">
+                  {subContent}
+                </p>
               </motion.div>
 
               {/* Editorial Metadata */}
@@ -117,21 +98,21 @@ export default function CinematicBlogHero() {
                 <div className="flex items-center gap-2 rounded-full border border-sky-100/80 bg-white/80 px-4 py-2 backdrop-blur-xl shadow-[0_10px_30px_rgba(14,165,233,0.05)]">
                   <PenLine className="h-3.5 w-3.5 text-sky-500" />
                   <span className="text-[12px] font-light tracking-[-0.01em] text-slate-700">
-                    {dummyBlog.author}
+                    {author}
                   </span>
                 </div>
 
                 <div className="flex items-center gap-2 rounded-full border border-sky-100/80 bg-white/80 px-4 py-2 backdrop-blur-xl shadow-[0_10px_30px_rgba(14,165,233,0.05)]">
                   <Calendar className="h-3.5 w-3.5 text-sky-500" />
                   <span className="text-[12px] font-light tracking-[-0.01em] text-slate-700">
-                    {dummyBlog.createdAt}
+                    {createdAt}
                   </span>
                 </div>
 
                 <div className="flex items-center gap-2 rounded-full border border-sky-100/80 bg-white/80 px-4 py-2 backdrop-blur-xl shadow-[0_10px_30px_rgba(14,165,233,0.05)]">
                   <Clock className="h-3.5 w-3.5 text-sky-500" />
                   <span className="text-[12px] font-light tracking-[-0.01em] text-slate-700">
-                    {dummyBlog.readTime}
+                    {readTime}
                   </span>
                 </div>
               </motion.div>
@@ -151,11 +132,10 @@ export default function CinematicBlogHero() {
               className="xl:col-span-7 pb-5 sm:pb-14 xl:pb-0"
             >
               <div className="relative">
-                {/* Main Image */}
                 <div className="relative overflow-hidden rounded-[2rem] border border-white/60 shadow-[0_30px_80px_rgba(15,23,42,0.18)] aspect-[1/1.02] sm:aspect-[1.08/1] lg:aspect-[1.35/1]">
                   <Image
-                    src={dummyBlog.image}
-                    alt={dummyBlog.alt}
+                    src={image}
+                    alt={alt}
                     fill
                     priority
                     className="object-cover transition-transform duration-[8s] hover:scale-105"
@@ -179,10 +159,9 @@ export default function CinematicBlogHero() {
                             Featured Destination
                           </p>
                           <h3 className="mt-2 text-2xl font-light text-white">
-                            Dal Lake, Srinagar
+                            Kashmir Valley
                           </h3>
                         </div>
-
                         <div className="hidden sm:flex h-14 w-14 items-center justify-center rounded-full border border-white/15 bg-white/10 backdrop-blur-xl">
                           <Mountain className="h-6 w-6 text-sky-200" />
                         </div>
@@ -193,9 +172,8 @@ export default function CinematicBlogHero() {
               </div>
             </motion.div>
 
-            {/* MOBILE + SHARED BOTTOM CONTENT */}
+            {/* BOTTOM CTA */}
             <div className="xl:col-span-12 flex flex-col xl:flex-row xl:items-end xl:justify-between gap-10 xl:gap-16">
-              {/* CTA */}
               <motion.div
                 initial="hidden"
                 animate="visible"
