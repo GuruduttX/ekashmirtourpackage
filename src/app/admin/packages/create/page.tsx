@@ -204,7 +204,6 @@ export default function CreatePackagePage() {
       <CMSHeader editorType="Package" />
 
       <form onSubmit={handleSubmit} className="space-y-6">
-
         {/* Post Details */}
         <CMSSection title="Package Details" defaultOpen>
           <CMSMetaSection
@@ -222,25 +221,49 @@ export default function CreatePackagePage() {
           <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="text-sm text-slate-400">Price (₹) <span className="text-red-400">*</span></label>
-                <input type="number" className={`mt-2 ${inp}`} placeholder="0" value={form.price}
-                  onChange={(e) => f('price', e.target.value)} />
+                <label className="text-sm text-slate-400">
+                  Price (₹) <span className="text-red-400">*</span>
+                </label>
+                <input
+                  type="number"
+                  className={`mt-2 ${inp}`}
+                  placeholder="0"
+                  value={form.price}
+                  onChange={(e) => f("price", e.target.value)}
+                />
               </div>
               <div>
                 <label className="text-sm text-slate-400">Rating</label>
-                <input type="number" min={0} max={5} step={0.1} className={`mt-2 ${inp}`} placeholder="4.5"
-                  value={form.rating} onChange={(e) => f('rating', e.target.value)} />
+                <input
+                  type="number"
+                  min={0}
+                  max={5}
+                  step={0.1}
+                  className={`mt-2 ${inp}`}
+                  placeholder="4.5"
+                  value={form.rating}
+                  onChange={(e) => f("rating", e.target.value)}
+                />
               </div>
               <div>
                 <label className="text-sm text-slate-400">Reviews</label>
-                <input type="number" className={`mt-2 ${inp}`} placeholder="0"
-                  value={form.reviews} onChange={(e) => f('reviews', e.target.value)} />
+                <input
+                  type="number"
+                  className={`mt-2 ${inp}`}
+                  placeholder="0"
+                  value={form.reviews}
+                  onChange={(e) => f("reviews", e.target.value)}
+                />
               </div>
             </div>
             <div>
               <label className="text-sm text-slate-400">Duration Label</label>
-              <input className={`mt-2 ${inp}`} placeholder="e.g. 7N/8D" value={form.duration}
-                onChange={(e) => f('duration', e.target.value)} />
+              <input
+                className={`mt-2 ${inp}`}
+                placeholder="e.g. 7N/8D"
+                value={form.duration}
+                onChange={(e) => f("duration", e.target.value)}
+              />
             </div>
           </div>
         </CMSSection>
@@ -256,7 +279,11 @@ export default function CreatePackagePage() {
         </CMSSection>
 
         {/* Package Overview */}
-        <CMSSection title="Package Overview" icon={<AlignLeft className="w-4 h-4" />} defaultOpen>
+        <CMSSection
+          title="Package Overview"
+          icon={<AlignLeft className="w-4 h-4" />}
+          defaultOpen
+        >
           <div className="mt-1">
             <PackageOverview
               overview={form.overview}
@@ -266,23 +293,35 @@ export default function CreatePackagePage() {
         </CMSSection>
 
         {/* What's Included */}
-        <CMSSection title="What's Included" icon={<SlidersHorizontal className="w-4 h-4" />} defaultOpen={false}>
+        <CMSSection
+          title="What's Included"
+          icon={<SlidersHorizontal className="w-4 h-4" />}
+          defaultOpen={false}
+        >
           <div className="grid grid-cols-2 gap-3 mt-1">
-            {([
-              ['isTransferIncluded',   'Transfer'],
-              ['isStayIncluded',       'Stay'],
-              ['isBreakfastIncluded',  'Breakfast'],
-              ['isSightseeingIncluded','Sightseeing'],
-            ] as const).map(([key, label]) => (
-              <button key={key} type="button"
+            {(
+              [
+                ["isTransferIncluded", "Transfer"],
+                ["isStayIncluded", "Stay"],
+                ["isBreakfastIncluded", "Breakfast"],
+                ["isSightseeingIncluded", "Sightseeing"],
+              ] as const
+            ).map(([key, label]) => (
+              <button
+                key={key}
+                type="button"
                 onClick={() => setForm((p) => ({ ...p, [key]: !p[key] }))}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl border transition-all text-sm font-medium ${
                   form[key]
-                    ? 'bg-emerald-600/10 border-emerald-600/30 text-emerald-400'
-                    : 'bg-[#07111f] border-[#19315d]/50 text-slate-500 hover:border-[#244278]/50'
+                    ? "bg-emerald-600/10 border-emerald-600/30 text-emerald-400"
+                    : "bg-[#07111f] border-[#19315d]/50 text-slate-500 hover:border-[#244278]/50"
                 }`}
               >
-                {form[key] ? <CheckCircle2 className="w-4 h-4 shrink-0" /> : <XCircle className="w-4 h-4 shrink-0" />}
+                {form[key] ? (
+                  <CheckCircle2 className="w-4 h-4 shrink-0" />
+                ) : (
+                  <XCircle className="w-4 h-4 shrink-0" />
+                )}
                 {label}
               </button>
             ))}
@@ -290,7 +329,11 @@ export default function CreatePackagePage() {
         </CMSSection>
 
         {/* Duration */}
-        <CMSSection title="Duration" icon={<Clock className="w-4 h-4" />} defaultOpen={false}>
+        <CMSSection
+          title="Duration"
+          icon={<Clock className="w-4 h-4" />}
+          defaultOpen={false}
+        >
           <div className="mt-1">
             <DurationSection
               days={form.days}
@@ -303,43 +346,110 @@ export default function CreatePackagePage() {
         </CMSSection>
 
         {/* Source Cities */}
-        <CMSSection title="Source Cities" icon={<Navigation className="w-4 h-4" />} defaultOpen={false} badge={availableSrc.length || undefined}>
+        <CMSSection
+          title="Source Cities"
+          icon={<Navigation className="w-4 h-4" />}
+          defaultOpen={false}
+          badge={availableSrc.length || undefined}
+        >
           <div className="mt-1">
-            <SourceCitySelector availableSrc={availableSrc} setAvailableSrc={setAvailableSrc} />
+            <SourceCitySelector
+              availableSrc={availableSrc}
+              setAvailableSrc={setAvailableSrc}
+            />
           </div>
         </CMSSection>
 
         {/* Routes */}
-        <CMSSection title="Routes" icon={<Map className="w-4 h-4" />} defaultOpen={false}>
+        <CMSSection
+          title="Routes"
+          icon={<Map className="w-4 h-4" />}
+          defaultOpen={false}
+        >
           <div className="space-y-4 mt-1">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="text-sm text-slate-400">Source City</label>
-                <input className={`mt-2 ${inp}`} placeholder="e.g. Delhi" value={route.source}
-                  onChange={(e) => setRoute((r) => ({ ...r, source: e.target.value }))} />
+                <input
+                  className={`mt-2 ${inp}`}
+                  placeholder="e.g. Delhi"
+                  value={route.source}
+                  onChange={(e) =>
+                    setRoute((r) => ({ ...r, source: e.target.value }))
+                  }
+                />
               </div>
               <div>
-                <label className="text-sm text-slate-400">Destination City</label>
-                <input className={`mt-2 ${inp}`} placeholder="e.g. Srinagar" value={route.destination}
-                  onChange={(e) => setRoute((r) => ({ ...r, destination: e.target.value }))} />
+                <label className="text-sm text-slate-400">
+                  Destination City
+                </label>
+                <input
+                  className={`mt-2 ${inp}`}
+                  placeholder="e.g. Srinagar"
+                  value={route.destination}
+                  onChange={(e) =>
+                    setRoute((r) => ({ ...r, destination: e.target.value }))
+                  }
+                />
               </div>
             </div>
             <div className="space-y-2">
               {route.segments.map((seg) => (
-                <div key={seg.id} className="flex items-center gap-3 rounded-xl border border-[#19315d]/40 bg-[#07111f]/60 p-3">
-                  <input className={`${inp} flex-1`} placeholder="From" value={seg.from}
-                    onChange={(e) => setRoute((r) => ({ ...r, segments: r.segments.map((s) => s.id === seg.id ? { ...s, from: e.target.value } : s) }))} />
+                <div
+                  key={seg.id}
+                  className="flex items-center gap-3 rounded-xl border border-[#19315d]/40 bg-[#07111f]/60 p-3"
+                >
+                  <input
+                    className={`${inp} flex-1`}
+                    placeholder="From"
+                    value={seg.from}
+                    onChange={(e) =>
+                      setRoute((r) => ({
+                        ...r,
+                        segments: r.segments.map((s) =>
+                          s.id === seg.id ? { ...s, from: e.target.value } : s,
+                        ),
+                      }))
+                    }
+                  />
                   <ChevronsUpDown className="w-4 h-4 text-slate-600 shrink-0 rotate-90" />
-                  <input className={`${inp} flex-1`} placeholder="To" value={seg.to}
-                    onChange={(e) => setRoute((r) => ({ ...r, segments: r.segments.map((s) => s.id === seg.id ? { ...s, to: e.target.value } : s) }))} />
-                  <button type="button" className={removeBtn}
-                    onClick={() => setRoute((r) => ({ ...r, segments: r.segments.filter((s) => s.id !== seg.id) }))}>
+                  <input
+                    className={`${inp} flex-1`}
+                    placeholder="To"
+                    value={seg.to}
+                    onChange={(e) =>
+                      setRoute((r) => ({
+                        ...r,
+                        segments: r.segments.map((s) =>
+                          s.id === seg.id ? { ...s, to: e.target.value } : s,
+                        ),
+                      }))
+                    }
+                  />
+                  <button
+                    type="button"
+                    className={removeBtn}
+                    onClick={() =>
+                      setRoute((r) => ({
+                        ...r,
+                        segments: r.segments.filter((s) => s.id !== seg.id),
+                      }))
+                    }
+                  >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
                 </div>
               ))}
-              <button type="button" className={addBtn}
-                onClick={() => setRoute((r) => ({ ...r, segments: [...r.segments, { id: uid(), from: '', to: '' }] }))}>
+              <button
+                type="button"
+                className={addBtn}
+                onClick={() =>
+                  setRoute((r) => ({
+                    ...r,
+                    segments: [...r.segments, { id: uid(), from: "", to: "" }],
+                  }))
+                }
+              >
                 <Plus className="w-4 h-4" /> Add Segment
               </button>
             </div>
@@ -347,136 +457,329 @@ export default function CreatePackagePage() {
         </CMSSection>
 
         {/* Highlights */}
-        <CMSSection title="Trip Highlights" icon={<Star className="w-4 h-4" />} defaultOpen={false} badge={highlights.length || undefined}>
+        <CMSSection
+          title="Trip Highlights"
+          icon={<Star className="w-4 h-4" />}
+          defaultOpen={false}
+          badge={highlights.length || undefined}
+        >
           <div className="space-y-3 mt-1">
             {highlights.map((item, idx) => (
               <div key={item.id} className="flex items-center gap-3">
-                <span className="text-xs text-slate-600 w-5 shrink-0">{idx + 1}</span>
-                <input className={`${inp} flex-1`} placeholder="Highlight description" value={item.description}
-                  onChange={(e) => setHighlights((p) => p.map((i) => i.id === item.id ? { ...i, description: e.target.value } : i))} />
-                <button type="button" className={removeBtn} onClick={() => setHighlights((p) => p.filter((i) => i.id !== item.id))}>
+                <span className="text-xs text-slate-600 w-5 shrink-0">
+                  {idx + 1}
+                </span>
+                <input
+                  className={`${inp} flex-1`}
+                  placeholder="Highlight description"
+                  value={item.description}
+                  onChange={(e) =>
+                    setHighlights((p) =>
+                      p.map((i) =>
+                        i.id === item.id
+                          ? { ...i, description: e.target.value }
+                          : i,
+                      ),
+                    )
+                  }
+                />
+                <button
+                  type="button"
+                  className={removeBtn}
+                  onClick={() =>
+                    setHighlights((p) => p.filter((i) => i.id !== item.id))
+                  }
+                >
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
               </div>
             ))}
-            <button type="button" className={addBtn} onClick={() => setHighlights((p) => [...p, { id: uid(), description: '' }])}>
+            <button
+              type="button"
+              className={addBtn}
+              onClick={() =>
+                setHighlights((p) => [...p, { id: uid(), description: "" }])
+              }
+            >
               <Plus className="w-4 h-4" /> Add Highlight
             </button>
           </div>
         </CMSSection>
 
         {/* Itinerary */}
-        <CMSSection title="Itinerary" icon={<FileText className="w-4 h-4" />} defaultOpen={false} badge={itinerary.length || undefined}>
+        <CMSSection
+          title="Itinerary"
+          icon={<FileText className="w-4 h-4" />}
+          defaultOpen={false}
+          badge={itinerary.length || undefined}
+        >
           <div className="mt-1">
             <ItineraryMaker itinerary={itinerary} setItinerary={setItinerary} />
           </div>
         </CMSSection>
 
         {/* Inclusions */}
-        <CMSSection title="Inclusions" icon={<CheckCircle2 className="w-4 h-4" />} defaultOpen={false} badge={inclusions.length || undefined}>
+        <CMSSection
+          title="Inclusions"
+          icon={<CheckCircle2 className="w-4 h-4" />}
+          defaultOpen={false}
+          badge={inclusions.length || undefined}
+        >
           <div className="space-y-3 mt-1">
             {inclusions.map((item, idx) => (
               <div key={item.id} className="flex items-center gap-3">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                <input className={`${inp} flex-1`} placeholder={`Inclusion ${idx + 1}`} value={item.description}
-                  onChange={(e) => setInclusions((p) => p.map((i) => i.id === item.id ? { ...i, description: e.target.value } : i))} />
-                <button type="button" className={removeBtn} onClick={() => setInclusions((p) => p.filter((i) => i.id !== item.id))}>
+                <input
+                  className={`${inp} flex-1`}
+                  placeholder={`Inclusion ${idx + 1}`}
+                  value={item.description}
+                  onChange={(e) =>
+                    setInclusions((p) =>
+                      p.map((i) =>
+                        i.id === item.id
+                          ? { ...i, description: e.target.value }
+                          : i,
+                      ),
+                    )
+                  }
+                />
+                <button
+                  type="button"
+                  className={removeBtn}
+                  onClick={() =>
+                    setInclusions((p) => p.filter((i) => i.id !== item.id))
+                  }
+                >
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
               </div>
             ))}
-            <button type="button" className={addBtn} onClick={() => setInclusions((p) => [...p, { id: uid(), description: '' }])}>
+            <button
+              type="button"
+              className={addBtn}
+              onClick={() =>
+                setInclusions((p) => [...p, { id: uid(), description: "" }])
+              }
+            >
               <Plus className="w-4 h-4" /> Add Inclusion
             </button>
           </div>
         </CMSSection>
 
         {/* Exclusions */}
-        <CMSSection title="Exclusions" icon={<XCircle className="w-4 h-4" />} defaultOpen={false} badge={exclusions.length || undefined}>
+        <CMSSection
+          title="Exclusions"
+          icon={<XCircle className="w-4 h-4" />}
+          defaultOpen={false}
+          badge={exclusions.length || undefined}
+        >
           <div className="space-y-3 mt-1">
             {exclusions.map((item, idx) => (
               <div key={item.id} className="flex items-center gap-3">
                 <XCircle className="w-3.5 h-3.5 text-red-500 shrink-0" />
-                <input className={`${inp} flex-1`} placeholder={`Exclusion ${idx + 1}`} value={item.description}
-                  onChange={(e) => setExclusions((p) => p.map((i) => i.id === item.id ? { ...i, description: e.target.value } : i))} />
-                <button type="button" className={removeBtn} onClick={() => setExclusions((p) => p.filter((i) => i.id !== item.id))}>
+                <input
+                  className={`${inp} flex-1`}
+                  placeholder={`Exclusion ${idx + 1}`}
+                  value={item.description}
+                  onChange={(e) =>
+                    setExclusions((p) =>
+                      p.map((i) =>
+                        i.id === item.id
+                          ? { ...i, description: e.target.value }
+                          : i,
+                      ),
+                    )
+                  }
+                />
+                <button
+                  type="button"
+                  className={removeBtn}
+                  onClick={() =>
+                    setExclusions((p) => p.filter((i) => i.id !== item.id))
+                  }
+                >
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
               </div>
             ))}
-            <button type="button" className={addBtn} onClick={() => setExclusions((p) => [...p, { id: uid(), description: '' }])}>
+            <button
+              type="button"
+              className={addBtn}
+              onClick={() =>
+                setExclusions((p) => [...p, { id: uid(), description: "" }])
+              }
+            >
               <Plus className="w-4 h-4" /> Add Exclusion
             </button>
           </div>
         </CMSSection>
 
         {/* FAQs */}
-        <CMSSection title="FAQs" defaultOpen={false} badge={faqs.length || undefined}>
+        <CMSSection
+          title="FAQs"
+          defaultOpen={false}
+          badge={faqs.length || undefined}
+        >
           <div className="mt-1">
             <FaqHandler faqs={faqs} setFaqs={setFaqs} />
           </div>
         </CMSSection>
 
         {/* Testimonials */}
-        <CMSSection title="Testimonials" icon={<Users className="w-4 h-4" />} defaultOpen={false} badge={testimonials.length || undefined}>
+        <CMSSection
+          title="Testimonials"
+          icon={<Users className="w-4 h-4" />}
+          defaultOpen={false}
+          badge={testimonials.length || undefined}
+        >
           <div className="space-y-3 mt-1">
             {testimonials.map((t) => (
-              <div key={t.id} className="rounded-xl border border-[#19315d]/40 bg-[#07111f]/60 p-4 space-y-3">
+              <div
+                key={t.id}
+                className="rounded-xl border border-[#19315d]/40 bg-[#07111f]/60 p-4 space-y-3"
+              >
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-slate-500">Review</span>
-                  <button type="button" className={removeBtn} onClick={() => setTestimonials((p) => p.filter((i) => i.id !== t.id))}>
+                  <button
+                    type="button"
+                    className={removeBtn}
+                    onClick={() =>
+                      setTestimonials((p) => p.filter((i) => i.id !== t.id))
+                    }
+                  >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
-                  <input className={inp} placeholder="Name" value={t.name}
-                    onChange={(e) => setTestimonials((p) => p.map((i) => i.id === t.id ? { ...i, name: e.target.value } : i))} />
-                  <input className={inp} placeholder="Rating (e.g. 5)" value={t.rating}
-                    onChange={(e) => setTestimonials((p) => p.map((i) => i.id === t.id ? { ...i, rating: e.target.value } : i))} />
+                  <input
+                    className={inp}
+                    placeholder="Name"
+                    value={t.name}
+                    onChange={(e) =>
+                      setTestimonials((p) =>
+                        p.map((i) =>
+                          i.id === t.id ? { ...i, name: e.target.value } : i,
+                        ),
+                      )
+                    }
+                  />
+                  <input
+                    className={inp}
+                    placeholder="Rating (e.g. 5)"
+                    value={t.rating}
+                    onChange={(e) =>
+                      setTestimonials((p) =>
+                        p.map((i) =>
+                          i.id === t.id ? { ...i, rating: e.target.value } : i,
+                        ),
+                      )
+                    }
+                  />
                 </div>
-                <textarea className={`${ta} min-h-20`} placeholder="Review text" value={t.description}
-                  onChange={(e) => setTestimonials((p) => p.map((i) => i.id === t.id ? { ...i, description: e.target.value } : i))} />
+                <textarea
+                  className={`${ta} min-h-20`}
+                  placeholder="Review text"
+                  value={t.description}
+                  onChange={(e) =>
+                    setTestimonials((p) =>
+                      p.map((i) =>
+                        i.id === t.id
+                          ? { ...i, description: e.target.value }
+                          : i,
+                      ),
+                    )
+                  }
+                />
               </div>
             ))}
-            <button type="button" className={addBtn}
-              onClick={() => setTestimonials((p) => [...p, { id: uid(), name: '', description: '', rating: '' }])}>
+            <button
+              type="button"
+              className={addBtn}
+              onClick={() =>
+                setTestimonials((p) => [
+                  ...p,
+                  { id: uid(), name: "", description: "", rating: "" },
+                ])
+              }
+            >
               <Plus className="w-4 h-4" /> Add Testimonial
             </button>
           </div>
         </CMSSection>
 
         {/* Know Before You Go */}
-        <CMSSection title="Know Before You Go" icon={<Info className="w-4 h-4" />} defaultOpen={false} badge={kbyg.length || undefined}>
+        <CMSSection
+          title="Know Before You Go"
+          icon={<Info className="w-4 h-4" />}
+          defaultOpen={false}
+          badge={kbyg.length || undefined}
+        >
           <div className="space-y-3 mt-1">
             {kbyg.map((item, idx) => (
               <div key={item.id} className="flex items-center gap-3">
-                <span className="text-xs text-slate-600 w-5 shrink-0">{idx + 1}</span>
-                <input className={`${inp} flex-1`} placeholder="Important note..." value={item.description}
-                  onChange={(e) => setKbyg((p) => p.map((i) => i.id === item.id ? { ...i, description: e.target.value } : i))} />
-                <button type="button" className={removeBtn} onClick={() => setKbyg((p) => p.filter((i) => i.id !== item.id))}>
+                <span className="text-xs text-slate-600 w-5 shrink-0">
+                  {idx + 1}
+                </span>
+                <input
+                  className={`${inp} flex-1`}
+                  placeholder="Important note..."
+                  value={item.description}
+                  onChange={(e) =>
+                    setKbyg((p) =>
+                      p.map((i) =>
+                        i.id === item.id
+                          ? { ...i, description: e.target.value }
+                          : i,
+                      ),
+                    )
+                  }
+                />
+                <button
+                  type="button"
+                  className={removeBtn}
+                  onClick={() =>
+                    setKbyg((p) => p.filter((i) => i.id !== item.id))
+                  }
+                >
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
               </div>
             ))}
-            <button type="button" className={addBtn} onClick={() => setKbyg((p) => [...p, { id: uid(), description: '' }])}>
+            <button
+              type="button"
+              className={addBtn}
+              onClick={() =>
+                setKbyg((p) => [...p, { id: uid(), description: "" }])
+              }
+            >
               <Plus className="w-4 h-4" /> Add Note
             </button>
           </div>
         </CMSSection>
 
         {/* Policies */}
-        <CMSSection title="Policies" icon={<FileText className="w-4 h-4" />} defaultOpen={false}>
+        <CMSSection
+          title="Policies"
+          icon={<FileText className="w-4 h-4" />}
+          defaultOpen={false}
+        >
           <div className="space-y-4 mt-1">
-            {([
-              ['refund',       'Refund Policy'],
-              ['cancel',       'Cancellation Policy'],
-              ['confirmation', 'Confirmation Policy'],
-              ['payment',      'Payment Policy'],
-            ] as const).map(([key, label]) => (
+            {(
+              [
+                ["refund", "Refund Policy"],
+                ["cancel", "Cancellation Policy"],
+                ["confirmation", "Confirmation Policy"],
+                ["payment", "Payment Policy"],
+              ] as const
+            ).map(([key, label]) => (
               <div key={key}>
                 <label className="text-sm text-slate-400">{label}</label>
-                <textarea className={`mt-2 ${ta}`} placeholder={`${label}...`} value={form[key]}
-                  onChange={(e) => f(key, e.target.value)} />
+                <textarea
+                  className={`mt-2 ${ta}`}
+                  placeholder={`${label}...`}
+                  value={form[key]}
+                  onChange={(e) => f(key, e.target.value)}
+                />
               </div>
             ))}
           </div>
@@ -490,31 +793,69 @@ export default function CreatePackagePage() {
               alt={form.heroAlt}
               editorType="Package"
               onChange={(field, value) =>
-                setForm((p) => ({ ...p, [field === 'image' ? 'heroImage' : 'heroAlt']: value }))
+                setForm((p) => ({
+                  ...p,
+                  [field === "image" ? "heroImage" : "heroAlt"]: value,
+                }))
               }
             />
           </div>
         </CMSSection>
 
         {/* Gallery */}
-        <CMSSection title="Gallery Images" icon={<ImageIcon className="w-4 h-4" />} defaultOpen={false} badge={childImages.length || undefined}>
-          <div className="space-y-3 mt-1">
+        <CMSSection
+          title="Gallery Images"
+          icon={<ImageIcon className="w-4 h-4" />}
+          defaultOpen={false}
+          badge={childImages.length || undefined}
+        >
+          <div className="space-y-4 mt-1">
             {childImages.map((img) => (
-              <div key={img.id} className="rounded-xl border border-[#19315d]/40 bg-[#07111f]/60 p-4 space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-slate-500">Image</span>
-                  <button type="button" className={removeBtn} onClick={() => setChildImages((p) => p.filter((i) => i.id !== img.id))}>
+              <div
+                key={img.id}
+                className="rounded-xl border border-[#19315d]/40 bg-[#07111f]/60 p-4 space-y-4"
+              >
+                {/* Header and Delete Button */}
+                <div className="flex items-center justify-between pb-2 border-b border-[#19315d]/40">
+                  <span className="text-sm text-slate-400 font-medium">
+                    Gallery Image
+                  </span>
+                  <button
+                    type="button"
+                    className={removeBtn}
+                    onClick={() =>
+                      setChildImages((p) => p.filter((i) => i.id !== img.id))
+                    }
+                  >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
                 </div>
-                <input className={inp} placeholder="Image URL" value={img.image}
-                  onChange={(e) => setChildImages((p) => p.map((i) => i.id === img.id ? { ...i, image: e.target.value } : i))} />
-                <input className={inp} placeholder="Alt text" value={img.alt}
-                  onChange={(e) => setChildImages((p) => p.map((i) => i.id === img.id ? { ...i, alt: e.target.value } : i))} />
+
+                {/* Upload Component */}
+                <CMSMediaSection
+                  image={img.image}
+                  alt={img.alt}
+                  editorType="Package" // Change this if your editorType is dynamic (e.g., editorType prop)
+                  onChange={(field, value) =>
+                    setChildImages((p) =>
+                      p.map((i) =>
+                        // Dynamically update either 'image' or 'alt' based on the field returned by CMSMediaSection
+                        i.id === img.id ? { ...i, [field]: value } : i,
+                      ),
+                    )
+                  }
+                />
               </div>
             ))}
-            <button type="button" className={addBtn}
-              onClick={() => setChildImages((p) => [...p, { id: uid(), image: '', alt: '' }])}>
+
+            {/* Add New Image Button */}
+            <button
+              type="button"
+              className={addBtn}
+              onClick={() =>
+                setChildImages((p) => [...p, { id: uid(), image: "", alt: "" }])
+              }
+            >
               <Plus className="w-4 h-4" /> Add Image
             </button>
           </div>
@@ -556,20 +897,23 @@ export default function CreatePackagePage() {
       <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none">
         <AnimatePresence>
           {toasts.map((t) => (
-            <motion.div key={t.id}
+            <motion.div
+              key={t.id}
               initial={{ opacity: 0, y: 16, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 8, scale: 0.95 }}
-              transition={{ ease: 'easeOut', duration: 0.2 }}
+              transition={{ ease: "easeOut", duration: 0.2 }}
               className={`flex items-center gap-3 px-4 py-3 rounded-xl shadow-xl text-sm font-medium pointer-events-auto border ${
-                t.type === 'success'
-                  ? 'bg-emerald-900/80 border-emerald-500/30 text-emerald-200'
-                  : 'bg-red-900/80 border-red-500/30 text-red-200'
+                t.type === "success"
+                  ? "bg-emerald-900/80 border-emerald-500/30 text-emerald-200"
+                  : "bg-red-900/80 border-red-500/30 text-red-200"
               }`}
             >
-              {t.type === 'success'
-                ? <CheckCircle2 className="w-4 h-4 shrink-0" />
-                : <XCircle className="w-4 h-4 shrink-0" />}
+              {t.type === "success" ? (
+                <CheckCircle2 className="w-4 h-4 shrink-0" />
+              ) : (
+                <XCircle className="w-4 h-4 shrink-0" />
+              )}
               {t.message}
             </motion.div>
           ))}

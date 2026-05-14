@@ -36,6 +36,7 @@ interface CMSMetaSectionProps {
   title: string;
   category: string;
   slug: string;
+  author?: string;
   onChange: (field: string, value: string) => void;
   editorType: string;
   /** Pass a list to render a <select>; omit for a free-text <input> */
@@ -48,36 +49,61 @@ export default function CMSMetaSection({
   slug,
   onChange,
   editorType,
+  author,
   categories,
 }: CMSMetaSectionProps) {
   const cats = categories ?? BLOG_CATEGORIES;
 
   return (
     <div className="space-y-5">
-      {/* Title */}
-      <div>
-        <label className="text-sm text-slate-400">{editorType} Title <span className="text-red-400">*</span></label>
-        <input
-          value={title}
-          required
-          placeholder={`Enter a compelling ${editorType.toLowerCase()} title...`}
-          className={inp}
-          onChange={(e) => onChange('title', e.target.value)}
-        />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        {/* Title */}
+        <div>
+          <label className="text-sm text-slate-400">
+            {editorType} Title <span className="text-red-400">*</span>
+          </label>
+          <input
+            value={title}
+            required
+            placeholder={`Enter a compelling ${editorType.toLowerCase()} title...`}
+            className={inp}
+            onChange={(e) => onChange("title", e.target.value)}
+          />
+        </div>
+
+        {/* Author */}
+        {author !== undefined && (
+          <div>
+            <label className="text-sm text-slate-400">
+              {editorType} Author <span className="text-red-400">*</span>
+            </label>
+            <input
+              value={author}
+              required
+              placeholder={`Enter the ${editorType.toLowerCase()} Author's name`}
+              className={inp}
+              onChange={(e) => onChange("author", e.target.value)}
+            />
+          </div>
+        )}
       </div>
 
       {/* Category + Slug */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div>
-          <label className="text-sm text-slate-400">Category <span className="text-red-400">*</span></label>
+          <label className="text-sm text-slate-400">
+            Category <span className="text-red-400">*</span>
+          </label>
           {cats.length > 0 ? (
             <select
               required
               value={category}
-              onChange={(e) => onChange('category', e.target.value)}
+              onChange={(e) => onChange("category", e.target.value)}
               className={`${inp} cursor-pointer`}
             >
-              <option value="" className="bg-[#0b1730]">Select Category</option>
+              <option value="" className="bg-[#0b1730]">
+                Select Category
+              </option>
               {cats.map((cat) => (
                 <option key={cat} value={cat} className="bg-[#0b1730]">
                   {cat}
@@ -89,7 +115,7 @@ export default function CMSMetaSection({
               value={category}
               placeholder="e.g. Adventure, Luxury"
               className={inp}
-              onChange={(e) => onChange('category', e.target.value)}
+              onChange={(e) => onChange("category", e.target.value)}
             />
           )}
         </div>
@@ -103,7 +129,7 @@ export default function CMSMetaSection({
             required
             placeholder="your-url-slug-here"
             className={inp}
-            onChange={(e) => onChange('slug', e.target.value)}
+            onChange={(e) => onChange("slug", e.target.value)}
           />
         </div>
       </div>

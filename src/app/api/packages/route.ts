@@ -26,6 +26,7 @@ export async function POST(request: Request) {
     if (typeof error === 'object' && error !== null && 'code' in error && (error as { code: number }).code === 11000) {
       return Response.json({ error: 'Slug already exists' }, { status: 409 });
     }
+    console.log(error)
     return Response.json({ error: 'Failed to create package' }, { status: 500 });
   }
 }

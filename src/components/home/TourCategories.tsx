@@ -57,25 +57,7 @@ const I = {
   valley2: "https://images.unsplash.com/photo-1426604966848-d7adac402bff?q=85&w=900&auto=format&fit=crop",
 };
 
-function toSlug(s: string) {
-  return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-}
 
-/* ── Hardcoded fallback packages ─────────────────────────── */
-const HARDCODED_PACKAGES: PackageCard[] = [
-  { id: 1, days: 1, slug: "srinagar-city-day-tour", title: "Srinagar City Day Tour", location: "Srinagar", idealFor: "Solo & Couples", inclusions: ["AC Cab", "City Tour", "Local Guide", "Pickup & Drop"], price: "₹4,999", originalPrice: "₹7,500", images: [I.houseboat, I.meadow, I.valley, I.river, I.road] },
-  { id: 2, days: 2, slug: "dal-lake-mughal-gardens", title: "Dal Lake & Mughal Gardens", location: "Dal Lake, Srinagar", idealFor: "Couples", inclusions: ["AC Cab", "Shikara Ride", "Local Guide", "Hotel Stay"], price: "₹9,999", originalPrice: "₹14,500", images: [I.river, I.houseboat, I.meadow, I.valley, I.mountain] },
-  { id: 3, days: 3, slug: "gulmarg-weekend-escape", title: "Gulmarg Weekend Escape", location: "Gulmarg", idealFor: "Families", inclusions: ["AC Cab", "Gondola Ride", "Local Guide", "Pickup & Drop"], price: "₹14,999", originalPrice: "₹21,000", images: [I.mountain, I.snow, I.glacier, I.meadow, I.path] },
-  { id: 4, days: 4, slug: "pahalgam-adventure-getaway", title: "Pahalgam Adventure Getaway", location: "Pahalgam", idealFor: "Adventure Lovers", inclusions: ["AC Cab", "Trek Guide", "Local Guide", "Hotel Stay"], price: "₹18,499", originalPrice: "₹26,000", images: [I.meadow, I.path, I.valley2, I.river, I.valley] },
-  { id: 5, days: 5, slug: "gulmarg-snow-retreat", title: "Gulmarg Snow Retreat", location: "Gulmarg", idealFor: "Families & Couples", inclusions: ["AC Cab", "Snow Sports", "Local Guide", "Hotel Stay"], price: "₹32,999", originalPrice: "₹42,999", images: [I.mountain, I.snow, I.glacier, I.valley, I.path] },
-  { id: 6, days: 5, slug: "dal-lake-pahalgam-escape", title: "Dal Lake & Pahalgam Escape", location: "Dal Lake, Pahalgam", idealFor: "Families & Elders", inclusions: ["AC Cab", "Shikara Ride", "Local Guide", "Pickup & Drop"], price: "₹28,999", originalPrice: "₹38,000", images: [I.houseboat, I.river, I.meadow, I.path, I.valley2] },
-  { id: 7, days: 6, slug: "sonamarg-pahalgam-tour", title: "Sonamarg & Pahalgam Tour", location: "Sonamarg", idealFor: "Adventure Lovers", inclusions: ["AC Cab", "Glacier Walk", "Local Guide", "All Meals"], price: "₹34,499", originalPrice: "₹46,000", images: [I.glacier, I.snow, I.meadow, I.path, I.valley2] },
-  { id: 8, days: 7, slug: "kashmir-valley-complete", title: "Kashmir Valley Complete", location: "All Kashmir", idealFor: "Families & Elders", inclusions: ["AC Cab", "All Sightseeing", "Local Guide", "Pickup & Drop"], price: "₹38,499", originalPrice: "₹52,000", images: [I.valley, I.mountain, I.houseboat, I.meadow, I.glacier] },
-  { id: 9, days: 7, slug: "snow-lakes-meadows", title: "Snow, Lakes & Meadows", location: "Gulmarg, Pahalgam", idealFor: "All Traveler Types", inclusions: ["AC Cab", "Snow Activities", "Local Guide", "Hotel Stay"], price: "₹41,999", originalPrice: "₹56,000", images: [I.snow, I.river, I.glacier, I.mountain, I.path] },
-  { id: 10, days: 8, slug: "kashmir-extended-discovery", title: "Kashmir Extended Discovery", location: "All Kashmir", idealFor: "Groups & Families", inclusions: ["AC Cab", "All Sightseeing", "Local Guide", "All Meals"], price: "₹44,999", originalPrice: "₹60,000", images: [I.valley2, I.mountain, I.glacier, I.houseboat, I.meadow] },
-  { id: 11, days: 9, slug: "kashmir-complete-experience", title: "Kashmir Complete Experience", location: "All Kashmir", idealFor: "All Traveler Types", inclusions: ["AC Cab", "All Sightseeing", "Local Guide", "Premium Hotels"], price: "₹49,999", originalPrice: "₹67,000", images: [I.mountain, I.houseboat, I.glacier, I.meadow, I.valley] },
-  { id: 12, days: 10, slug: "kashmir-grand-tour", title: "Kashmir Grand Tour", location: "Kashmir & Beyond", idealFor: "Premium Travelers", inclusions: ["Luxury Cab", "All Sightseeing", "Expert Guide", "Luxury Hotels"], price: "₹54,999", originalPrice: "₹74,000", images: [I.valley, I.snow, I.glacier, I.houseboat, I.road] },
-];
 
 const TABS = [
   "All",
@@ -97,7 +79,7 @@ export default function TourCategories({
   const [expanded, setExpanded] = useState(false);
   const [collapsedCount, setCollapsedCount] = useState(6);
 
-  const PACKAGES = externalPackages ?? HARDCODED_PACKAGES;
+  const PACKAGES = externalPackages ?? [];
 
   const filtered =
     activeTab === "All"

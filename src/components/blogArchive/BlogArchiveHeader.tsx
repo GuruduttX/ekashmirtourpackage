@@ -47,7 +47,7 @@ export default function BlogArchiveHeader({
         <div className="absolute bottom-0 left-1/3 h-[200px] w-[300px] rounded-full bg-sky-300/5 blur-[100px]" />
       </div>
 
-      <div className="relative z-10  max-w-3xl px-5 sm:px-8 md:px-12">
+      <div className="relative z-10   px-5 sm:px-8 md:px-12">
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -79,7 +79,7 @@ export default function BlogArchiveHeader({
           {/* Description */}
           <motion.p
             variants={itemVariants}
-            className="max-w-xl text-base font-light leading-relaxed text-slate-600 sm:text-lg"
+            className=" text-base font-light leading-relaxed text-slate-600 sm:text-lg"
           >
             Immerse yourself in curated tales, luxury travel guides, and the
             hidden poetry of the valley. A cinematic journal for the mindful

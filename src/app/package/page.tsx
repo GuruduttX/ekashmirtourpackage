@@ -59,7 +59,7 @@ function buildInclusions(pkg: {
   return labels;
 }
 
-async function getPublishedPackages(): Promise<PackageCard[]> {
+export async function getPublishedPackages(): Promise<PackageCard[]> {
   try {
     await connectDB();
     const packages = await Package.find({ status: "published" })

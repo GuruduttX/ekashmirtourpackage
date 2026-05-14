@@ -46,7 +46,6 @@ export default function DashboardPage() {
         blogsRes.blogs ?? [];
       const packages: Array<{ title: string; status: string; createdAt: string }> =
         pkgsRes.packages ?? [];
-
       setStats({
         blogs: blogs.length,
         publishedBlogs: blogs.filter((b) => b.status === 'published').length,
@@ -149,7 +148,7 @@ export default function DashboardPage() {
               <CountUp end={card.value} duration={1400} />
             </h2>
 
-            <p className="text-xs text-slate-600 mt-1">Total {card.title.toLowerCase()}</p>
+            <p className="text-xs text-slate-600 mt-1">{card.title}</p>
           </div>
         ))}
       </div>

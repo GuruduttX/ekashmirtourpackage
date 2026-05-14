@@ -15,6 +15,7 @@ import CMSActions from '@/components/admin/cms/CMSActions';
 import FaqHandler, { FaqItem } from '@/components/admin/cms/FaqHandler';
 import CMSSection from '@/components/admin/CMSSection';
 
+
 interface FormState {
   title: string;
   category: string;
@@ -23,6 +24,7 @@ interface FormState {
   metaDescription: string;
   schemaTitle: string;
   schemaDescription: string;
+  author: string;
   image: string;
   alt: string;
   subContent: string;
@@ -35,6 +37,7 @@ const EMPTY: FormState = {
   category: '',
   slug: '',
   metaTitle: '',
+  author: '',
   metaDescription: '',
   schemaTitle: '',
   schemaDescription: '',
@@ -51,6 +54,7 @@ interface Toast {
   type: 'success' | 'error';
 }
 
+
 export default function EditBlogPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
@@ -61,6 +65,9 @@ export default function EditBlogPage({ params }: { params: Promise<{ id: string 
   const [isSaving, setIsSaving] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [toasts, setToasts] = useState<Toast[]>([]);
+
+
+ 
 
   // Fetch blog data on mount
   useEffect(() => {
@@ -74,6 +81,7 @@ export default function EditBlogPage({ params }: { params: Promise<{ id: string 
           title: blog.title ?? '',
           category: blog.category ?? '',
           slug: blog.slug ?? '',
+          author: blog.author ?? '',
           metaTitle: blog.meta?.title ?? '',
           metaDescription: blog.meta?.description ?? '',
           schemaTitle: blog.structuredData?.title ?? '',
@@ -183,6 +191,7 @@ export default function EditBlogPage({ params }: { params: Promise<{ id: string 
           <CMSMetaSection
             title={form.title}
             category={form.category}
+            author={form.author}
             slug={form.slug}
             onChange={handleChange}
             editorType="Blog"

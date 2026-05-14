@@ -1,17 +1,15 @@
-
-
 "use client";
 
+import { useState } from "react";
 import { motion, Variants } from "framer-motion";
 import {
-  CalendarDays,
-  ChevronDown,
   HeartHandshake,
-  MapPinned,
   MessageSquareText,
   Phone,
   Send,
   User,
+  CheckCircle2,
+  AlertCircle,
 } from "lucide-react";
 
 const fadeUpVariants: Variants = {
@@ -31,27 +29,109 @@ const fadeUpVariants: Variants = {
   },
 };
 
-const destinations = [
-  "Srinagar",
-  "Gulmarg",
-  "Pahalgam",
-  "Sonamarg",
-  "Dal Lake",
-  "Kupwara",
-];
-
 export default function BlogInquiryForm() {
+  const [formData, setFormData] = useState({
+    name: "",
+    phone: "",
+    message: "",
+  });
+
+  const [errors, setErrors] = useState({
+    name: "",
+    phone: "",
+  });
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    // Clear field-specific error when user starts typing
+    if (errors[name as keyof typeof errors]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
+  };
+
+  const validateForm = () => {
+    let isValid = true;
+    const newErrors = { name: "", phone: "" };
+
+    if (!formData.name.trim()) {
+      newErrors.name = "Name is required.";
+      isValid = false;
+    }
+
+    if (!formData.phone.trim()) {
+      newErrors.phone = "Phone number is required.";
+      isValid = false;
+    } else if (!/^\+?[\d\s-]{10,}$/.test(formData.phone.trim())) {
+      newErrors.phone = "Please enter a valid phone number.";
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSuccessMessage("");
+    setErrorMessage("");
+
+    if (!validateForm()) return;
+
+    setIsLoading(true);
+
+    try {
+      const payload = {
+        name: formData.name.trim(),
+        phone: formData.phone.trim(),
+        serviceType: `Inquiry Source:- Blog Inquiry Form, User Message:- ${formData.message.trim()}`,
+      };
+
+      const response = await fetch("/api/simbark", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      // Attempt to parse JSON if the API returns it
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(
+          data.message || "Something went wrong. Please try again.",
+        );
+      }
+
+      setSuccessMessage("Your enquiry has been submitted successfully.");
+      setFormData({ name: "", phone: "", message: "" });
+    } catch (error: any) {
+      setErrorMessage(
+        error.message || "Failed to submit enquiry. Please try again later.",
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <motion.div
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, amount: 0.2 }}
       variants={fadeUpVariants}
-      className="relative overflow-hidden rounded-[2rem] md:border border-sky-100/80 bg-[linear-gradient(135deg,rgba(255,255,255,0.92),rgba(240,249,255,0.82))] md:p-6  shadow-[0_25px_80px_rgba(14,165,233,0.08)] backdrop-blur-2xl"
+      className="relative overflow-hidden rounded-[2rem] md:border border-sky-100/80 bg-[linear-gradient(135deg,rgba(255,255,255,0.92),rgba(240,249,255,0.82))] md:p-6 shadow-[0_25px_80px_rgba(14,165,233,0.08)] backdrop-blur-2xl"
     >
       {/* Ambient Glow Layers */}
       <div className="absolute -right-16 top-0 h-44 w-44 rounded-full bg-sky-400/15 blur-[100px]" />
-
       <div className="absolute bottom-0 left-0 h-36 w-36 rounded-full bg-cyan-400/10 blur-[90px]" />
 
       <div className="relative z-10">
@@ -81,79 +161,98 @@ export default function BlogInquiryForm() {
             </h3>
           </div>
         </div>
-        {/* Form */}
-        <form className="mt-8 flex flex-col gap-5">
-          {/* Name */}
-          <div className="group relative">
-            <User className="pointer-events-none absolute left-5 top-1/2 z-10 h-5 w-5 -translate-y-1/2 text-slate-400 transition-colors duration-300 group-focus-within:text-sky-500" />
 
-            <input
-              type="text"
-              placeholder="Your Name"
-              className="h-14 w-full rounded-2xl border border-white/70 bg-white/75 pl-14 pr-5 text-[15px] text-slate-700 outline-none backdrop-blur-xl transition-all duration-300 placeholder:text-slate-400 focus:border-sky-200 focus:bg-white focus:shadow-[0_10px_30px_rgba(14,165,233,0.08)]"
-            />
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-5">
+          {/* Global Status Messages */}
+          {successMessage && (
+            <div className="flex items-center gap-2 rounded-2xl border border-green-200 bg-green-50/80 p-4 text-sm text-green-700 backdrop-blur-md">
+              <CheckCircle2 className="h-5 w-5 shrink-0 text-green-500" />
+              <p>{successMessage}</p>
+            </div>
+          )}
+
+          {errorMessage && (
+            <div className="flex items-center gap-2 rounded-2xl border border-red-200 bg-red-50/80 p-4 text-sm text-red-700 backdrop-blur-md">
+              <AlertCircle className="h-5 w-5 shrink-0 text-red-500" />
+              <p>{errorMessage}</p>
+            </div>
+          )}
+
+          {/* Name */}
+          <div>
+            <div className="group relative">
+              <User className="pointer-events-none absolute left-5 top-1/2 z-10 h-5 w-5 -translate-y-1/2 text-slate-400 transition-colors duration-300 group-focus-within:text-sky-500" />
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Your Name"
+                className={`h-14 w-full rounded-2xl border bg-white/75 pl-14 pr-5 text-[15px] text-slate-700 outline-none backdrop-blur-xl transition-all duration-300 placeholder:text-slate-400 focus:bg-white focus:shadow-[0_10px_30px_rgba(14,165,233,0.08)] ${
+                  errors.name
+                    ? "border-red-400 focus:border-red-500"
+                    : "border-white/70 focus:border-sky-200"
+                }`}
+              />
+            </div>
+            {errors.name && (
+              <p className="mt-1.5 ml-3 text-xs font-medium text-red-500">
+                {errors.name}
+              </p>
+            )}
           </div>
 
           {/* Phone */}
-          <div className="group relative">
-            <Phone className="pointer-events-none absolute left-5 top-1/2 z-10 h-5 w-5 -translate-y-1/2 text-slate-400 transition-colors duration-300 group-focus-within:text-sky-500" />
-
-            <input
-              type="tel"
-              placeholder="Phone Number"
-              className="h-14 w-full rounded-2xl border border-white/70 bg-white/75 pl-14 pr-5 text-[15px] text-slate-700 outline-none backdrop-blur-xl transition-all duration-300 placeholder:text-slate-400 focus:border-sky-200 focus:bg-white focus:shadow-[0_10px_30px_rgba(14,165,233,0.08)]"
-            />
-          </div>
-
-          {/* Destination */}
-          <div className="group relative">
-            <MapPinned className="pointer-events-none absolute left-5 top-1/2 z-10 h-5 w-5 -translate-y-1/2 text-slate-400 transition-colors duration-300 group-focus-within:text-sky-500" />
-
-            <ChevronDown className="pointer-events-none absolute right-5 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
-
-            <select className="h-14 w-full appearance-none rounded-2xl border border-white/70 bg-white/75 pl-14 pr-12 text-[15px] text-slate-700 outline-none backdrop-blur-xl transition-all duration-300 focus:border-sky-200 focus:bg-white focus:shadow-[0_10px_30px_rgba(14,165,233,0.08)]">
-              <option value="">Preferred Destination</option>
-
-              {destinations.map((destination) => (
-                <option key={destination} value={destination}>
-                  {destination}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Travel Date */}
-          <div className="group relative">
-            <CalendarDays className="pointer-events-none absolute left-5 top-1/2 z-10 h-5 w-5 -translate-y-1/2 text-slate-400 transition-colors duration-300 group-focus-within:text-sky-500" />
-
-            <input
-              type="text"
-              placeholder="Preferred Travel Month"
-              className="h-14 w-full rounded-2xl border border-white/70 bg-white/75 pl-14 pr-5 text-[15px] text-slate-700 outline-none backdrop-blur-xl transition-all duration-300 placeholder:text-slate-400 focus:border-sky-200 focus:bg-white focus:shadow-[0_10px_30px_rgba(14,165,233,0.08)]"
-            />
+          <div>
+            <div className="group relative">
+              <Phone className="pointer-events-none absolute left-5 top-1/2 z-10 h-5 w-5 -translate-y-1/2 text-slate-400 transition-colors duration-300 group-focus-within:text-sky-500" />
+              <input
+                type="tel"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                placeholder="Phone Number"
+                className={`h-14 w-full rounded-2xl border bg-white/75 pl-14 pr-5 text-[15px] text-slate-700 outline-none backdrop-blur-xl transition-all duration-300 placeholder:text-slate-400 focus:bg-white focus:shadow-[0_10px_30px_rgba(14,165,233,0.08)] ${
+                  errors.phone
+                    ? "border-red-400 focus:border-red-500"
+                    : "border-white/70 focus:border-sky-200"
+                }`}
+              />
+            </div>
+            {errors.phone && (
+              <p className="mt-1.5 ml-3 text-xs font-medium text-red-500">
+                {errors.phone}
+              </p>
+            )}
           </div>
 
           {/* Message */}
           <div className="group relative">
             <MessageSquareText className="pointer-events-none absolute left-5 top-5 z-10 h-5 w-5 text-slate-400 transition-colors duration-300 group-focus-within:text-sky-500" />
-
             <textarea
+              name="message"
+              value={formData.message}
+              onChange={handleChange}
               rows={5}
               placeholder="Tell us about the kind of Kashmir experience you want..."
-              className="w-full rounded-[1.7rem] border border-white/70 bg-white/75 pl-14 pr-5 pt-5 text-[15px] text-slate-700 outline-none backdrop-blur-xl transition-all duration-300 placeholder:text-slate-400 focus:border-sky-200 focus:bg-white focus:shadow-[0_10px_30px_rgba(14,165,233,0.08)] resize-none"
+              className="w-full resize-none rounded-[1.7rem] border border-white/70 bg-white/75 pl-14 pr-5 pt-5 text-[15px] text-slate-700 outline-none backdrop-blur-xl transition-all duration-300 placeholder:text-slate-400 focus:border-sky-200 focus:bg-white focus:shadow-[0_10px_30px_rgba(14,165,233,0.08)]"
             />
           </div>
 
           {/* CTA */}
           <motion.button
-            whileHover={{ y: -2 }}
-            whileTap={{ scale: 0.98 }}
+            whileHover={!isLoading ? { y: -2 } : {}}
+            whileTap={!isLoading ? { scale: 0.98 } : {}}
             transition={{ duration: 0.3 }}
             type="submit"
-            className="group mt-2 inline-flex items-center justify-center gap-3 rounded-full bg-slate-950 px-7 py-4 text-sm font-medium text-white shadow-[0_20px_50px_rgba(15,23,42,0.18)] transition-all duration-500 hover:bg-sky-500"
+            disabled={isLoading}
+            className="group mt-2 inline-flex items-center justify-center gap-3 rounded-full bg-slate-950 px-7 py-4 text-sm font-medium text-white shadow-[0_20px_50px_rgba(15,23,42,0.18)] transition-all duration-500 hover:bg-sky-500 disabled:opacity-75 disabled:cursor-not-allowed disabled:hover:bg-slate-950"
           >
-            Plan My Kashmir Trip
-            <Send className="h-4 w-4 transition-transform duration-500 group-hover:translate-x-1 group-hover:-translate-y-1" />
+            {isLoading ? "Sending..." : "Plan My Kashmir Trip"}
+            {!isLoading && (
+              <Send className="h-4 w-4 transition-transform duration-500 group-hover:translate-x-1 group-hover:-translate-y-1" />
+            )}
           </motion.button>
         </form>
       </div>

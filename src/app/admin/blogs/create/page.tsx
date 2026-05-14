@@ -20,6 +20,7 @@ const STORAGE_KEY = 'cms_blog_create_draft';
 interface FormState {
   title: string;
   category: string;
+  author: string;
   slug: string;
   metaTitle: string;
   metaDescription: string;
@@ -29,22 +30,23 @@ interface FormState {
   alt: string;
   subContent: string;
   content: string;
-  status: 'draft' | 'published';
+  status: "draft" | "published";
 }
 
 const INITIAL: FormState = {
-  title: '',
-  category: '',
-  slug: '',
-  metaTitle: '',
-  metaDescription: '',
-  schemaTitle: '',
-  schemaDescription: '',
-  image: '',
-  alt: '',
-  subContent: '',
-  content: '',
-  status: 'draft',
+  title: "",
+  category: "",
+  slug: "",
+  author: "",
+  metaTitle: "",
+  metaDescription: "",
+  schemaTitle: "",
+  schemaDescription: "",
+  image: "",
+  alt: "",
+  subContent: "",
+  content: "",
+  status: "draft",
 };
 
 interface Toast {
@@ -107,6 +109,7 @@ export default function CreateBlogPage() {
     title: form.title,
     category: form.category,
     slug: form.slug,
+    author: form.author,
     meta: { title: form.metaTitle, description: form.metaDescription },
     structuredData: { title: form.schemaTitle, description: form.schemaDescription },
     image: form.image,
@@ -166,6 +169,7 @@ export default function CreateBlogPage() {
             title={form.title}
             category={form.category}
             slug={form.slug}
+            author={form.author}
             onChange={handleChange}
             editorType="Blog"
           />

@@ -13,6 +13,7 @@ import MidPageCTA from "@/components/home/Midpagecta";
 import TopDestinations from "@/components/home/Topdestinations";
 import PopularPackagesCarousel from "@/components/home/PopularPackagesCarousel";
 import HomeFaq from "@/components/home/HomeFaq";
+import { getPublishedPackages } from "./package/page";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.ekashmirtourpackage.com";
 
@@ -63,7 +64,9 @@ const organizationSchema = {
   },
 };
 
-export default function HomePage() {
+export default async function HomePage() {
+  const packages = await getPublishedPackages();
+  console.log(packages)
   return (
     <main className="overflow-x-hidden">
       <script
@@ -73,7 +76,7 @@ export default function HomePage() {
       <Navbar />
       <HeroSection />
       <FeaturedPackages />
-      <TourCategories />
+      <TourCategories packages={packages.length > 0 ? packages : undefined} />
       <ActivityCarousel />
       <HowItWorks />
       <PopularPackagesCarousel />

@@ -32,6 +32,10 @@ export default function ServiceEnquiryPopupForm({
     bookingTimeline: "Just Checking Out",
   });
 
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+
   // Sync selected service when modal opens or prop changes
   useEffect(() => {
     if (isOpen) {
@@ -48,6 +52,9 @@ export default function ServiceEnquiryPopupForm({
           phone: "",
           bookingTimeline: "Just Checking Out",
         });
+        setTouched({});
+        setSubmitError("");
+        setIsSubmitting(false);
       }, 300);
     }
     return () => {
@@ -58,31 +65,73 @@ export default function ServiceEnquiryPopupForm({
   // Handle ESC key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isOpen) onClose();
+      if (e.key === "Escape" && isOpen && !isSubmitting) onClose();
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, isSubmitting]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    setTouched((prev) => ({ ...prev, [e.target.name]: true }));
   };
 
   const handleTimelineSelect = (timeline: string) => {
     setFormData((prev) => ({ ...prev, bookingTimeline: timeline }));
   };
 
+  // Validation Logic
+  const isValidPhone = (phone: string) =>
+    /^\+?[\d\s-]{10,}$/.test(phone.trim());
+
   const canGoNext = () => {
     if (step === 1) {
-      return formData.name.trim() !== "" && formData.phone.trim() !== "";
+      return formData.name.trim() !== "" && isValidPhone(formData.phone);
     }
     return true;
   };
 
-  // Fully decoupled from HTML form submission — called via onClick only
-  const handleSubmit = () => {
-    console.log("Form Submitted:", formData);
-    setStep(3);
+  // API Integration
+  const handleSubmit = async () => {
+    if (!canGoNext() || isSubmitting) return;
+
+    setIsSubmitting(true);
+    setSubmitError("");
+
+    try {
+      const payload = {
+        name: formData.name.trim(),
+        phone: formData.phone.trim(),
+        serviceType: `Inquiry Source:- Service Enquiry Popup Form Selected Service:- ${formData.service} Booking Timeline:- ${formData.bookingTimeline}`,
+      };
+
+      const response = await fetch("/api/simbark", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(
+          data.message || "Failed to submit enquiry. Please try again.",
+        );
+      }
+
+      setStep(3); // Move to Success Screen
+    } catch (error: any) {
+      setSubmitError(
+        error.message || "Something went wrong. Please try again later.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Step Content Variants
@@ -121,7 +170,7 @@ export default function ServiceEnquiryPopupForm({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5, ease: "easeInOut" }}
-            onClick={onClose}
+            onClick={!isSubmitting ? onClose : undefined}
             className="absolute inset-0 bg-black/50 backdrop-blur-md"
             aria-hidden="true"
           />
@@ -143,7 +192,8 @@ export default function ServiceEnquiryPopupForm({
               <div className="relative px-6 pb-2 pt-8 sm:px-8 sm:pt-10">
                 <button
                   onClick={onClose}
-                  className="group absolute right-6 top-6 flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white/50 text-slate-400 backdrop-blur-md transition-all hover:scale-105 hover:border-slate-300 hover:text-slate-700 focus:outline-none"
+                  disabled={isSubmitting}
+                  className="group absolute right-6 top-6 flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white/50 text-slate-400 backdrop-blur-md transition-all hover:scale-105 hover:border-slate-300 hover:text-slate-700 focus:outline-none disabled:opacity-50 disabled:hover:scale-100 disabled:hover:border-slate-200 disabled:hover:text-slate-400"
                   aria-label="Close"
                 >
                   <X className="h-4 w-4 transition-transform group-hover:rotate-90" />
@@ -208,22 +258,56 @@ export default function ServiceEnquiryPopupForm({
                         </div>
 
                         <div className="space-y-3">
-                          <input
-                            type="text"
-                            name="name"
-                            value={formData.name}
-                            onChange={handleChange}
-                            placeholder="Full Name"
-                            className="w-full rounded-2xl border border-slate-200 bg-white/50 px-4 py-3.5 text-sm text-slate-900 shadow-sm outline-none transition-all placeholder:text-slate-400 focus:border-sky-400/50 focus:bg-white focus:ring-2 focus:ring-sky-400/20"
-                          />
-                          <input
-                            type="tel"
-                            name="phone"
-                            value={formData.phone}
-                            onChange={handleChange}
-                            placeholder="Phone Number"
-                            className="w-full rounded-2xl border border-slate-200 bg-white/50 px-4 py-3.5 text-sm text-slate-900 shadow-sm outline-none transition-all placeholder:text-slate-400 focus:border-sky-400/50 focus:bg-white focus:ring-2 focus:ring-sky-400/20"
-                          />
+                          {/* Name Input */}
+                          <div>
+                            <input
+                              type="text"
+                              name="name"
+                              value={formData.name}
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                              placeholder="Full Name"
+                              className={`w-full rounded-2xl border bg-white/50 px-4 py-3.5 text-sm text-slate-900 shadow-sm outline-none transition-all placeholder:text-slate-400 focus:bg-white focus:ring-2 ${
+                                touched.name && formData.name.trim() === ""
+                                  ? "border-red-400 focus:border-red-400 focus:ring-red-400/20"
+                                  : "border-slate-200 focus:border-sky-400/50 focus:ring-sky-400/20"
+                              }`}
+                            />
+                            {touched.name && formData.name.trim() === "" && (
+                              <p className="ml-1 mt-1.5 text-[11px] font-medium text-red-500">
+                                Name is required.
+                              </p>
+                            )}
+                          </div>
+
+                          {/* Phone Input */}
+                          <div>
+                            <input
+                              type="tel"
+                              name="phone"
+                              value={formData.phone}
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                              placeholder="Phone Number"
+                              className={`w-full rounded-2xl border bg-white/50 px-4 py-3.5 text-sm text-slate-900 shadow-sm outline-none transition-all placeholder:text-slate-400 focus:bg-white focus:ring-2 ${
+                                touched.phone &&
+                                (formData.phone.trim() === "" ||
+                                  !isValidPhone(formData.phone))
+                                  ? "border-red-400 focus:border-red-400 focus:ring-red-400/20"
+                                  : "border-slate-200 focus:border-sky-400/50 focus:ring-sky-400/20"
+                              }`}
+                            />
+                            {touched.phone && formData.phone.trim() === "" ? (
+                              <p className="ml-1 mt-1.5 text-[11px] font-medium text-red-500">
+                                Phone number is required.
+                              </p>
+                            ) : touched.phone &&
+                              !isValidPhone(formData.phone) ? (
+                              <p className="ml-1 mt-1.5 text-[11px] font-medium text-red-500">
+                                Valid phone number required.
+                              </p>
+                            ) : null}
+                          </div>
                         </div>
                       </div>
                     </motion.div>
@@ -273,7 +357,7 @@ export default function ServiceEnquiryPopupForm({
                       initial="hidden"
                       animate="visible"
                       exit="exit"
-                      className="flex min-h-[300px] flex-col items-center justify-center text-center pt-8"
+                      className="flex min-h-[300px] flex-col items-center justify-center pt-8 text-center"
                     >
                       <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-green-50">
                         <CheckCircle2 className="h-10 w-10 text-green-500" />
@@ -281,7 +365,7 @@ export default function ServiceEnquiryPopupForm({
                       <h2 className="mb-2 text-2xl font-medium text-slate-900">
                         Enquiry Sent
                       </h2>
-                      <p className="mb-8 text-sm text-slate-500 max-w-[280px]">
+                      <p className="mb-8 max-w-[280px] text-sm text-slate-500">
                         Your enquiry has been sent successfully. Our Kashmir
                         travel team will contact you shortly.
                       </p>
@@ -299,41 +383,60 @@ export default function ServiceEnquiryPopupForm({
 
               {/* Footer Actions (hidden on success step) */}
               {step < 3 && (
-                <div className="mt-auto flex items-center justify-between border-t border-slate-100 pt-6">
-                  {step > 1 ? (
-                    <button
-                      type="button"
-                      onClick={() => setStep((prev) => prev - 1)}
-                      className="flex items-center text-sm font-medium text-slate-400 transition-colors hover:text-slate-700 focus:outline-none"
-                    >
-                      <ChevronLeft className="mr-1 h-4 w-4" />
-                      Back
-                    </button>
-                  ) : (
-                    <div /> // Spacer to align Next/Complete to the right
-                  )}
+                <div className="mt-auto flex flex-col pt-2">
+                  {/* Inline Error Message on Submit */}
+                  <AnimatePresence>
+                    {submitError && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="mb-4 rounded-xl border border-red-200 bg-red-50/80 p-3 text-sm text-red-700 backdrop-blur-md"
+                      >
+                        {submitError}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
 
-                  {step < TOTAL_STEPS - 1 ? (
-                    <button
-                      type="button"
-                      onClick={() => setStep((prev) => prev + 1)}
-                      disabled={!canGoNext()}
-                      className="group flex items-center rounded-full bg-slate-900 px-6 py-2.5 text-sm font-medium text-white transition-all hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-slate-900/20"
-                    >
-                      Next
-                      <ChevronRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={handleSubmit}
-                      disabled={!canGoNext()}
-                      className="group flex items-center rounded-full bg-gradient-to-r from-sky-500 to-cyan-400 px-6 py-2.5 text-sm font-medium text-white shadow-lg shadow-sky-500/25 transition-all hover:scale-[1.02] hover:shadow-sky-500/40 disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-sky-400/50"
-                    >
-                      Complete
-                      <Send className="ml-2 h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                    </button>
-                  )}
+                  <div className="flex items-center justify-between border-t border-slate-100 pt-6">
+                    {step > 1 ? (
+                      <button
+                        type="button"
+                        onClick={() => setStep((prev) => prev - 1)}
+                        disabled={isSubmitting}
+                        className="flex items-center text-sm font-medium text-slate-400 transition-colors hover:text-slate-700 focus:outline-none disabled:opacity-50 disabled:hover:text-slate-400"
+                      >
+                        <ChevronLeft className="mr-1 h-4 w-4" />
+                        Back
+                      </button>
+                    ) : (
+                      <div /> // Spacer to align Next/Complete to the right
+                    )}
+
+                    {step < TOTAL_STEPS - 1 ? (
+                      <button
+                        type="button"
+                        onClick={() => setStep((prev) => prev + 1)}
+                        disabled={!canGoNext()}
+                        className="group flex items-center rounded-full bg-slate-900 px-6 py-2.5 text-sm font-medium text-white transition-all hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-900/20 disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        Next
+                        <ChevronRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={handleSubmit}
+                        disabled={!canGoNext() || isSubmitting}
+                        className="group flex items-center rounded-full bg-gradient-to-r from-sky-500 to-cyan-400 px-6 py-2.5 text-sm font-medium text-white shadow-lg shadow-sky-500/25 transition-all hover:scale-[1.02] hover:shadow-sky-500/40 focus:outline-none focus:ring-2 focus:ring-sky-400/50 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
+                      >
+                        {isSubmitting ? "Sending..." : "Complete"}
+                        {!isSubmitting && (
+                          <Send className="ml-2 h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                        )}
+                      </button>
+                    )}
+                  </div>
                 </div>
               )}
             </form>

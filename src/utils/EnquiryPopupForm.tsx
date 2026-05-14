@@ -25,10 +25,29 @@ export default function EnquiryPopupForm({
     bookingTimeline: "",
   });
 
-  // Reset step to 1 when modal opens/closes
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [status, setStatus] = useState<{
+    type: "success" | "error" | null;
+    message: string;
+  }>({ type: null, message: "" });
+
+  // Reset states when modal opens/closes
   useEffect(() => {
     if (!isOpen) {
-      setTimeout(() => setStep(1), 300); // Wait for exit animation
+      setTimeout(() => {
+        setStep(1);
+        setStatus({ type: null, message: "" });
+        setTouched({});
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          message: "",
+          service: "General Enquiry",
+          bookingTimeline: "",
+        });
+      }, 300); // Wait for exit animation
     } else {
       document.body.style.overflow = "hidden";
     }
@@ -40,16 +59,22 @@ export default function EnquiryPopupForm({
   // Handle ESC key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isOpen) onClose();
+      if (e.key === "Escape" && isOpen && !isSubmitting) onClose();
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, isSubmitting]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleBlur = (
+    e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    setTouched((prev) => ({ ...prev, [e.target.name]: true }));
   };
 
   const handleServiceSelect = (service: string) => {
@@ -60,12 +85,18 @@ export default function EnquiryPopupForm({
     setFormData((prev) => ({ ...prev, bookingTimeline: timeline }));
   };
 
+  // Validation Helpers
+  const isValidEmail = (email: string) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const isValidPhone = (phone: string) =>
+    /^\+?[\d\s-]{10,}$/.test(phone.trim());
+
   const canGoNext = () => {
     if (step === 1) {
       return (
         formData.name.trim() !== "" &&
-        formData.email.trim() !== "" &&
-        formData.phone.trim() !== "" &&
+        isValidEmail(formData.email) &&
+        isValidPhone(formData.phone) &&
         formData.message.trim() !== ""
       );
     }
@@ -74,11 +105,66 @@ export default function EnquiryPopupForm({
     return true;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const isFieldError = (field: string) => {
+    if (!touched[field]) return false;
+    if (field === "name") return formData.name.trim() === "";
+    if (field === "email") return !isValidEmail(formData.email);
+    if (field === "phone") return !isValidPhone(formData.phone);
+    if (field === "message") return formData.message.trim() === "";
+    return false;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form Submitted:", formData);
-    // Add submission logic here
-    onClose();
+    if (!canGoNext() || isSubmitting) return;
+
+    setIsSubmitting(true);
+    setStatus({ type: null, message: "" });
+
+    try {
+      const payload = {
+        name: formData.name.trim(),
+        phone: formData.phone.trim(),
+        serviceType: `Inquiry Source:- Enquiry Popup Form Selected Service:- ${
+          formData.service
+        } Booking Timeline:- ${
+          formData.bookingTimeline
+        } User Message:- ${formData.message.trim()} Email Address:- ${formData.email.trim()}`,
+      };
+
+      const response = await fetch("/api/simbark", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(
+          data.message || "Failed to submit enquiry. Please try again.",
+        );
+      }
+
+      setStatus({
+        type: "success",
+        message: "Enquiry submitted successfully! We will contact you soon.",
+      });
+
+      // Keep success message visible briefly before automatically closing
+      setTimeout(() => {
+        onClose();
+      }, 2500);
+    } catch (error: any) {
+      setStatus({
+        type: "error",
+        message:
+          error.message || "Something went wrong. Please try again later.",
+      });
+      setIsSubmitting(false); // Only re-enable on error so user can't re-submit during success timeout
+    }
   };
 
   // Step Content Variants
@@ -118,7 +204,7 @@ export default function EnquiryPopupForm({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5, ease: "easeInOut" }}
-            onClick={onClose}
+            onClick={!isSubmitting ? onClose : undefined}
             className="absolute inset-0 bg-black/50 backdrop-blur-md"
             aria-hidden="true"
           />
@@ -139,7 +225,8 @@ export default function EnquiryPopupForm({
             <div className="relative px-6 pb-2 pt-8 sm:px-8 sm:pt-10">
               <button
                 onClick={onClose}
-                className="group absolute right-6 top-6 flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white/50 text-slate-400 backdrop-blur-md transition-all hover:scale-105 hover:border-slate-300 hover:text-slate-700"
+                disabled={isSubmitting}
+                className="group absolute right-6 top-6 flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white/50 text-slate-400 backdrop-blur-md transition-all hover:scale-105 hover:border-slate-300 hover:text-slate-700 disabled:opacity-50 disabled:hover:scale-100"
                 aria-label="Close"
               >
                 <X className="h-4 w-4 transition-transform group-hover:rotate-90" />
@@ -168,6 +255,21 @@ export default function EnquiryPopupForm({
               onSubmit={handleSubmit}
               className="flex flex-col px-6 pb-8 sm:px-8"
             >
+              {/* Status Messages */}
+              {status.message && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className={`mt-4 flex items-center gap-2 rounded-xl border p-3 text-sm backdrop-blur-md ${
+                    status.type === "success"
+                      ? "border-green-200 bg-green-50/80 text-green-700"
+                      : "border-red-200 bg-red-50/80 text-red-700"
+                  }`}
+                >
+                  <p>{status.message}</p>
+                </motion.div>
+              )}
+
               <div className="relative min-h-[320px] py-6">
                 <AnimatePresence mode="wait">
                   {step === 1 && (
@@ -177,7 +279,7 @@ export default function EnquiryPopupForm({
                       initial="hidden"
                       animate="visible"
                       exit="exit"
-                      className="space-y-4"
+                      className="space-y-6"
                     >
                       <h2 className="text-2xl font-light text-slate-900">
                         Your{" "}
@@ -185,45 +287,130 @@ export default function EnquiryPopupForm({
                           Details
                         </span>
                       </h2>
-                      <div className="space-y-3">
-                        <input
-                          type="text"
-                          name="name"
-                          value={formData.name}
-                          onChange={handleChange}
-                          placeholder="Full Name"
-                          className="w-full rounded-2xl border border-slate-200 bg-white/50 px-4 py-3.5 text-sm text-slate-900 shadow-sm outline-none transition-all placeholder:text-slate-400 focus:border-sky-400/50 focus:bg-white focus:ring-2 focus:ring-sky-400/20"
-                          required
-                        />
-                        <div className="grid grid-cols-2 gap-3">
+
+                      <div className="space-y-5">
+                        {/* Name */}
+                        <div className="flex flex-col space-y-1.5">
+                          <label
+                            htmlFor="name"
+                            className="ml-1 text-[11px] font-bold uppercase tracking-widest text-slate-500"
+                          >
+                            Full Name
+                          </label>
                           <input
-                            type="email"
-                            name="email"
-                            value={formData.email}
+                            type="text"
+                            id="name"
+                            name="name"
+                            value={formData.name}
                             onChange={handleChange}
-                            placeholder="Email Address"
-                            className="w-full rounded-2xl border border-slate-200 bg-white/50 px-4 py-3.5 text-sm text-slate-900 shadow-sm outline-none transition-all placeholder:text-slate-400 focus:border-sky-400/50 focus:bg-white focus:ring-2 focus:ring-sky-400/20"
+                            onBlur={handleBlur}
+                            placeholder="Your full name"
+                            className={`w-full rounded-[1rem] border-2 bg-white px-4 py-3.5 text-[15px] text-slate-800 shadow-sm outline-none transition-all duration-300 placeholder:text-slate-400/70 ${
+                              isFieldError("name")
+                                ? "border-red-300 bg-red-50/30 focus:border-red-500 focus:ring-[4px] focus:ring-red-500/20"
+                                : "border-slate-200 hover:border-slate-300 focus:border-sky-500 focus:ring-[4px] focus:ring-sky-500/20"
+                            }`}
                             required
                           />
-                          <input
-                            type="tel"
-                            name="phone"
-                            value={formData.phone}
-                            onChange={handleChange}
-                            placeholder="Phone Number"
-                            className="w-full rounded-2xl border border-slate-200 bg-white/50 px-4 py-3.5 text-sm text-slate-900 shadow-sm outline-none transition-all placeholder:text-slate-400 focus:border-sky-400/50 focus:bg-white focus:ring-2 focus:ring-sky-400/20"
-                            required
-                          />
+                          {isFieldError("name") && (
+                            <p className="ml-1 mt-1 text-[11px] font-medium text-red-500">
+                              Name is required.
+                            </p>
+                          )}
                         </div>
-                        <textarea
-                          name="message"
-                          value={formData.message}
-                          onChange={handleChange}
-                          placeholder="Tell us about your Kashmir travel plans..."
-                          rows={3}
-                          className="w-full resize-none rounded-2xl border border-slate-200 bg-white/50 px-4 py-3.5 text-sm text-slate-900 shadow-sm outline-none transition-all placeholder:text-slate-400 focus:border-sky-400/50 focus:bg-white focus:ring-2 focus:ring-sky-400/20"
-                          required
-                        />
+
+                        {/* Email & Phone */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          {/* Email */}
+                          <div className="flex flex-col space-y-1.5">
+                            <label
+                              htmlFor="email"
+                              className="ml-1 text-[11px] font-bold uppercase tracking-widest text-slate-500"
+                            >
+                              Email Address
+                            </label>
+                            <input
+                              type="email"
+                              id="email"
+                              name="email"
+                              value={formData.email}
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                              placeholder="you@example.com"
+                              className={`w-full rounded-[1rem] border-2 bg-white px-4 py-3.5 text-[15px] text-slate-800 shadow-sm outline-none transition-all duration-300 placeholder:text-slate-400/70 ${
+                                isFieldError("email")
+                                  ? "border-red-300 bg-red-50/30 focus:border-red-500 focus:ring-[4px] focus:ring-red-500/20"
+                                  : "border-slate-200 hover:border-slate-300 focus:border-sky-500 focus:ring-[4px] focus:ring-sky-500/20"
+                              }`}
+                              required
+                            />
+                            {isFieldError("email") && (
+                              <p className="ml-1 mt-1 text-[11px] font-medium text-red-500">
+                                Valid email required.
+                              </p>
+                            )}
+                          </div>
+
+                          {/* Phone */}
+                          <div className="flex flex-col space-y-1.5">
+                            <label
+                              htmlFor="phone"
+                              className="ml-1 text-[11px] font-bold uppercase tracking-widest text-slate-500"
+                            >
+                              Phone Number
+                            </label>
+                            <input
+                              type="tel"
+                              id="phone"
+                              name="phone"
+                              value={formData.phone}
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                              placeholder="10-digit mobile number"
+                              className={`w-full rounded-[1rem] border-2 bg-white px-4 py-3.5 text-[15px] text-slate-800 shadow-sm outline-none transition-all duration-300 placeholder:text-slate-400/70 ${
+                                isFieldError("phone")
+                                  ? "border-red-300 bg-red-50/30 focus:border-red-500 focus:ring-[4px] focus:ring-red-500/20"
+                                  : "border-slate-200 hover:border-slate-300 focus:border-sky-500 focus:ring-[4px] focus:ring-sky-500/20"
+                              }`}
+                              required
+                            />
+                            {isFieldError("phone") && (
+                              <p className="ml-1 mt-1 text-[11px] font-medium text-red-500">
+                                Valid phone required.
+                              </p>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Message */}
+                        <div className="flex flex-col space-y-1.5">
+                          <label
+                            htmlFor="message"
+                            className="ml-1 text-[11px] font-bold uppercase tracking-widest text-slate-500"
+                          >
+                            Your Message
+                          </label>
+                          <textarea
+                            id="message"
+                            name="message"
+                            value={formData.message}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            placeholder="Tell us about your Kashmir travel plans..."
+                            rows={3}
+                            className={`w-full resize-none rounded-[1rem] border-2 bg-white px-4 py-3.5 text-[15px] text-slate-800 shadow-sm outline-none transition-all duration-300 placeholder:text-slate-400/70 ${
+                              isFieldError("message")
+                                ? "border-red-300 bg-red-50/30 focus:border-red-500 focus:ring-[4px] focus:ring-red-500/20"
+                                : "border-slate-200 hover:border-slate-300 focus:border-sky-500 focus:ring-[4px] focus:ring-sky-500/20"
+                            }`}
+                            required
+                          />
+                          {isFieldError("message") && (
+                            <p className="ml-1 mt-1 text-[11px] font-medium text-red-500">
+                              Message is required.
+                            </p>
+                          )}
+                        </div>
                       </div>
                     </motion.div>
                   )}
@@ -257,7 +444,11 @@ export default function EnquiryPopupForm({
                               {service}
                             </span>
                             <div
-                              className={`flex h-5 w-5 items-center justify-center rounded-full border ${formData.service === service ? "border-sky-400 bg-sky-400 text-white" : "border-slate-300"}`}
+                              className={`flex h-5 w-5 items-center justify-center rounded-full border ${
+                                formData.service === service
+                                  ? "border-sky-400 bg-sky-400 text-white"
+                                  : "border-slate-300"
+                              }`}
                             >
                               {formData.service === service && (
                                 <Check className="h-3 w-3" />
@@ -313,7 +504,8 @@ export default function EnquiryPopupForm({
                   <button
                     type="button"
                     onClick={() => setStep(step - 1)}
-                    className="flex items-center text-sm font-medium text-slate-400 transition-colors hover:text-slate-700"
+                    disabled={isSubmitting}
+                    className="flex items-center text-sm font-medium text-slate-400 transition-colors hover:text-slate-700 disabled:opacity-50"
                   >
                     <ChevronLeft className="mr-1 h-4 w-4" />
                     Back
@@ -335,11 +527,13 @@ export default function EnquiryPopupForm({
                 ) : (
                   <button
                     type="submit"
-                    disabled={!canGoNext()}
-                    className="group flex items-center rounded-full bg-gradient-to-r from-sky-500 to-cyan-400 px-6 py-2.5 text-sm font-medium text-white shadow-lg shadow-sky-500/25 transition-all hover:scale-[1.02] hover:shadow-sky-500/40 disabled:cursor-not-allowed disabled:opacity-50"
+                    disabled={!canGoNext() || isSubmitting}
+                    className="group flex items-center rounded-full bg-gradient-to-r from-sky-500 to-cyan-400 px-6 py-2.5 text-sm font-medium text-white shadow-lg shadow-sky-500/25 transition-all hover:scale-[1.02] hover:shadow-sky-500/40 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
                   >
-                    Send Enquiry
-                    <Send className="ml-2 h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                    {isSubmitting ? "Sending..." : "Send Enquiry"}
+                    {!isSubmitting && (
+                      <Send className="ml-2 h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                    )}
                   </button>
                 )}
               </div>
