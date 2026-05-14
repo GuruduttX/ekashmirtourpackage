@@ -32,7 +32,7 @@ export default function InclusionExclusion({
   return (
     <section className="py-0 sm:py-6 md:py-12 px-6 sm:px-0">
       <div className="max-w-7xl mx-auto">
-        <h2 className="text-2xl font-bold text-gray-900 mb-8">
+        <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-8">
           What's Included &amp; Excluded
         </h2>
 

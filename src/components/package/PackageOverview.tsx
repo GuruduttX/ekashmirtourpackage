@@ -127,11 +127,13 @@ export default function PackageOverview({ overview = defaultOverview }) {
                   prose-ol:pl-6 prose-ol:list-decimal
                   prose-li:my-2 prose-li:text-gray-600
                   prose-strong:text-gray-800 prose-strong:font-semibold
-                  prose-a:text-sky-500 prose-a:no-underline hover:prose-a:underline
+                  prose-a:text-orange-500 prose-a:no-underline hover:prose-a:underline
                   [&_.ItineraryContent_ul>li]:pl-6
                   [&_.ItineraryContent_ul>li]:relative
                 "
-                style={{ "--tw-prose-bullets": "#0ea5e9" } as React.CSSProperties}
+                style={
+                  { "--tw-prose-bullets": "#0ea5e9" } as React.CSSProperties
+                }
                 dangerouslySetInnerHTML={{ __html: overview ?? "" }}
               />
             </div>

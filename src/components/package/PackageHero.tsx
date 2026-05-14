@@ -14,16 +14,6 @@ interface PackageHeroProps {
   childImages: Array<{ id?: string; image: string; alt: string }>;
 }
 
-const marqueeItems = [
-  { icon: Tag, text: "Early Bird Offer — 25% Off" },
-  { icon: Sparkles, text: "Book Now & Save Big" },
-  { icon: Tag, text: "Early Bird Offer — 25% Off" },
-  { icon: Sparkles, text: "Limited Seats Available" },
-  { icon: Tag, text: "Early Bird Offer — 25% Off" },
-  { icon: Sparkles, text: "Book Now & Save Big" },
-  { icon: Tag, text: "Early Bird Offer — 25% Off" },
-  { icon: Sparkles, text: "Limited Seats Available" },
-];
 
 const INTERVAL = 3500;
 
@@ -128,12 +118,12 @@ export default function PackageHero({
           </div>
 
           {/* RIGHT — 2×2 Grid */}
-          <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 md:grid md:grid-cols-2 md:gap-6 md:overflow-visible md:pb-0">
+          <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 md:grid md:grid-cols-2 md:gap-6 md:overflow-visible md:pb-0 no-scrollbar">
             {cards.map((card, index) => (
               <div
                 key={index}
                 onClick={() => goTo(index)}
-                className="relative group h-[112px] min-w-[148px] snap-start cursor-pointer overflow-hidden rounded-2xl shadow-md shadow-black/10 sm:h-[132px] sm:min-w-[178px] md:h-[217px] md:min-w-0 lg:h-[250px]"
+                className="relative group h-[112px] min-w-[148px] snap-start cursor-pointer overflow-hidden rounded-2xl shadow-md shadow-black/10 sm:h-[132px] sm:min-w-[178px] md:h-[217px] md:min-w-0 lg:h-[250px] "
               >
                 <Image
                   src={card.image || fallbackSrc}
@@ -160,11 +150,11 @@ export default function PackageHero({
 
         {/* Title + Stats */}
         <div className="mx-auto mt-6 max-w-7xl sm:mt-8">
-          <h2 className="max-w-4xl text-3xl font-bold leading-tight text-slate-950 sm:text-5xl lg:text-4xl">
+          <h2 className="max-w-4xl text-2xl font-bold leading-tight text-slate-950 sm:text-5xl lg:text-4xl">
             {title}
           </h2>
-          <div className="-mx-4 mt-5 overflow-x-auto px-4 sm:mx-0 sm:px-0">
-            <div className="flex min-w-max flex-nowrap gap-3 pb-2 sm:pb-0">
+          <div className="-mx-4 mt-5 overflow-x-auto px-4 sm:mx-0 sm:px-0 no-scrollbar">
+            <div className="flex min-w-max flex-nowrap gap-3 pb-2 sm:pb-0 ">
               {stats.map(({ icon: Icon, text }) => (
                 <div
                   key={text}

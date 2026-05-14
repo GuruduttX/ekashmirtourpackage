@@ -31,7 +31,7 @@ export async function GET() {
     const entries = packages
       .map((pkg) => {
         const lastmod = new Date(
-          (pkg as Record<string, unknown>).updatedAt as Date ?? pkg.createdAt as Date
+          (pkg as unknown as Record<string, unknown>).updatedAt as Date ?? pkg.createdAt as Date
         )
           .toISOString()
           .split("T")[0];

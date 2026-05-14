@@ -112,8 +112,8 @@ export async function generateMetadata({
         publishedTime: blog.createdAt
           ? new Date(blog.createdAt as Date).toISOString()
           : undefined,
-        modifiedTime: (blog as Record<string, unknown>).updatedAt
-          ? new Date((blog as Record<string, unknown>).updatedAt as Date).toISOString()
+        modifiedTime: (blog as unknown as Record<string, unknown>).updatedAt
+          ? new Date((blog as unknown as Record<string, unknown>).updatedAt as Date).toISOString()
           : undefined,
         section: blog.category,
         authors: blog.author ? [blog.author] : [],
@@ -143,26 +143,38 @@ export default async function BlogPage({
   const createdAt = formatDate(blog.createdAt);
   const relatedBlogs = await getRelatedBlogs(blog.category, slug);
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    headline: (blog as Record<string, unknown> & { structuredData?: { title?: string } }).structuredData?.title || blog.meta?.title || blog.title,
-    description: (blog as Record<string, unknown> & { structuredData?: { description?: string } }).structuredData?.description || blog.meta?.description || blog.subContent,
-    image: blog.image,
-    datePublished: new Date(blog.createdAt as Date).toISOString(),
-    dateModified: new Date(((blog as Record<string, unknown>).updatedAt as Date) || (blog.createdAt as Date)).toISOString(),
-    author: { "@type": "Person", name: blog.author },
-    publisher: {
-      "@type": "Organization",
-      name: "eKashmir Tour Packages",
-      url: SITE_URL,
-    },
-    url: `${SITE_URL}/blog/${slug}`,
-    mainEntityOfPage: {
-      "@type": "WebPage",
-      "@id": `${SITE_URL}/blog/${slug}`,
-    },
-  };
+ const jsonLd = {
+   "@context": "https://schema.org",
+   "@type": "BlogPosting",
+   headline:
+     (blog as unknown as { structuredData?: { title?: string } }).structuredData
+       ?.title ||
+     (blog as unknown as { meta?: { title?: string } }).meta?.title ||
+     blog.title,
+   description:
+     (blog as unknown as { structuredData?: { description?: string } })
+       .structuredData?.description ||
+     (blog as unknown as { meta?: { description?: string } }).meta
+       ?.description ||
+     (blog as any).subContent, // assuming subContent is missing from IBlog
+   image: blog.image,
+   datePublished: new Date(blog.createdAt as Date).toISOString(),
+   dateModified: new Date(
+     (blog as unknown as { updatedAt?: Date }).updatedAt ||
+       (blog.createdAt as Date),
+   ).toISOString(),
+   author: { "@type": "Person", name: blog.author },
+   publisher: {
+     "@type": "Organization",
+     name: "eKashmir Tour Packages",
+     url: SITE_URL,
+   },
+   url: `${SITE_URL}/blog/${slug}`,
+   mainEntityOfPage: {
+     "@type": "WebPage",
+     "@id": `${SITE_URL}/blog/${slug}`,
+   },
+ };
 
   return (
     <div className="min-h-screen overflow-x-clip bg-sky-50">

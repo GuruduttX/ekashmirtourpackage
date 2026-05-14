@@ -25,7 +25,7 @@ export async function GET() {
     const entries = blogs
       .map((blog) => {
         const lastmod = new Date(
-          (blog as Record<string, unknown>).updatedAt as Date ?? blog.createdAt as Date
+          (blog as unknown as Record<string, unknown>).updatedAt as Date ?? blog.createdAt as Date
         )
           .toISOString()
           .split("T")[0];

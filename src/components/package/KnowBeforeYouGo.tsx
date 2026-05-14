@@ -54,9 +54,9 @@ export default function KnowBeforeYouGo({ PackageData = defaultPackageData }) {
           >
             <div className="flex items-center gap-3">
               <div className="p-3 rounded-xl bg-gradient-to-br from-sky-500 to-cyan-500 text-white shadow-lg">
-                <Info className="w-6 h-6" />
+                <Info className="w-4 h-4 md:w-6 md:h-6" />
               </div>
-              <h2 className="text-xl md:text-2xl font-bold text-gray-900">
+              <h2 className="text-md md:text-2xl font-bold text-gray-900">
                 Know Before You Go
               </h2>
             </div>
@@ -74,11 +74,11 @@ export default function KnowBeforeYouGo({ PackageData = defaultPackageData }) {
               open ? "max-h-full opacity-100" : "max-h-0 opacity-0"
             } overflow-hidden`}
           >
-            <ul className="px-6 pb-6 md:px-8 space-y-4">
+            <ul className="px-6 pb-6 md:px-8 md:space-y-4">
               {PackageData?.documents?.map((item, index) => (
                 <li
                   key={index}
-                  className="group flex items-start gap-4 p-4 rounded-xl transition-all duration-300 hover:bg-sky-50"
+                  className="group flex items-start gap-4 p-2 md:p-4 rounded-xl transition-all duration-300 hover:bg-sky-50"
                 >
                   <div>
                     <CheckCircle className="w-5 h-5 mt-1 text-sky-500 group-hover:scale-110 transition-transform cursor-pointer" />

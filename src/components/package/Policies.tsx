@@ -31,8 +31,8 @@ export default function Policies({ policies = defaultPolicies }: Props) {
   const list = policies.length > 0 ? policies : defaultPolicies;
 
   return (
-    <section className="w-full max-w-7xl mx-auto py-8 sm:py-12 px-6">
-      <h2 className="mb-6 text-2xl font-bold text-gray-900">
+    <section className="w-full max-w-7xl mx-auto py-5 md:py-8 sm:py-12 px-6">
+      <h2 className="mb-6 text-lg md:text-2xl font-bold text-gray-900">
         Policies &amp; Important Information
       </h2>
 
@@ -50,7 +50,7 @@ export default function Policies({ policies = defaultPolicies }: Props) {
             >
               <button
                 onClick={() => setActive(isOpen ? null : index)}
-                className="flex w-full items-center justify-between px-6 py-5 text-left cursor-pointer"
+                className="flex w-full items-center justify-between px-4 py-3 md:px-6 md:py-5 text-left cursor-pointer"
               >
                 <div className="flex items-center gap-4">
                   <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-sm border border-sky-50 shrink-0">
@@ -58,7 +58,7 @@ export default function Policies({ policies = defaultPolicies }: Props) {
                       <BadgeCheck className="w-6 h-6 text-cyan-500" />
                     )}
                   </span>
-                  <h3 className="text-lg font-semibold text-gray-900">{item.title}</h3>
+                  <h3 className="text-md md:text-lg font-semibold text-gray-900">{item.title}</h3>
                 </div>
                 <span
                   className={`flex h-8 w-8 items-center justify-center rounded-full transition-all duration-300 shrink-0 ${

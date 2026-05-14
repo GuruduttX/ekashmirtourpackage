@@ -404,6 +404,356 @@ body {
   height: 0;
 }
 
+
+.ItineraryContent {
+  font-size: 14.5px;
+  line-height: 1.85;
+  color: #334155;
+  /* slate-700 */
+}
+
+/* Scrollbar */
+.ItineraryContent::-webkit-scrollbar {
+  width: 4px;
+}
+
+.ItineraryContent::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.ItineraryContent::-webkit-scrollbar-thumb {
+  background: #38bdf8;
+  /* sky-400 */
+  border-radius: 4px;
+}
+
+/* Paragraphs */
+.ItineraryContent p {
+  margin-bottom: 12px;
+}
+
+/* Strong / bold */
+.ItineraryContent strong,
+.ItineraryContent b {
+  font-weight: 700;
+  color: #082f49;
+  /* sky-950 */
+}
+
+/* ── Unordered list — premium cyan pill style ── */
+.ItineraryContent ul {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 10px 0 14px !important;
+}
+
+.ItineraryContent ul li {
+  position: relative;
+  padding: 7px 14px 7px 38px !important;
+  margin-bottom: 6px !important;
+  background: linear-gradient(to right, #f0f9ff, #ecfeff);
+  /* sky-50 -> cyan-50 */
+  border-radius: 10px;
+  border-left: 3px solid #06b6d4;
+  /* cyan-500 */
+  font-size: 13.5px;
+  display: block !important;
+  color: #334155;
+  /* slate-700 */
+}
+
+.ItineraryContent ul li::before {
+  content: "";
+  position: absolute;
+  left: 27px;
+  top: 1.4em;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  background: #0ea5e9;
+  /* sky-500 */
+  border-radius: 50%;
+  opacity: 0.75;
+}
+
+/* ── Ordered list ── */
+.ItineraryContent ol {
+  list-style-type: decimal !important;
+  padding-left: 1.5rem !important;
+  margin: 10px 0 14px !important;
+}
+
+.ItineraryContent ol li {
+  margin-bottom: 6px !important;
+  display: list-item !important;
+  color: #334155;
+  /* slate-700 */
+}
+
+/* ── Headings ── */
+.ItineraryContent h1 {
+  font-size: 18px;
+  font-weight: 800;
+  color: #082f49;
+  /* sky-950 */
+  margin: 18px 0 8px;
+  letter-spacing: -0.01em;
+}
+
+.ItineraryContent h2 {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+  /* slate-900 */
+  margin: 16px 0 6px;
+  border-bottom: 1px solid #bae6fd;
+  /* sky-200 */
+  padding-bottom: 4px;
+}
+
+.ItineraryContent h3 {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #0891b2;
+  /* cyan-600 */
+  margin: 12px 0 4px;
+}
+
+/* ── Links ── */
+.ItineraryContent a {
+  color: #0284c7;
+  /* sky-600 */
+  text-decoration: underline;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.ItineraryContent a:hover {
+  color: #0369a1;
+  /* sky-700 */
+}
+
+/* ── Images ── */
+.ItineraryContent img {
+  margin: 16px 0;
+  border-radius: 12px;
+  max-width: 100%;
+  height: auto;
+}
+
+/* ── Tables ── */
+.ItineraryContent table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 13px;
+}
+
+.ItineraryContent th,
+.ItineraryContent td {
+  border: 1px solid #bae6fd;
+  /* sky-200 */
+  padding: 9px 12px;
+  text-align: left;
+}
+
+.ItineraryContent th {
+  background-color: #f0f9ff;
+  /* sky-50 */
+  font-weight: 700;
+  color: #0c4a6e;
+  /* sky-800 */
+}
+
+/* ── Blockquote ── */
+.ItineraryContent blockquote {
+  border-left: 3px solid #06b6d4;
+  /* cyan-500 */
+  padding: 10px 14px;
+  margin: 12px 0;
+  color: #475569;
+  /* slate-600 */
+  font-style: italic;
+  background: linear-gradient(to right, #f0f9ff, #ecfeff);
+  /* sky-50 -> cyan-50 */
+  border-radius: 8px;
+}
+
+/* ── HR ── */
+.ItineraryContent hr {
+  margin: 18px 0;
+  border: none;
+  border-top: 1px solid #bae6fd;
+  /* sky-200 */
+}
+
+
+/* Responsive table (mobile friendly) */
+@media (max-width: 768px) {
+  .BlogContent table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
+
+/* ===============================
+   BLOG TYPOGRAPHY (RESPONSIVE)
+================================ */
+
+.BlogContent {
+  line-height: 1.75;
+  font-size: clamp(14px, 1.1vw, 16px);
+  color: #334155;
+  /* slate-700 */
+}
+
+/* Headings */
+.BlogContent h1 {
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 800;
+  margin: 1.5rem 0 1rem;
+  color: #082f49;
+  /* sky-950 */
+}
+
+.BlogContent h2 {
+  font-size: clamp(10px, 2vw, 22px);
+  font-weight: 700;
+  margin: 1.4rem 0 0.9rem;
+  color: #0f172a;
+  /* slate-900 */
+}
+
+.BlogContent h3 {
+  font-size: clamp(18px, 2.4vw, 24px);
+  font-weight: 600;
+  margin: 1.2rem 0 0.75rem;
+  color: #0369a1;
+  /* sky-700 */
+}
+
+.BlogContent h4 {
+  font-size: clamp(16px, 2vw, 20px);
+  font-weight: 600;
+  margin: 1rem 0 0.6rem;
+  color: #0f766e;
+  /* cyan-700 */
+}
+
+.BlogContent h5 {
+  font-size: clamp(14px, 1.6vw, 18px);
+  font-weight: 600;
+  color: #155e75;
+  /* cyan-800 */
+}
+
+.BlogContent h6 {
+  font-size: clamp(13px, 1.4vw, 16px);
+  font-weight: 600;
+  color: #0891b2;
+  /* cyan-600 */
+}
+
+/* ===============================
+   LISTS
+================================ */
+
+.BlogContent ul,
+.BlogContent ol {
+  padding-left: clamp(1.25rem, 2vw, 2rem);
+  margin: 1rem 0;
+}
+
+.BlogContent li {
+  margin: 0.4rem 0;
+  font-size: clamp(14px, 1.1vw, 16px);
+  color: #334155;
+  /* slate-700 */
+}
+
+.BlogContent li::marker {
+  color: #06b6d4;
+  /* cyan-500 */
+  font-weight: 500;
+}
+
+/* ===============================
+   TABLES (MOBILE-FIRST)
+================================ */
+
+/* Table wrapper */
+.BlogContent .table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+}
+
+/* Table */
+.BlogContent table {
+  width: 100%;
+  min-width: 600px;
+  border-collapse: collapse;
+  font-size: clamp(13px, 1vw, 15px);
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+/* Header */
+.BlogContent thead {
+  background: linear-gradient(to right, #f0f9ff, #ecfeff);
+  /* sky-50 -> cyan-50 */
+}
+
+.BlogContent th {
+  padding: clamp(10px, 1.5vw, 14px);
+  text-align: left;
+  font-weight: 600;
+  color: #082f49;
+  /* sky-950 */
+  border: 1px solid #bae6fd;
+  /* sky-200 */
+}
+
+/* Body */
+.BlogContent td {
+  padding: clamp(10px, 1.5vw, 14px);
+  border: 1px solid #e0f2fe;
+  /* sky-100 */
+  color: #334155;
+  /* slate-700 */
+  vertical-align: top;
+}
+
+/* Zebra rows */
+.BlogContent tbody tr:nth-child(even) {
+  background-color: #f0f9ff;
+  /* sky-50 */
+}
+
+/* Hover */
+.BlogContent tbody tr:hover {
+  background-color: #e0f2fe;
+  /* sky-100 */
+  transition: background-color 0.2s ease;
+}
+
+/* ===============================
+   SMALL SCREENS OPTIMIZATION
+================================ */
+
+@media (max-width: 640px) {
+  .BlogContent {
+    line-height: 1.8;
+  }
+
+  .BlogContent table {
+    font-size: 13px;
+  }
+}
+
+
 /* ─── Scroll-driven section reveals ────────────────────── */
 
 .reveal {

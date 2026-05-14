@@ -47,10 +47,10 @@ export default function ItineraryAccordion({
   PackageData = defaultPackageData,
 }) {
   const [active, setActive] = useState<number | null>(null);
-
+  console.log(PackageData, "from itineary");
   return (
     <section className="w-full max-w-4xl px-5 space-y-3 sm:space-y-4">
-      <h2 className="text-2xl font-bold">Itinerary</h2>
+      <h2 className="text-2xl  md:text-2xl font-bold">Itinerary</h2>
 
       {PackageData.itinerary.map((item, index) => {
         const isOpen = active === index;
@@ -67,7 +67,7 @@ export default function ItineraryAccordion({
             {/* Header */}
             <button
               onClick={() => setActive(isOpen ? null : index)}
-              className="flex w-full items-center justify-between px-6 py-5 text-left cursor-pointer"
+              className="flex w-full items-center justify-between px-4 py-4 md:px-6 md:py-5 text-left cursor-pointer"
             >
               <div className="flex items-center gap-4">
                 {/* Day Badge */}
@@ -77,7 +77,7 @@ export default function ItineraryAccordion({
                 </span>
 
                 {/* Title */}
-                <h3 className="text-lg font-semibold text-gray-900">
+                <h3 className="text-sm md:text-lg font-semibold text-gray-900">
                   {item.title}
                 </h3>
               </div>

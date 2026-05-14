@@ -44,10 +44,10 @@ export default function PackageFaqSection({ faqs = defaultFaqs }: Props) {
           <span className="inline-block px-4 py-1.5 rounded-full bg-cyan-50 text-cyan-600 text-sm font-semibold mb-4 border border-cyan-100">
             Need Help?
           </span>
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
+          <h2 className="text-2xl md:text-4xl font-bold text-gray-900">
             Frequently Asked Questions
           </h2>
-          <div className="mt-3 h-[3px] w-44 bg-gradient-to-r from-cyan-500 via-sky-400 to-transparent rounded-full" />
+          <div className="mt-3 mx-auto md:mx-0 h-[3px] w-44 bg-gradient-to-r from-cyan-500 via-sky-400 to-transparent rounded-full" />
           <p className="mt-4 text-gray-700 max-w-2xl">
             Clear answers to common questions about this tour package so you can plan your Kashmir journey with confidence.
           </p>

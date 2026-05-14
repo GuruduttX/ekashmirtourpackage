@@ -166,7 +166,7 @@ export default function PackageTestimonials({
           <div className="relative">
             <div
               ref={sliderRef}
-              className="flex gap-6 overflow-x-auto snap-x snap-mandatory scrollbar-hide"
+              className="flex gap-6 overflow-x-auto snap-x snap-mandatory no-scrollbar"
             >
               {testimonials.map((t: Testimonial, index: number) => {
                 const rating = Number(t.rating || 0);

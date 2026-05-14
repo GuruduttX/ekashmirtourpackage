@@ -136,11 +136,11 @@ export default async function PackagePage({
         childImages={pkg.childImages ?? []}
       />
 
-      <section className="flex-grow w-full max-w-7xl mx-auto py-10 md:py-16 lg:py-10 overflow-x-clip">
+      <section className="flex-grow w-full max-w-7xl mx-auto py-0 md:py-16 lg:py-10 overflow-x-clip">
         <div className="grid min-w-0 lg:grid-cols-3 gap-12 lg:gap-16">
           {/* Left column */}
           <div
-            className="order-2 min-w-0 lg:order-1 lg:col-span-2 space-y-16 anim-fade-in-up"
+            className="order-2 min-w-0 lg:order-1 lg:col-span-2 space-y-10 anim-fade-in-up"
             style={{ animationDelay: "100ms" }}
           >
             <ItineraryStrip
@@ -189,7 +189,9 @@ export default async function PackagePage({
         </div>
 
         <KnowBeforeYouGo PackageData={{ documents: pkg.knowBeforeYouGo ?? [] }} />
+        <div className="px-3">
         <PackageCTA />
+        </div>
         <PackageTestimonials PackageData={{ testimonials: pkg.testimonials ?? [] }} />
         <PackageFaqSection faqs={pkg.faqs ?? []} />
         <Policies policies={policies} />
