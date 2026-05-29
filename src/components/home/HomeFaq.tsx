@@ -1,278 +1,278 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence, Variants } from "framer-motion";
-import { X, HelpCircle, ChevronDown, MapPin } from "lucide-react";
+import React from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  ArrowRight,
+  ChevronDown,
+  HelpCircle,
+  MapPin,
+} from "lucide-react";
 
-// --- Types & Data ---
+export default function FAQPreview() {
+  const [openId, setOpenId] = React.useState<number | null>(null);
 
-interface FAQ {
-  id: number;
-  question: string;
-  answer: string;
-}
-
-const faqs: FAQ[] = [
-  {
-    id: 1,
-    question: "When is the absolute best time to visit Kashmir?",
-    answer:
-      "Spring (March to early May) offers blooming tulip gardens, while Autumn (September to November) provides stunning golden Chinar landscapes. Winter (December to February) is the go-to for snow lovers and skiing in Gulmarg.",
-  },
-  {
-    id: 2,
-    question: "Do I need a special travel permit to visit?",
-    answer:
-      "Indian nationals do not require permits for major tourist hubs like Srinagar, Gulmarg, and Pahalgam. Foreign nationals must register upon arrival. Areas near the border (like Gurez or Teetwal) may require a pass from local authorities.",
-  },
-  {
-    id: 3,
-    question: "What should I pack for a winter expedition?",
-    answer:
-      "Pack heavy thermals, fleece-lined waterproof jackets, snow boots with good grip, and insulated gloves. Temperatures regularly drop below freezing in higher altitudes, so layered clothing is critical.",
-  },
-  {
-    id: 4,
-    question: "Is altitude sickness common in Kashmir?",
-    answer:
-      "Most of the main valley, including Srinagar, is at a moderate altitude where sickness is rare. However, if you travel up to Gulmarg's Phase 2 or Sonamarg, take it slow, stay hydrated, and allow your body a day to acclimatize.",
-  },
-];
-
-// --- Animation Variants ---
-
-const containerVariants: Variants = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: { staggerChildren: 0.2, delayChildren: 0.1 },
-  },
-};
-
-const cardVariants: Variants = {
-  hidden: { opacity: 0, y: 30 },
-  show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 120 } },
-};
-
-// --- Components ---
-
-export default function KashmirFAQ() {
-  const [activeModalId, setActiveModalId] = useState<number | null>(null);
-  const [expandedMobileId, setExpandedMobileId] = useState<number | null>(null);
-
-  // Lock body scroll when modal is open
-  useEffect(() => {
-    if (activeModalId !== null) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
-    return () => {
-      document.body.style.overflow = "unset";
-    };
-  }, [activeModalId]);
-
-  const handleCardClick = (faq: FAQ) => {
-    if (window.innerWidth >= 1024) {
-      // Desktop: Open Modal
-      setActiveModalId(faq.id);
-    } else {
-      // Mobile: Toggle Accordion
-      setExpandedMobileId((prev) => (prev === faq.id ? null : faq.id));
-    }
+  const toggleFAQ = (id: number) => {
+    setOpenId((prev) => (prev === id ? null : id));
   };
 
-  const activeFAQ = faqs.find((f) => f.id === activeModalId);
+  const faqs = [
+    {
+      id: 1,
+      question: "What is the LNAT and why is it important?",
+      answer:
+        "The LNAT (Law National Aptitude Test) is a standardized admissions test used by several UK universities to assess aptitude for law studies. It tests critical thinking, comprehension, and argumentative skills.",
+    },
+    {
+      id: 2,
+      question: "When should I start preparing for Oxbridge law applications?",
+      answer:
+        "Begin your preparation at least a year in advance. This includes practicing LNAT questions, refining your personal statement, and preparing for interviews.",
+    },
+    {
+      id: 3,
+      question: "How does the UCAS application timeline work?",
+      answer:
+        "UCAS applications for law courses typically open in September and close by mid-October for Oxbridge and medicine. Early preparation is crucial to meet these deadlines.",
+    },
+    {
+      id: 4,
+      question: "Are there specific essay tips for the LNAT?",
+      answer:
+        "Yes, focus on structuring your essay clearly, presenting balanced arguments, and demonstrating critical analysis rather than memorized facts.",
+    },
+  ];
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.15, delayChildren: 0.1 },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100 } },
+  };
 
   return (
-    <section className="relative overflow-hidden py-10 md:py-20 lg:py-32 px-6 lg:px-12 bg-sky-50 font-sans">
-      {/* --- SVG Wave Background (Desktop Only) --- */}
-      <div className="absolute inset-0 hidden lg:flex items-center justify-center pointer-events-none opacity-40">
+    <section className="relative overflow-hidden py-14 md:py-20 lg:py-28 px-6 lg:px-12 bg-[#FDFBF7] border-y border-[#0D1B3E]/6">
+      {/* Background Atmosphere */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-0 left-0 h-[420px] w-[420px] rounded-full bg-[#C9A84C]/6 blur-3xl" />
+        <div className="absolute bottom-0 right-0 h-[380px] w-[380px] rounded-full bg-[#0D1B3E]/5 blur-3xl" />
+      </div>
+
+      {/* Editorial Wave Accent */}
+      <div className="absolute inset-0 hidden lg:flex items-center justify-center opacity-30 pointer-events-none">
         <svg
-          viewBox="0 0 1440 300"
+          viewBox="0 0 1440 320"
           preserveAspectRatio="none"
-          className="w-[120%] h-64 text-sky-300 drop-shadow-sm"
+          className="w-[120%] h-72 text-[#C9A84C]/50"
         >
           <motion.path
             initial={{ pathLength: 0, opacity: 0 }}
             whileInView={{ pathLength: 1, opacity: 1 }}
             viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 2.5, ease: "easeInOut" }}
-            d="M -100 150 C 200 50, 400 250, 720 150 C 1040 50, 1200 250, 1540 150"
+            transition={{ duration: 2.4, ease: "easeInOut" }}
+            d="M -100 160 C 220 80, 420 260, 720 160 C 1020 60, 1210 260, 1540 160"
             fill="none"
             stroke="currentColor"
-            strokeWidth="3"
+            strokeWidth="2.5"
             strokeLinecap="round"
           />
+
           <motion.path
             initial={{ pathLength: 0, opacity: 0 }}
-            whileInView={{ pathLength: 1, opacity: 0.3 }}
+            whileInView={{ pathLength: 0.9, opacity: 0.3 }}
             viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 3, ease: "easeInOut", delay: 0.5 }}
-            d="M -100 170 C 250 80, 350 220, 720 170 C 1090 120, 1200 280, 1540 170"
+            transition={{ duration: 3, ease: "easeInOut", delay: 0.3 }}
+            d="M -100 190 C 260 110, 380 240, 720 190 C 1060 140, 1230 280, 1540 190"
             fill="none"
             stroke="currentColor"
-            strokeWidth="2"
-            strokeDasharray="8 8"
+            strokeWidth="1.5"
+            strokeDasharray="8 10"
           />
         </svg>
       </div>
 
-      {/* --- Header --- */}
-      <div className="relative z-10 max-w-2xl mx-auto text-center mb-16 lg:mb-24">
+      <div className="relative z-10 max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="max-w-3xl mx-auto text-center mb-14 md:mb-20">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="inline-flex items-center gap-2 rounded-full border border-[#C9A84C]/20 bg-[#F7F3EC] px-4 py-2 text-sm font-medium text-[#8C6A1F] mb-6"
+          >
+            <MapPin size={16} />
+            <span>Admissions Guidance</span>
+          </motion.div>
+
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="text-4xl md:text-5xl lg:text-[3.4rem] font-serif tracking-[-0.04em] text-[#0D1B3E] leading-[0.95]"
+          >
+            Frequently Asked Questions
+          </motion.h2>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.15 }}
+            className="mt-6 text-[15px] md:text-base text-[#44506B] leading-8 max-w-2xl mx-auto"
+          >
+            Clear, structured answers covering the LNAT, UCAS applications,
+            Oxbridge admissions timelines, and the broader UK law school
+            application process for Indian students.
+          </motion.p>
+        </div>
+
+        {/* FAQ Cards */}
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-sky-100/80 text-sky-700 font-medium text-sm mb-6 border border-sky-200"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+          className="flex flex-col gap-5 md:gap-6"
         >
-          <MapPin size={16} />
-          <span>Plan Your Journey</span>
-        </motion.div>
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.1 }}
-          className="text-4xl lg:text-5xl font-extrabold text-slate-800 tracking-tight"
-        >
-          Frequently Asked Questions
-        </motion.h2>
-      </div>
+          {faqs.map((faq, index) => {
+            const isOpen = openId === faq.id;
 
-      {/* --- FAQ Container --- */}
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, margin: "-50px" }}
-        className="relative z-10 flex flex-col lg:flex-row justify-center items-center lg:items-stretch gap-6 lg:gap-8 w-full max-w-7xl mx-auto"
-      >
-        {faqs.map((faq, index) => {
-          const isExpanded = expandedMobileId === faq.id;
-          const isDesktopActive = activeModalId === faq.id;
-
-          return (
-            <motion.div
-              key={faq.id}
-              variants={cardVariants}
-              className={`w-full max-w-xl lg:max-w-none lg:w-72 flex-shrink-0 transition-transform duration-700 ease-out 
-                ${index % 2 === 0 ? "lg:-translate-y-12" : "lg:translate-y-12"}
-              `}
-            >
-              <div
-                onClick={() => handleCardClick(faq)}
-                className={`
-                  relative group cursor-pointer overflow-hidden
-                  bg-white/70 backdrop-blur-xl border 
-                  rounded-3xl p-6 lg:p-8 transition-all duration-300
-                  ${
-                    isDesktopActive
-                      ? "border-sky-400 shadow-[0_10px_40px_rgba(56,189,248,0.4)] scale-[1.02]"
-                      : "border-white/40 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:-translate-y-2 hover:shadow-[0_10px_40px_rgba(56,189,248,0.3)] hover:border-sky-200"
-                  }
-                `}
+            return (
+              <motion.div
+                key={faq.id}
+                variants={itemVariants}
+                className="group"
               >
-                {/* Index Background Number */}
-                <div className="absolute -top-4 -right-2 text-[80px] font-black text-sky-100 opacity-40 group-hover:text-sky-200 transition-colors pointer-events-none select-none">
-                  0{index + 1}
-                </div>
-
-                {/* Content */}
-                <div className="relative z-10 flex flex-col h-full">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="bg-sky-100 text-sky-500 p-2 rounded-xl mb-4 group-hover:bg-sky-500 group-hover:text-white transition-colors">
-                      <HelpCircle size={20} strokeWidth={2.5} />
-                    </div>
-                    {/* Mobile toggle icon */}
-                    <div className="lg:hidden text-sky-400">
-                      <motion.div
-                        animate={{ rotate: isExpanded ? 180 : 0 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        <ChevronDown size={24} />
-                      </motion.div>
-                    </div>
+                <div
+                  className={`relative overflow-hidden rounded-[28px] border backdrop-blur-xl transition-all duration-500 ${
+                    isOpen
+                      ? "border-[#C9A84C]/35 bg-white shadow-[0_20px_60px_rgba(13,27,62,0.08)]"
+                      : "border-[#0D1B3E]/8 bg-white/90 hover:border-[#C9A84C]/25 hover:shadow-[0_15px_50px_rgba(13,27,62,0.06)]"
+                  }`}
+                >
+                  {/* Decorative Number */}
+                  <div className="absolute -top-5 right-2 text-[88px] md:text-[110px] font-black leading-none text-[#C9A84C]/6 select-none pointer-events-none transition-colors duration-500 group-hover:text-[#C9A84C]/10">
+                    {faq.id}
                   </div>
 
-                  <h3 className="text-lg font-bold text-slate-800 leading-snug group-hover:text-sky-900 transition-colors">
-                    {faq.question}
-                  </h3>
+                  <button
+                    onClick={() => toggleFAQ(faq.id)}
+                    className="relative z-10 w-full text-left px-6 md:px-8 py-6 md:py-8"
+                    aria-expanded={isOpen}
+                  >
+                    <div className="flex items-start justify-between gap-6">
+                      <div className="flex items-start gap-5 md:gap-6 max-w-4xl">
+                        <div
+                          className={`shrink-0 rounded-2xl p-3 transition-all duration-300 ${
+                            isOpen
+                              ? "bg-[#0D1B3E] text-white"
+                              : "bg-[#F7F3EC] text-[#C9A84C] group-hover:bg-[#0D1B3E] group-hover:text-white"
+                          }`}
+                        >
+                          <HelpCircle size={22} strokeWidth={2.2} />
+                        </div>
 
-                  {/* Desktop visual prompt */}
-                  <div className="hidden lg:block mt-auto pt-6 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <span className="text-sm font-semibold text-sky-500 flex items-center gap-2">
-                      Read answer{" "}
-                      <ChevronDown size={16} className="-rotate-90" />
-                    </span>
-                  </div>
+                        <div>
+                          <div className="flex items-center gap-3 mb-3">
+                            <span className="text-[10px] uppercase tracking-[0.24em] font-semibold text-[#8C6A1F]">
+                              FAQ {faq.id}
+                            </span>
+                          </div>
 
-                  {/* Mobile Answer Accordion */}
-                  <AnimatePresence>
-                    {isExpanded && (
+                          <h3
+                            className={`text-lg md:text-[1.45rem] font-serif leading-snug tracking-[-0.02em] transition-colors duration-300 ${
+                              isOpen
+                                ? "text-[#0D1B3E]"
+                                : "text-[#132445] group-hover:text-[#0D1B3E]"
+                            }`}
+                          >
+                            {faq.question}
+                          </h3>
+                        </div>
+                      </div>
+
+                      <div className="shrink-0 pt-1">
+                        <motion.div
+                          animate={{ rotate: isOpen ? 180 : 0 }}
+                          transition={{ duration: 0.35 }}
+                          className={`rounded-full border p-2.5 transition-all duration-300 ${
+                            isOpen
+                              ? "border-[#C9A84C]/30 bg-[#F7F3EC] text-[#8C6A1F]"
+                              : "border-[#0D1B3E]/10 text-[#44506B] group-hover:border-[#C9A84C]/30"
+                          }`}
+                        >
+                          <ChevronDown size={18} />
+                        </motion.div>
+                      </div>
+                    </div>
+                  </button>
+
+                  <AnimatePresence initial={false}>
+                    {isOpen && (
                       <motion.div
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.3, ease: "easeInOut" }}
-                        className="lg:hidden overflow-hidden"
+                        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                        className="overflow-hidden"
                       >
-                        <p className="mt-4 text-sm text-slate-600 leading-relaxed pb-2 border-t border-sky-100 pt-4">
-                          {faq.answer}
-                        </p>
+                        <div className="relative z-10 border-t border-[#0D1B3E]/6 px-6 md:px-8 pb-7 md:pb-8 pt-6 md:pt-7">
+                          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
+                            <div className="lg:col-span-8">
+                              <p className="text-[15px] md:text-base text-[#44506B] leading-8">
+                                {faq.answer}
+                              </p>
+                            </div>
+
+                            <div className="lg:col-span-4">
+                              <div className="rounded-2xl border border-[#C9A84C]/15 bg-[#F7F3EC] p-5 md:p-6 h-full">
+                                <p className="text-[10px] uppercase tracking-[0.22em] text-[#8C6A1F] font-semibold mb-3">
+                                  Guidance Note
+                                </p>
+
+                                <p className="text-sm text-[#5A647B] leading-7">
+                                  Elite UK law admissions evaluate reasoning,
+                                  intellectual depth, consistency of preparation,
+                                  and academic potential rather than memorized
+                                  legal knowledge.
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                       </motion.div>
                     )}
                   </AnimatePresence>
                 </div>
-              </div>
-            </motion.div>
-          );
-        })}
-      </motion.div>
+              </motion.div>
+            );
+          })}
+        </motion.div>
 
-      {/* --- Desktop Modal --- */}
-      <AnimatePresence>
-        {activeModalId !== null && activeFAQ && (
-          <div className="fixed inset-0 z-50 hidden lg:flex items-center justify-center p-6">
-            {/* Overlay */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setActiveModalId(null)}
-              className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
-            />
-
-            {/* Modal Content */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="relative w-full max-w-2xl bg-white/90 backdrop-blur-2xl border border-white/60 rounded-[2rem] p-10 shadow-[0_20px_60px_rgba(0,0,0,0.15)]"
-            >
-              <button
-                onClick={() => setActiveModalId(null)}
-                className="absolute top-6 right-6 p-2.5 bg-sky-50/50 hover:bg-sky-100 rounded-full text-slate-500 hover:text-slate-800 transition-colors"
-              >
-                <X size={20} strokeWidth={2.5} />
-              </button>
-
-              <div className="mb-6 inline-flex items-center justify-center w-12 h-12 bg-sky-100 text-sky-500 rounded-2xl">
-                <HelpCircle size={24} strokeWidth={2.5} />
-              </div>
-
-              <h3 className="text-2xl font-extrabold text-slate-800 mb-4 leading-tight">
-                {activeFAQ.question}
-              </h3>
-
-              <p className="text-lg text-slate-600 leading-relaxed">
-                {activeFAQ.answer}
-              </p>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+        {/* Footer CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.2 }}
+          className="mt-14 md:mt-16 flex justify-center"
+        >
+          <a
+            href="#"
+            className="group inline-flex items-center gap-3 rounded-full border border-[#0D1B3E]/10 bg-white px-6 py-3 text-sm font-medium text-[#0D1B3E] transition-all duration-300 hover:border-[#C9A84C]/30 hover:shadow-[0_10px_30px_rgba(13,27,62,0.06)]"
+          >
+            Explore More Questions
+            <ArrowRight className="w-4 h-4 text-[#C9A84C] transition-transform duration-300 group-hover:translate-x-1" />
+          </a>
+        </motion.div>
+      </div>
     </section>
   );
 }
