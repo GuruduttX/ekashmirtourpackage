@@ -40,7 +40,7 @@ export default function KnowBeforeYouGo({ PackageData = defaultPackageData }) {
   const [open, setOpen] = useState(false);
 
   return (
-    <section className="w-full py-0 sm:py-6 px-4 my-10">
+    <section className="w-full py-0 sm:py-6 px-0 my-10">
       <div className="max-w-7xl mx-auto">
         {/* Dropdown Card */}
         <div className="relative rounded-2xl border border-sky-200 bg-white/70 backdrop-blur-md shadow-xl overflow-hidden">
@@ -74,16 +74,14 @@ export default function KnowBeforeYouGo({ PackageData = defaultPackageData }) {
               open ? "max-h-full opacity-100" : "max-h-0 opacity-0"
             } overflow-hidden`}
           >
-            <ul className="px-6 pb-6 md:px-8 md:space-y-4">
+            <ul className="px-6 pb-6 md:px-8">
               {PackageData?.documents?.map((item, index) => (
                 <li
                   key={index}
-                  className="group flex items-start gap-4 p-2 md:p-4 rounded-xl transition-all duration-300 hover:bg-sky-50"
+                  className="group flex items-start gap-2.5 rounded-lg px-2 py-1.5 transition-colors duration-200 hover:bg-sky-50"
                 >
-                  <div>
-                    <CheckCircle className="w-5 h-5 mt-1 text-sky-500 group-hover:scale-110 transition-transform cursor-pointer" />
-                  </div>
-                  <p className="text-gray-700 leading-relaxed">
+                  <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-sky-500" />
+                  <p className="text-sm leading-snug text-gray-700">
                     {item.description}
                   </p>
                 </li>

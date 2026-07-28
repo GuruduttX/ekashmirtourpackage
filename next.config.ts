@@ -1,6 +1,26 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  allowedDevOrigins: ["192.168.1.15"],
+  async redirects() {
+    return [
+      {
+        source: "/package",
+        destination: "/kashmir-tour-packages",
+        permanent: true,
+      },
+      {
+        source: "/package/:slug",
+        destination: "/kashmir-tour-packages/:slug",
+        permanent: true,
+      },
+      {
+        source: "/services",
+        destination: "/cab-service/srinagar-to-gulmarg",
+        permanent: true,
+      },
+    ];
+  },
   images: {
     remotePatterns: [
       {

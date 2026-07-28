@@ -235,6 +235,18 @@ body {
 .anim-fade-in-up  { animation: fadeInUp  0.85s ease both; }
 .anim-scroll-pulse { animation: scrollPulse 2.2s ease-in-out infinite; }
 
+/* Infinite horizontal marquee — track is duplicated content, scrolls -50% */
+@keyframes marqueeScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marqueeScroll var(--marquee-duration, 40s) linear infinite;
+}
+.animate-marquee-paused {
+  animation-play-state: paused;
+}
+
 /* Hero heading — each line slides up with blur wipe */
 @keyframes heroLine {
   from {

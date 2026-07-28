@@ -171,7 +171,7 @@ export default async function PackagePage({
 
             <PackageHighlights PackageData={{ highlights: pkg.highlights ?? [] }} />
 
-            <PackageItinerary PackageData={{ itinerary: pkg.itinerary ?? [] }} />
+            <PackageItinerary PackageData={{ itinerary: pkg.itinerary_days ?? [] }} />
 
             <InclusionsExclusions
               inclusions={pkg.inclusions ?? []}

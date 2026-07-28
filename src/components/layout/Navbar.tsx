@@ -105,11 +105,11 @@ function PackagesDropdown({ onClose }: { onClose: () => void }) {
         transform: "translateX(-50%)",
         width: "880px",
         maxWidth: "calc(100vw - 2rem)",
-        background: "rgba(6,14,35,0.97)",
+        background: "rgba(255,255,255,0.98)",
         backdropFilter: "blur(36px)",
         WebkitBackdropFilter: "blur(36px)",
-        border: "1px solid rgba(56,189,248,0.20)",
-        boxShadow: "0 28px 70px rgba(4,10,28,0.75), 0 0 0 1px rgba(56,189,248,0.06)",
+        border: "1px solid rgba(56,189,248,0.25)",
+        boxShadow: "0 28px 70px rgba(15,23,42,0.18), 0 0 0 1px rgba(56,189,248,0.05)",
       }}
     >
       {/* ── Top sky-blue gradient accent line ── */}
@@ -122,13 +122,13 @@ function PackagesDropdown({ onClose }: { onClose: () => void }) {
       <div
         className="flex items-center justify-between px-5 py-2.5"
         style={{
-          background: "linear-gradient(90deg, rgba(2,106,167,0.45) 0%, rgba(14,165,233,0.28) 50%, rgba(56,189,248,0.18) 100%)",
-          borderBottom: "1px solid rgba(56,189,248,0.14)",
+          background: "linear-gradient(90deg, rgba(2,106,167,0.10) 0%, rgba(14,165,233,0.07) 50%, rgba(56,189,248,0.05) 100%)",
+          borderBottom: "1px solid rgba(56,189,248,0.16)",
         }}
       >
         <div className="flex items-center gap-2">
-          <span className="text-sky-400 text-[0.72rem] font-bold">✦</span>
-          <span className="text-[0.75rem] font-semibold tracking-wide text-white">
+          <span className="text-sky-500 text-[0.72rem] font-bold">✦</span>
+          <span className="text-[0.75rem] font-semibold tracking-wide text-slate-800">
             Exclusive Deals — Up to 30% Off on Selected Packages
           </span>
         </div>
@@ -139,8 +139,8 @@ function PackagesDropdown({ onClose }: { onClose: () => void }) {
             { label: "Travelers", value: "4K +" },
           ].map((s) => (
             <div key={s.label} className="flex items-center gap-1.5 text-[0.7rem]">
-              <span className="text-white/50">{s.label}</span>
-              <span className="font-bold text-sky-300">{s.value}</span>
+              <span className="text-slate-400">{s.label}</span>
+              <span className="font-bold text-sky-600">{s.value}</span>
             </div>
           ))}
         </div>
@@ -152,9 +152,9 @@ function PackagesDropdown({ onClose }: { onClose: () => void }) {
         {/* Left: Duration filters */}
         <div
           className="flex w-[210px] shrink-0 flex-col py-4"
-          style={{ borderRight: "1px solid rgba(56,189,248,0.10)" }}
+          style={{ borderRight: "1px solid rgba(15,23,42,0.08)" }}
         >
-          <p className="mb-2 px-4 text-[0.58rem] font-bold tracking-[0.22em] text-sky-400/60 uppercase">
+          <p className="mb-2 px-4 text-[0.58rem] font-bold tracking-[0.22em] text-sky-500/70 uppercase">
             Duration
           </p>
           {DURATION_FILTERS.map((f) => {
@@ -165,21 +165,21 @@ function PackagesDropdown({ onClose }: { onClose: () => void }) {
                 onClick={() => setActiveDuration(f.key)}
                 className="flex items-center justify-between px-4 py-2.5 text-left transition-all duration-150"
                 style={{
-                  background: active ? "rgba(56,189,248,0.12)" : "transparent",
+                  background: active ? "rgba(56,189,248,0.10)" : "transparent",
                   borderLeft: active ? "3px solid #38BDF8" : "3px solid transparent",
                 }}
               >
                 <span
                   className="text-[0.78rem] font-medium"
-                  style={{ color: active ? "#7DD3FC" : "rgba(255,255,255,0.55)" }}
+                  style={{ color: active ? "#0284C7" : "#475569" }}
                 >
                   {f.label}
                 </span>
                 <span
                   className="rounded-full px-2 py-0.5 text-[0.6rem] font-bold"
                   style={{
-                    background: active ? "#0EA5E9" : "rgba(255,255,255,0.08)",
-                    color: active ? "white" : "rgba(255,255,255,0.45)",
+                    background: active ? "#0EA5E9" : "rgba(15,23,42,0.06)",
+                    color: active ? "white" : "#64748b",
                   }}
                 >
                   {f.count}
@@ -194,7 +194,7 @@ function PackagesDropdown({ onClose }: { onClose: () => void }) {
 
           {/* City chips */}
           <div className="mb-3.5 flex flex-wrap items-center gap-2">
-            <span className="mr-1 text-[0.6rem] font-semibold tracking-widest text-sky-400/60 uppercase">
+            <span className="mr-1 text-[0.6rem] font-semibold tracking-widest text-sky-500/70 uppercase">
               🌍 Destination
             </span>
             {DESTINATIONS.map((city) => {
@@ -205,10 +205,10 @@ function PackagesDropdown({ onClose }: { onClose: () => void }) {
                   onClick={() => setActiveCity(city)}
                   className="rounded-full px-3 py-1 text-[0.7rem] font-medium transition-all duration-150"
                   style={{
-                    background: active ? "linear-gradient(135deg, #0EA5E9, #38BDF8)" : "rgba(255,255,255,0.06)",
-                    color: active ? "white" : "rgba(255,255,255,0.55)",
-                    border: active ? "1px solid rgba(56,189,248,0.50)" : "1px solid rgba(255,255,255,0.10)",
-                    boxShadow: active ? "0 4px 12px rgba(14,165,233,0.35)" : "none",
+                    background: active ? "linear-gradient(135deg, #0EA5E9, #38BDF8)" : "rgba(15,23,42,0.04)",
+                    color: active ? "white" : "#475569",
+                    border: active ? "1px solid rgba(56,189,248,0.50)" : "1px solid rgba(15,23,42,0.10)",
+                    boxShadow: active ? "0 4px 12px rgba(14,165,233,0.30)" : "none",
                   }}
                 >
                   {city}
@@ -222,23 +222,23 @@ function PackagesDropdown({ onClose }: { onClose: () => void }) {
             {visible.slice(0, 2).map((pkg) => (
               <Link
                 key={pkg.key}
-                href="/package/slug"
+                href="/kashmir-tour-packages/"
                 onClick={onClose}
                 className="group overflow-hidden rounded-xl transition-all duration-250 hover:-translate-y-0.5"
                 style={{
-                  background: "rgba(255,255,255,0.05)",
-                  border: "1px solid rgba(255,255,255,0.09)",
-                  boxShadow: "0 2px 12px rgba(4,10,28,0.30)",
+                  background: "#ffffff",
+                  border: "1px solid rgba(15,23,42,0.08)",
+                  boxShadow: "0 2px 12px rgba(15,23,42,0.06)",
                 }}
                 onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLElement).style.border = "1px solid rgba(56,189,248,0.40)";
-                  (e.currentTarget as HTMLElement).style.boxShadow = "0 8px 30px rgba(14,165,233,0.22)";
-                  (e.currentTarget as HTMLElement).style.background = "rgba(56,189,248,0.07)";
+                  (e.currentTarget as HTMLElement).style.border = "1px solid rgba(56,189,248,0.45)";
+                  (e.currentTarget as HTMLElement).style.boxShadow = "0 8px 30px rgba(14,165,233,0.15)";
+                  (e.currentTarget as HTMLElement).style.background = "rgba(56,189,248,0.04)";
                 }}
                 onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLElement).style.border = "1px solid rgba(255,255,255,0.09)";
-                  (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 12px rgba(4,10,28,0.30)";
-                  (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.05)";
+                  (e.currentTarget as HTMLElement).style.border = "1px solid rgba(15,23,42,0.08)";
+                  (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 12px rgba(15,23,42,0.06)";
+                  (e.currentTarget as HTMLElement).style.background = "#ffffff";
                 }}
               >
                 {/* Image */}
@@ -253,7 +253,7 @@ function PackagesDropdown({ onClose }: { onClose: () => void }) {
                   {/* Dark gradient over image bottom */}
                   <div
                     className="absolute inset-0"
-                    style={{ background: "linear-gradient(180deg, transparent 40%, rgba(6,14,35,0.65) 100%)" }}
+                    style={{ background: "linear-gradient(180deg, transparent 40%, rgba(6,14,35,0.55) 100%)" }}
                   />
                   {/* Tag */}
                   <span
@@ -275,19 +275,19 @@ function PackagesDropdown({ onClose }: { onClose: () => void }) {
 
                 {/* Card body */}
                 <div className="p-3">
-                  <h4 className="mb-1.5 text-[0.82rem] font-semibold text-white leading-tight">
+                  <h4 className="mb-1.5 text-[0.82rem] font-semibold text-slate-900 leading-tight">
                     {pkg.title}
                   </h4>
-                  <div className="mb-2.5 flex items-center gap-3 text-[0.66rem] text-white/40">
+                  <div className="mb-2.5 flex items-center gap-3 text-[0.66rem] text-slate-500">
                     <span className="flex items-center gap-1">⏱ {pkg.duration}</span>
                     <span className="flex items-center gap-1">📍 {pkg.location}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <div>
-                      <div className="text-[0.6rem] text-white/35">Starting from</div>
+                      <div className="text-[0.6rem] text-slate-400">Starting from</div>
                       <div
                         className="text-[0.92rem] font-bold"
-                        style={{ color: "#38BDF8" }}
+                        style={{ color: "#0284C7" }}
                       >
                         {pkg.price}
                       </div>
@@ -312,7 +312,7 @@ function PackagesDropdown({ onClose }: { onClose: () => void }) {
       {/* ── Bottom CTA bar ── */}
       <div
         className="flex items-center gap-3 px-5 py-3"
-        style={{ borderTop: "1px solid rgba(56,189,248,0.12)" }}
+        style={{ borderTop: "1px solid rgba(15,23,42,0.08)" }}
       >
         <Link
           href="#packages"
@@ -326,8 +326,8 @@ function PackagesDropdown({ onClose }: { onClose: () => void }) {
           🔍 Explore All Packages →
         </Link>
         <button
-          className="flex items-center gap-2 rounded-xl px-5 py-3 text-[0.82rem] font-semibold text-sky-300 transition-all hover:bg-sky-400/10"
-          style={{ border: "1px solid rgba(56,189,248,0.30)" }}
+          className="flex items-center gap-2 rounded-xl px-5 py-3 text-[0.82rem] font-semibold text-sky-600 transition-all hover:bg-sky-50"
+          style={{ border: "1px solid rgba(56,189,248,0.40)" }}
         >
           🔥 Hot Deals
         </button>
@@ -336,7 +336,7 @@ function PackagesDropdown({ onClose }: { onClose: () => void }) {
       {/* ── Trust footer strip ── */}
       <div
         className="flex items-center justify-around px-5 py-2.5"
-        style={{ background: "rgba(255,255,255,0.03)", borderTop: "1px solid rgba(56,189,248,0.08)" }}
+        style={{ background: "rgba(15,23,42,0.03)", borderTop: "1px solid rgba(15,23,42,0.06)" }}
       >
         {[
           { icon: "✓", label: "Free Cancellation" },
@@ -344,12 +344,12 @@ function PackagesDropdown({ onClose }: { onClose: () => void }) {
           { icon: "🎧", label: "24 / 7 Support" },
         ].map((t) => (
           <div key={t.label} className="flex items-center gap-1.5">
-            <span className="text-sky-400 text-sm">{t.icon}</span>
-            <span className="text-[0.67rem] font-medium text-white/45">{t.label}</span>
+            <span className="text-sky-500 text-sm">{t.icon}</span>
+            <span className="text-[0.67rem] font-medium text-slate-500">{t.label}</span>
           </div>
         ))}
-        <div className="text-[0.67rem] text-sky-400/80">
-          Need help? <span className="cursor-pointer font-semibold text-sky-400 underline underline-offset-2">Talk to us →</span>
+        <div className="text-[0.67rem] text-sky-600/90">
+          Need help? <span className="cursor-pointer font-semibold text-sky-600 underline underline-offset-2">Talk to us →</span>
         </div>
       </div>
     </div>
@@ -364,12 +364,12 @@ function ServicesDropdown({ onClose }: { onClose: () => void }) {
     <div
       className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-[520px] rounded-2xl overflow-hidden z-50"
       style={{
-        background: "rgba(6,14,35,0.97)",
+        background: "rgba(255,255,255,0.98)",
         backdropFilter: "blur(32px)",
         WebkitBackdropFilter: "blur(32px)",
-        border: "1px solid rgba(56,189,248,0.22)",
+        border: "1px solid rgba(56,189,248,0.25)",
         boxShadow:
-          "0 24px 60px rgba(4,10,28,0.70), 0 0 0 1px rgba(56,189,248,0.08)",
+          "0 24px 60px rgba(15,23,42,0.16), 0 0 0 1px rgba(56,189,248,0.05)",
       }}
     >
       <div
@@ -380,50 +380,50 @@ function ServicesDropdown({ onClose }: { onClose: () => void }) {
         }}
       />
       <div className="p-5">
-        <p className="text-[0.6rem] font-semibold tracking-[0.28em] text-sky-400/70 uppercase mb-4 px-1">
+        <p className="text-[0.6rem] font-semibold tracking-[0.28em] text-sky-500/80 uppercase mb-4 px-1">
           What We Offer
         </p>
         <div className="grid grid-cols-2 gap-2">
           {NAV_SERVICES.map((svc) => (
             <Link
               key={svc.title}
-              href="/services"
+              href="/cab-service/srinagar-to-gulmarg/"
               onClick={onClose}
               className="group flex items-center gap-3 rounded-xl px-3 py-2.5 transition-all duration-200"
-              style={{ border: "1px solid rgba(255,255,255,0.06)" }}
+              style={{ border: "1px solid rgba(15,23,42,0.06)" }}
               onMouseEnter={(e) => {
                 (e.currentTarget as HTMLElement).style.background =
-                  "rgba(56,189,248,0.08)";
+                  "rgba(56,189,248,0.06)";
                 (e.currentTarget as HTMLElement).style.borderColor =
-                  "rgba(56,189,248,0.25)";
+                  "rgba(56,189,248,0.30)";
               }}
               onMouseLeave={(e) => {
                 (e.currentTarget as HTMLElement).style.background =
                   "transparent";
                 (e.currentTarget as HTMLElement).style.borderColor =
-                  "rgba(255,255,255,0.06)";
+                  "rgba(15,23,42,0.06)";
               }}
             >
               <span className="text-xl leading-none">{svc.icon}</span>
               <div>
-                <div className="text-[0.78rem] font-semibold text-white group-hover:text-sky-300 transition-colors">
+                <div className="text-[0.78rem] font-semibold text-slate-900 group-hover:text-sky-600 transition-colors">
                   {svc.title}
                 </div>
-                <div className="text-[0.65rem] text-white/40 leading-tight mt-0.5">
+                <div className="text-[0.65rem] text-slate-500 leading-tight mt-0.5">
                   {svc.desc}
                 </div>
               </div>
             </Link>
           ))}
         </div>
-        <div className="mt-4 border-t border-white/6 pt-3 flex items-center justify-between">
-          <span className="text-[0.68rem] text-white/35">
+        <div className="mt-4 border-t border-slate-200/70 pt-3 flex items-center justify-between">
+          <span className="text-[0.68rem] text-slate-400">
             All services customisable for your trip
           </span>
           <Link
             href="#contact"
             onClick={onClose}
-            className="text-[0.72rem] font-medium text-sky-400 hover:text-sky-300 transition-colors"
+            className="text-[0.72rem] font-medium text-sky-600 hover:text-sky-500 transition-colors"
           >
             Talk to us →
           </Link>
@@ -467,21 +467,21 @@ export default function Navbar() {
       <header className="fixed top-0 left-0 right-0 z-50">
         {/* ── Main bar ── */}
         <div
-          className={`transition-all duration-500 ${scrolled ? "shadow-2xl shadow-black/50" : "shadow-lg shadow-black/20"}`}
+          className={`transition-all duration-500 ${scrolled ? "shadow-xl shadow-slate-900/10" : "shadow-md shadow-slate-900/5"}`}
           style={{
-            background: scrolled ? "rgba(6,14,35,0.98)" : "rgba(5,12,26,0.84)",
+            background: scrolled ? "rgba(255,255,255,0.98)" : "rgba(255,255,255,0.85)",
             backdropFilter: "blur(28px)",
             WebkitBackdropFilter: "blur(28px)",
             borderBottom: scrolled
-              ? "1px solid rgba(56,189,248,0.22)"
-              : "1px solid rgba(56,189,248,0.12)",
+              ? "1px solid rgba(56,189,248,0.28)"
+              : "1px solid rgba(56,189,248,0.14)",
           }}
         >
           <nav className="mx-auto flex h-[70px] max-w-8xl items-center px-6 lg:px-12 justify-between">
             {/* Logo */}
             <Link
               href="/"
-              className="flex shrink-0 items-center gap-2.5 bg-white rounded-full px-5"
+              className="flex shrink-0 items-center gap-2.5"
             >
               <Image
                 src="/Experience_my_India.webp"
@@ -512,14 +512,14 @@ export default function Navbar() {
                       href={link.href}
                       className={`group relative flex items-center gap-1 rounded-lg px-3 py-2 text-[0.83rem] font-medium tracking-wide transition-all duration-200 ${
                         isActive
-                          ? "bg-sky-500/12 text-sky-400"
-                          : "text-white hover:bg-white/5 hover:text-white"
+                          ? "bg-sky-50 text-sky-600"
+                          : "text-slate-700 hover:bg-sky-50/70 hover:text-sky-600"
                       }`}
                     >
                       {link.label}
                       {hasDropdown && (
                         <svg
-                          className={`h-3 w-3 transition-transform duration-200 ${isActive ? "rotate-180 text-sky-400" : "text-white/35"}`}
+                          className={`h-3 w-3 transition-transform duration-200 ${isActive ? "rotate-180 text-sky-600" : "text-slate-400"}`}
                           viewBox="0 0 12 12"
                           fill="currentColor"
                         >
@@ -533,7 +533,7 @@ export default function Navbar() {
                         </svg>
                       )}
                       {!hasDropdown && (
-                        <span className="absolute -bottom-0.5 left-3 right-3 h-px scale-x-0 rounded-full bg-sky-400 transition-transform duration-300 group-hover:scale-x-100" />
+                        <span className="absolute -bottom-0.5 left-3 right-3 h-px scale-x-0 rounded-full bg-sky-500 transition-transform duration-300 group-hover:scale-x-100" />
                       )}
                     </Link>
 
@@ -580,20 +580,20 @@ export default function Navbar() {
               onClick={() => setMobileOpen((o) => !o)}
               className="relative flex h-9 w-9 items-center justify-center rounded-lg md:hidden"
               style={{
-                background: "rgba(255,255,255,0.06)",
-                border: "1px solid rgba(255,255,255,0.10)",
+                background: "rgba(15,23,42,0.04)",
+                border: "1px solid rgba(15,23,42,0.10)",
               }}
               aria-label="Toggle navigation"
             >
               <div className="flex w-5 flex-col gap-[5px]">
                 <span
-                  className={`block h-[1.5px] rounded bg-white origin-center transition-all duration-300 ${mobileOpen ? "rotate-45 translate-y-[6.5px]" : ""}`}
+                  className={`block h-[1.5px] rounded bg-slate-800 origin-center transition-all duration-300 ${mobileOpen ? "rotate-45 translate-y-[6.5px]" : ""}`}
                 />
                 <span
-                  className={`block h-[1.5px] rounded bg-white transition-all duration-300 ${mobileOpen ? "opacity-0 scale-x-0" : ""}`}
+                  className={`block h-[1.5px] rounded bg-slate-800 transition-all duration-300 ${mobileOpen ? "opacity-0 scale-x-0" : ""}`}
                 />
                 <span
-                  className={`block h-[1.5px] rounded bg-white origin-center transition-all duration-300 ${mobileOpen ? "-rotate-45 -translate-y-[6.5px]" : ""}`}
+                  className={`block h-[1.5px] rounded bg-slate-800 origin-center transition-all duration-300 ${mobileOpen ? "-rotate-45 -translate-y-[6.5px]" : ""}`}
                 />
               </div>
             </button>
@@ -613,10 +613,10 @@ export default function Navbar() {
         <div
           className={`md:hidden overflow-hidden transition-all duration-300 ${mobileOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"}`}
           style={{
-            background: "rgba(5,12,28,0.98)",
+            background: "rgba(255,255,255,0.98)",
             backdropFilter: "blur(28px)",
             WebkitBackdropFilter: "blur(28px)",
-            borderBottom: "1px solid rgba(56,189,248,0.15)",
+            borderBottom: "1px solid rgba(56,189,248,0.18)",
           }}
         >
           <div className="flex flex-col gap-0.5 px-5 py-4">
@@ -627,7 +627,7 @@ export default function Navbar() {
               return (
                 <div key={link.label}>
                   <div
-                    className="flex cursor-pointer items-center justify-between rounded-xl px-3 py-2.5 transition-colors hover:bg-white/5"
+                    className="flex cursor-pointer items-center justify-between rounded-xl px-3 py-2.5 transition-colors hover:bg-sky-50"
                     onClick={() =>
                       hasDropdown &&
                       setMobileExpanded(isExpanded ? null : link.dropdown!)
@@ -636,13 +636,13 @@ export default function Navbar() {
                     <Link
                       href={link.href}
                       onClick={() => !hasDropdown && setMobileOpen(false)}
-                      className="flex-1 text-[0.92rem] font-medium text-white/72 hover:text-white"
+                      className="flex-1 text-[0.92rem] font-medium text-slate-700 hover:text-sky-600"
                     >
                       {link.label}
                     </Link>
                     {hasDropdown ? (
                       <svg
-                        className={`h-4 w-4 text-white/70 transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
+                        className={`h-4 w-4 text-slate-500 transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
                         viewBox="0 0 12 12"
                         fill="currentColor"
                       >
@@ -655,20 +655,20 @@ export default function Navbar() {
                         />
                       </svg>
                     ) : (
-                      <span className="text-xs text-sky-500/60">→</span>
+                      <span className="text-xs text-sky-500/70">→</span>
                     )}
                   </div>
 
                   {hasDropdown &&
                     isExpanded &&
                     link.dropdown === "packages" && (
-                      <div className="ml-3 mt-1 flex flex-col gap-1 border-l border-sky-500/20 pl-3">
+                      <div className="ml-3 mt-1 flex flex-col gap-1 border-l border-sky-200 pl-3">
                         {DROPDOWN_PACKAGES.map((pkg) => (
                           <Link
                             key={pkg.key}
                             href="#packages"
                             onClick={() => setMobileOpen(false)}
-                            className="flex items-center gap-2.5 rounded-lg px-2 py-2 hover:bg-white/5"
+                            className="flex items-center gap-2.5 rounded-lg px-2 py-2 hover:bg-sky-50"
                           >
                             <div className="relative h-9 w-12 shrink-0 overflow-hidden rounded-lg">
                               <Image
@@ -680,10 +680,10 @@ export default function Navbar() {
                               />
                             </div>
                             <div>
-                              <div className="text-[0.78rem] font-medium text-white/85">
+                              <div className="text-[0.78rem] font-medium text-slate-800">
                                 {pkg.title}
                               </div>
-                              <div className="text-[0.65rem] text-white/40">
+                              <div className="text-[0.65rem] text-slate-400">
                                 {pkg.duration} ·{" "}
                                 <span style={{ color: pkg.tagColor }}>
                                   {pkg.price}
@@ -698,16 +698,16 @@ export default function Navbar() {
                   {hasDropdown &&
                     isExpanded &&
                     link.dropdown === "services" && (
-                      <div className="ml-3 mt-1 flex flex-col gap-1 border-l border-sky-500/20 pl-3">
+                      <div className="ml-3 mt-1 flex flex-col gap-1 border-l border-sky-200 pl-3">
                         {NAV_SERVICES.map((svc) => (
                           <Link
                             key={svc.title}
                             href="#services"
                             onClick={() => setMobileOpen(false)}
-                            className="flex items-center gap-2.5 rounded-lg px-2 py-2 hover:bg-white/5"
+                            className="flex items-center gap-2.5 rounded-lg px-2 py-2 hover:bg-sky-50"
                           >
                             <span className="text-base">{svc.icon}</span>
-                            <span className="text-[0.78rem] font-medium text-white/80">
+                            <span className="text-[0.78rem] font-medium text-slate-700">
                               {svc.title}
                             </span>
                           </Link>

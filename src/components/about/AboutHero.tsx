@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import EnquiryPopupForm from "@/utils/EnquiryPopupForm";
 
 type Snowflake = {
@@ -31,7 +32,7 @@ export default function AboutHero() {
   const [isOpen, setOpen] = useState(false)
 
   return (
-    <section className="relative flex min-h-[620px] overflow-hidden sm:min-h-[680px] lg:min-h-[760px]">
+    <section className="relative flex min-h-[720px] overflow-hidden lg:min-h-[760px] lg:max-h-[880px]">
       <EnquiryPopupForm isOpen={isOpen} onClose={()=>setOpen(false)}/>
       <Image
         src="/Home/kashmir-hero.webp"
@@ -148,8 +149,14 @@ export default function AboutHero() {
         ))}
       </div>
 
-      <div className="relative z-10 flex w-full flex-1 items-center justify-center">
-        <div className="mx-auto flex w-full max-w-5xl flex-col items-center px-5 pb-20 pt-28 text-center sm:px-8 sm:pt-32 lg:px-12 lg:pt-36">
+      <div className="relative z-10 flex w-full flex-1 items-center">
+        <div className="mx-auto grid w-full max-w-7xl items-center gap-6 px-5 pb-28 pt-32 sm:px-8 sm:pt-36 lg:grid-cols-[minmax(0,1.05fr)_minmax(320px,0.55fr)] lg:px-12 lg:pb-32 lg:pt-40">
+          <div className="max-w-3xl text-left">
+          <Breadcrumbs
+            items={[{ label: "About" }]}
+            className="mb-5 text-white/70 [&_a]:text-white/80 [&_a:hover]:text-cyan-200 [&_span]:text-white/70 [&_[aria-current=page]]:text-white"
+          />
+
           <div
             className="mb-6 inline-flex items-center gap-2.5 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 backdrop-blur-md anim-fade-in"
             style={{ animationDelay: "120ms" }}
@@ -164,32 +171,51 @@ export default function AboutHero() {
             className="hero-line font-heading font-bold leading-[1.08] text-white"
             style={{
               animationDelay: "220ms",
-              fontSize: "clamp(2rem, 6vw, 5rem)",
+              fontSize: "clamp(1.65rem, 3.6vw, 3.25rem)",
               textShadow: "0 3px 26px rgba(8,15,35,0.55)",
             }}
           >
-            Crafted journeys through the{" "}
+            The only Kashmir travel site that plans your{" "}
             <span className="bg-[linear-gradient(120deg,#BAE6FD_0%,#67E8F9_45%,#E0F2FE_100%)] bg-clip-text text-transparent">
-              snow, stillness,
+              whole trip like a local
             </span>{" "}
-            and soul of Kashmir.
+            who's done it for 20 years.
           </h1>
 
           <p
-            className="anim-fade-in-up mt-6 max-w-2xl text-sm font-light leading-7 text-white/82 sm:text-base sm:leading-8"
+            className="anim-fade-in-up mt-5 max-w-2xl text-sm font-light leading-7 text-white/82 sm:text-[0.95rem] sm:leading-8"
             style={{
               animationDelay: "520ms",
               textShadow: "0 1px 14px rgba(8,15,35,0.48)",
             }}
           >
-            We design Kashmir holidays with local insight, thoughtful pacing,
-            and a deep respect for the landscapes that make every valley, lake,
-            and mountain pass unforgettable.
+            eKashmir brings packages, cabs, stays, temples, festivals and
+            destination planning into one local-led system, with on-ground
+            verified guidance and transparent price tables replacing the
+            guesswork of national OTA listings.
           </p>
 
-          <div className="mt-9 flex w-full max-w-md flex-col gap-3 sm:max-w-none sm:flex-row sm:justify-center sm:gap-4">
+          <div
+            className="anim-fade-in-up mt-5 grid w-full max-w-3xl gap-3 text-left sm:grid-cols-3"
+            style={{ animationDelay: "620ms" }}
+          >
+            {[
+              "Packages, cabs, stays and routes in one place",
+              "On-ground notes from Kashmir, not generic OTA copy",
+              "Clear inclusions, exclusions and price tables",
+            ].map((value) => (
+              <div
+                key={value}
+                className="rounded-2xl border border-white/15 bg-white/10 p-4 text-sm leading-6 text-white/82 backdrop-blur-md"
+              >
+                {value}
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-6 flex w-full max-w-md flex-col gap-3 sm:max-w-none sm:flex-row sm:gap-4">
             <Link
-              href="/package"
+              href="/kashmir-tour-packages/"
               className="pop-in w-full rounded-2xl border border-white/30 bg-sky-500/85 px-7 py-3.5 text-center text-[0.95rem] font-medium text-white shadow-[0_10px_30px_rgba(14,165,233,0.35)] backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:bg-sky-600 sm:w-auto"
               style={{ animationDelay: "700ms" }}
             >
@@ -203,6 +229,28 @@ export default function AboutHero() {
               Get in Touch
             </button>
           </div>
+          </div>
+
+          <aside
+            className="hidden rounded-3xl border border-white/15 bg-white/10 p-5 text-left shadow-[0_20px_70px_rgba(8,15,35,0.28)] backdrop-blur-xl lg:block"
+            style={{ animationDelay: "760ms" }}
+          >
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-200">
+              What makes us different
+            </p>
+            <div className="mt-5 space-y-4">
+              {[
+                ["One roof", "Packages, cabs, stays, temples and festivals planned together."],
+                ["Local checks", "Route rules, seasonal timing and practical travel notes verified on ground."],
+                ["Clear costs", "Price tables and exclusions are surfaced before quote discussions."],
+              ].map(([title, text]) => (
+                <div key={title} className="rounded-2xl bg-white/10 p-4">
+                  <h2 className="text-base font-semibold text-white">{title}</h2>
+                  <p className="mt-2 text-sm leading-6 text-white/72">{text}</p>
+                </div>
+              ))}
+            </div>
+          </aside>
         </div>
       </div>
     </section>

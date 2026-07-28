@@ -245,7 +245,7 @@ function PackageTable({ packages, onDelete }: { packages: PkgItem[]; onDelete: (
                     )}
                     <div className="min-w-0">
                       <p className="text-white text-sm font-medium truncate max-w-52">{pkg.title}</p>
-                      <p className="text-slate-600 text-xs truncate max-w-52">/package/{pkg.slug}</p>
+                      <p className="text-slate-600 text-xs truncate max-w-52">/kashmir-tour-packages/{pkg.slug}</p>
                     </div>
                   </div>
                 </td>

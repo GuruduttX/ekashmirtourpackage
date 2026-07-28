@@ -10,6 +10,7 @@ import {
   Navigation,
   Star,
   Map,
+  MapPin,
   Plus,
   Trash2,
   CheckCircle,
@@ -31,7 +32,7 @@ import FaqHandler from '@/components/admin/FaqHandler';
 // ─── Types ───────────────────────────────────────────────
 interface DurationBreakdownItem { id: string; days: number; place: string }
 interface HighlightItem { id: string; description: string }
-interface ItineraryItem { id: string; day: number; title: string; description: string }
+interface ItineraryItem { id: string; day: number; title: string; description: string; stops: string[] }
 interface ChildImageItem { id: string; image: string; alt: string }
 interface TestimonialItem { id: string; name: string; description: string; rating: string }
 interface SegmentItem { id: string; from: string; to: string }
@@ -46,7 +47,7 @@ interface PackageFormData {
   availableSrc: string[];
   destination: string; overview: string;
   highlights: HighlightItem[];
-  itinerary: ItineraryItem[];
+  itinerary_days: ItineraryItem[];
   inclusions: HighlightItem[];
   exclusions: HighlightItem[];
   faqs: Array<{ id: string; question: string; answer: string }>;
@@ -58,6 +59,7 @@ interface PackageFormData {
   testimonials: TestimonialItem[];
   knowBeforeYouGo: KBYGItem[];
   routes: { source: string; destination: string; segments: SegmentItem[] };
+  mapEmbedUrl: string;
   isTransferIncluded: boolean;
   isStayIncluded: boolean;
   isBreakfastIncluded: boolean;
@@ -71,7 +73,7 @@ const EMPTY: PackageFormData = {
   days: 0, nights: 0,
   durationbreakdown: [], availableSrc: [],
   destination: '', overview: '',
-  highlights: [], itinerary: [],
+  highlights: [], itinerary_days: [],
   inclusions: [], exclusions: [],
   faqs: [],
   metaTitle: '', metaDescription: '',
@@ -80,6 +82,7 @@ const EMPTY: PackageFormData = {
   heroImage: { alt: '', image: '' },
   childImages: [], testimonials: [], knowBeforeYouGo: [],
   routes: { source: '', destination: '', segments: [] },
+  mapEmbedUrl: '',
   isTransferIncluded: false, isStayIncluded: false,
   isBreakfastIncluded: false, isSightseeingIncluded: false,
 };
@@ -217,8 +220,8 @@ export default function PackageEditor({ initialData, packageId }: Props) {
                   </button>
                 </div>
                 <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 text-sm select-none">/package/</span>
-                  <input className={`${inp} pl-20`} placeholder="auto-generated-from-title" value={form.slug} readOnly={!slugLocked} onChange={(e) => set('slug', slugify(e.target.value))} />
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 text-sm select-none">/kashmir-tour-packages/</span>
+                  <input className={`${inp} pl-48`} placeholder="auto-generated-from-title" value={form.slug} readOnly={!slugLocked} onChange={(e) => set('slug', slugify(e.target.value))} />
                 </div>
               </div>
 
@@ -399,6 +402,24 @@ export default function PackageEditor({ initialData, packageId }: Props) {
           </CMSSection>
         </motion.div>
 
+        {/* ── 6b. Location Map ── */}
+        <motion.div {...fadeUp(0.21)}>
+          <CMSSection title="Location Map" icon={<MapPin className="w-4 h-4" />} defaultOpen>
+            <div className="pt-4 space-y-2">
+              <label className={lbl}>Google Maps Embed URL</label>
+              <textarea
+                className={ta}
+                placeholder="Paste the embed src, e.g. https://www.google.com/maps/embed?pb=... — or paste the full <iframe> code from Google Maps > Share > Embed a map"
+                value={form.mapEmbedUrl}
+                onChange={(e) => set('mapEmbedUrl', e.target.value)}
+              />
+              <p className="text-xs text-slate-500">
+                In Google Maps: search the location → Share → Embed a map → Copy HTML. Paste it here as-is (the src URL is extracted automatically). Leave blank to hide the map on the package page.
+              </p>
+            </div>
+          </CMSSection>
+        </motion.div>
+
         {/* ── 7. Highlights ── */}
         <motion.div {...fadeUp(0.22)}>
           <CMSSection title="Trip Highlights" icon={<Star className="w-4 h-4" />} defaultOpen={false} badge={form.highlights.length || undefined}>
@@ -422,9 +443,9 @@ export default function PackageEditor({ initialData, packageId }: Props) {
 
         {/* ── 8. Itinerary ── */}
         <motion.div {...fadeUp(0.25)}>
-          <CMSSection title="Itinerary" icon={<FileText className="w-4 h-4" />} defaultOpen={false} badge={form.itinerary.length || undefined}>
+          <CMSSection title="Itinerary" icon={<FileText className="w-4 h-4" />} defaultOpen={false} badge={form.itinerary_days.length || undefined}>
             <div className="pt-4 space-y-3">
-              {form.itinerary.map((item) => (
+              {form.itinerary_days.map((item) => (
                 <div key={item.id} className="rounded-xl border border-[#19315d]/40 bg-[#07111f]/60 p-4 space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
@@ -432,20 +453,22 @@ export default function PackageEditor({ initialData, packageId }: Props) {
                         <span className="text-blue-400 text-xs font-bold">{item.day}</span>
                       </div>
                       <input type="number" className={`${inp} w-20`} placeholder="Day" value={item.day}
-                        onChange={(e) => set('itinerary', form.itinerary.map(i => i.id === item.id ? { ...i, day: Number(e.target.value) } : i))} />
+                        onChange={(e) => set('itinerary_days', form.itinerary_days.map(i => i.id === item.id ? { ...i, day: Number(e.target.value) } : i))} />
                     </div>
-                    <button type="button" className={removeBtn} onClick={() => set('itinerary', form.itinerary.filter(i => i.id !== item.id))}>
+                    <button type="button" className={removeBtn} onClick={() => set('itinerary_days', form.itinerary_days.filter(i => i.id !== item.id))}>
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
                   </div>
                   <input className={inp} placeholder="Day title" value={item.title}
-                    onChange={(e) => set('itinerary', form.itinerary.map(i => i.id === item.id ? { ...i, title: e.target.value } : i))} />
+                    onChange={(e) => set('itinerary_days', form.itinerary_days.map(i => i.id === item.id ? { ...i, title: e.target.value } : i))} />
                   <textarea className={`${ta} min-h-20`} placeholder="Day description" value={item.description}
-                    onChange={(e) => set('itinerary', form.itinerary.map(i => i.id === item.id ? { ...i, description: e.target.value } : i))} />
+                    onChange={(e) => set('itinerary_days', form.itinerary_days.map(i => i.id === item.id ? { ...i, description: e.target.value } : i))} />
+                  <input className={inp} placeholder="Stops (comma-separated)" value={item.stops.join(', ')}
+                    onChange={(e) => set('itinerary_days', form.itinerary_days.map(i => i.id === item.id ? { ...i, stops: e.target.value.split(',').map(s => s.trim()).filter(Boolean) } : i))} />
                 </div>
               ))}
               <button type="button" className={addBtn}
-                onClick={() => set('itinerary', [...form.itinerary, { id: uid(), day: form.itinerary.length + 1, title: '', description: '' }])}>
+                onClick={() => set('itinerary_days', [...form.itinerary_days, { id: uid(), day: form.itinerary_days.length + 1, title: '', description: '', stops: [] }])}>
                 <Plus className="w-4 h-4" /> Add Day
               </button>
             </div>
@@ -622,7 +645,7 @@ export default function PackageEditor({ initialData, packageId }: Props) {
                 <div className="rounded-xl border border-[#19315d]/40 bg-[#07111f] p-4">
                   <p className="text-[11px] text-slate-500 mb-2 uppercase tracking-widest">Search Preview</p>
                   <p className="text-blue-400 text-sm font-medium truncate">{form.metaTitle || form.title || 'Page Title'}</p>
-                  <p className="text-emerald-600 text-xs mt-0.5">ekashmirtours.com/package/{form.slug || 'package-slug'}</p>
+                  <p className="text-emerald-600 text-xs mt-0.5">ekashmirtours.com/kashmir-tour-packages/{form.slug || 'package-slug'}</p>
                   <p className="text-slate-400 text-xs mt-1 line-clamp-2">{form.metaDescription || 'Meta description...'}</p>
                 </div>
               )}

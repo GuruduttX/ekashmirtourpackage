@@ -1,187 +1,262 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
-import { MapPin, Clock, ArrowRight } from "lucide-react";
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import {
+  ImageIcon,
+  Heart,
+  Star,
+  CloudSun,
+  ArrowRight,
+  IndianRupee,
+} from "lucide-react";
 
-// Types
+const ICON_GRADIENT_ID = "package-icon-gradient";
+
 interface TourPackage {
   id: string;
   title: string;
-  location: string;
-  duration: string;
+  description: string;
+  days: string;
+  rating: number;
   price: string;
   image: string;
 }
 
-const dummyPackages: TourPackage[] = [
+const PACKAGES: TourPackage[] = [
   {
     id: "1",
-    title: "Gulmarg Adventure",
-    location: "Gulmarg & Srinagar",
-    duration: "5 Days",
-    price: "₹24,999",
+    title: "Shikara Ride",
+    description: "Asia's highest cable car with sweeping",
+    days: "2 days",
+    rating: 4.9,
+    price: "5000",
     image:
-      "https://images.unsplash.com/photo-1595815771614-ade9d652a65d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?q=80&w=1200&auto=format&fit=crop",
   },
   {
     id: "2",
-    title: "Pahalgam Romance",
-    location: "Pahalgam Valley",
-    duration: "4 Days",
-    price: "₹19,999",
+    title: "Gulmarg",
+    description: "Asia's highest cable car with sweeping",
+    days: "3 days",
+    rating: 4.8,
+    price: "8500",
     image:
-      "https://images.unsplash.com/photo-1646204892016-711ed35535ec?q=80&w=2012&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "https://images.unsplash.com/photo-1593693411515-c20261bcad6e?q=80&w=1200&auto=format&fit=crop",
   },
   {
     id: "3",
-    title: "Srinagar Lakes",
-    location: "Dal & Nigeen Lake",
-    duration: "3 Days",
-    price: "₹14,999",
+    title: "Kashmir Boat",
+    description: "Asia's highest cable car with sweeping",
+    days: "1 day",
+    rating: 4.7,
+    price: "3000",
     image:
-      "https://images.unsplash.com/photo-1564329494258-3f72215ba175?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "https://images.unsplash.com/photo-1677123419103-785c917c4a58?q=80&w=1200&auto=format&fit=crop",
   },
   {
     id: "4",
-    title: "Sonamarg Escape",
-    location: "Sonamarg & Beyond",
-    duration: "6 Days",
-    price: "₹29,999",
+    title: "Pahalgam",
+    description: "Asia's highest cable car with sweeping",
+    days: "2 days",
+    rating: 4.9,
+    price: "5000",
     image:
-      "https://images.unsplash.com/photo-1666698591954-440987ef6ba6?q=80&w=3089&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "https://images.unsplash.com/photo-1561287437-c69a30664793?q=80&w=1200&auto=format&fit=crop",
   },
   {
     id: "5",
-    title: "Kashmir Complete",
-    location: "All Major Spots",
-    duration: "7 Days",
-    price: "₹39,999",
+    title: "Sonamarg",
+    description: "Meadow of gold beneath the glaciers",
+    days: "2 days",
+    rating: 4.8,
+    price: "6500",
     image:
-      "https://images.unsplash.com/photo-1616190419596-e2839e7380d7?q=80&w=1064&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "https://images.unsplash.com/photo-1609947017136-9daf32a5eb16?q=80&w=1200&auto=format&fit=crop",
+  },
+  {
+    id: "6",
+    title: "Betaab Valley",
+    description: "Nature's own green canvas",
+    days: "1 day",
+    rating: 4.6,
+    price: "2500",
+    image:
+      "https://images.unsplash.com/photo-1593417376544-4c4201061e22?q=80&w=1200&auto=format&fit=crop",
+  },
+  {
+    id: "7",
+    title: "Dal Lake Houseboat",
+    description: "Wake up to mist over the water",
+    days: "3 days",
+    rating: 4.9,
+    price: "9000",
+    image:
+      "https://images.unsplash.com/photo-1598091383021-15ddea10925d?q=80&w=1200&auto=format&fit=crop",
+  },
+  {
+    id: "8",
+    title: "Aru Valley",
+    description: "Pine forests and quiet meadows",
+    days: "1 day",
+    rating: 4.7,
+    price: "2800",
+    image:
+      "https://images.unsplash.com/photo-1666698591954-440987ef6ba6?q=80&w=1200&auto=format&fit=crop",
   },
 ];
 
-// Reusable PackageCard Component
-const PackageCard = ({ pkg }: { pkg: TourPackage }) => (
-  <motion.div
-    className="flex-none snap-center w-[300px] md:w-[280px] lg:w-[320px] group"
-    initial={{ opacity: 0, y: 30 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.5 }}
-    viewport={{ once: true }}
-  >
-    <div className="relative h-[420px] rounded-3xl overflow-hidden">
-      
-      {/* Background Image */}
-      <img
+function PackageCard({ pkg }: { pkg: TourPackage }) {
+  const [hovered, setHovered] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(true);
+
+  useEffect(() => {
+    const mql = window.matchMedia("(min-width: 640px)");
+    const update = () => setIsDesktop(mql.matches);
+    update();
+    mql.addEventListener("change", update);
+    return () => mql.removeEventListener("change", update);
+  }, []);
+
+  return (
+    <motion.div
+      onMouseEnter={() => isDesktop && setHovered(true)}
+      onMouseLeave={() => isDesktop && setHovered(false)}
+      onClick={() => !isDesktop && setHovered((v) => !v)}
+      className="relative h-96 w-79 shrink-0 snap-center overflow-hidden rounded-3xl shadow-lg sm:w-80"
+    >
+      <motion.img
         src={pkg.image}
         alt={pkg.title}
-        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+        animate={{ scale: hovered ? 1.08 : 1 }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        className="absolute inset-0 h-full w-full object-cover"
       />
 
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
 
-      {/* Top Badge */}
-      <div className="absolute top-4 left-4">
-        <div className="bg-white/70 backdrop-blur-md text-gray-900 px-3 py-1 rounded-full text-xs font-medium">
-          {pkg.duration}
-        </div>
-      </div>
+      {/* Top-right action icons */}
+      <motion.div
+        initial={{ opacity: 0, y: -8 }}
+        animate={{ opacity: hovered ? 1 : 0, y: hovered ? 0 : -8 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="absolute right-4 top-4 flex gap-2"
+      >
+        <button className="flex h-9 w-9 items-center justify-center rounded-full bg-white shadow-md">
+          <ImageIcon
+            className="h-4 w-4"
+            fill={`url(#${ICON_GRADIENT_ID})`}
+            stroke={`url(#${ICON_GRADIENT_ID})`}
+          />
+        </button>
+        <button className="flex h-9 w-9 items-center justify-center rounded-full bg-white shadow-md">
+          <Heart
+            className="h-4 w-4"
+            fill={`url(#${ICON_GRADIENT_ID})`}
+            stroke={`url(#${ICON_GRADIENT_ID})`}
+          />
+        </button>
+      </motion.div>
 
-      {/* Content */}
-      <div className="absolute bottom-0 left-0 right-0 p-5 text-white">
-        
-        {/* Location */}
-        <div className="flex items-center space-x-1 text-sm text-white/80 mb-1">
-          <MapPin className="w-4 h-4" />
-          <span>{pkg.location}</span>
-        </div>
-
-        {/* Title */}
-        <h3 className="text-lg lg:text-xl font-semibold leading-tight mb-2">
+      {/* Glass info panel */}
+      <motion.div
+        animate={{ height: hovered ? 184 : 92 }}
+        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+        className="absolute inset-x-3 bottom-3 overflow-hidden rounded-2xl border border-white/20 bg-white/15 p-4 backdrop-blur-md"
+      >
+        <h3 className="font-heading text-lg font-bold leading-none text-white">
           {pkg.title}
         </h3>
+        <p className="mt-2 text-sm text-white/80">{pkg.description}</p>
 
-        {/* Bottom Row */}
-        <div className="flex items-center justify-between">
-          
-          {/* Price */}
-          <div>
-            <div className="text-lg font-semibold">{pkg.price}</div>
-            <div className="text-xs text-white/70">starting from</div>
+        <motion.div
+          animate={{ opacity: hovered ? 1 : 0, y: hovered ? 0 : 8 }}
+          transition={{ duration: 0.5, ease: "easeOut", delay: hovered ? 0.15 : 0 }}
+          className="mt-3"
+        >
+          <div className="flex items-center gap-4 text-xs font-medium text-white/90">
+            <span className="flex items-center gap-1">
+              <CloudSun className="h-3.5 w-3.5 fill-white text-white" />
+              {pkg.days}
+            </span>
+            <span className="flex items-center gap-1">
+              <Star className="h-3.5 w-3.5 fill-white text-white" />
+              {pkg.rating}
+            </span>
           </div>
 
-          {/* CTA */}
-          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-white/20 backdrop-blur-md border border-white/30 transition-all duration-300 group-hover:bg-white/30 group-hover:scale-110">
-            <ArrowRight className="w-4 h-4" />
+          <div className="mt-3 flex items-center justify-between">
+            <div className="flex items-center text-white">
+              <IndianRupee className="h-3.5 w-3.5" />
+              <span className="text-base font-bold">{pkg.price}</span>
+              <span className="ml-1 text-xs text-white/70">/ Person</span>
+            </div>
+
+            <motion.button
+              initial="rest"
+              whileHover="hover"
+              animate="rest"
+              className="flex items-center gap-1.5 rounded-full bg-linear-to-r from-sky-500 to-cyan-400 px-4 py-2 text-xs font-semibold text-white shadow-md"
+            >
+              <motion.span
+                variants={{ rest: { x: 0 }, hover: { x: -2 } }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
+              >
+                Book Now
+              </motion.span>
+              <motion.span
+                variants={{ rest: { x: 0, rotate: 0 }, hover: { x: 3, rotate: -40 } }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
+                className="flex"
+              >
+                <ArrowRight className="h-3.5 w-3.5" />
+              </motion.span>
+            </motion.button>
           </div>
-
-        </div>
-      </div>
-
-      {/* Hover Glow */}
-      <div className="absolute inset-0 rounded-3xl ring-1 ring-white/10 group-hover:ring-white/30 transition-all duration-500" />
-
-    </div>
-  </motion.div>
-);
+        </motion.div>
+      </motion.div>
+    </motion.div>
+  );
+}
 
 export default function PopularPackagesCarousel() {
   return (
-    <section className="bg-sky-50 py-16 lg:py-20 relative overflow-hidden">
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className="w-[500px] h-[500px] bg-cyan-300/20 blur-3xl rounded-full" />
-      </div>
-      <div className="max-w-7xl mx-auto px-6 lg:px-12">
-        {/* Header */}
-        <motion.div
-          className="text-center mb-16 lg:mb-20"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-        >
-          <div className="text-sky-500 text-xs font-medium uppercase tracking-[0.3em] mb-4">
-            Popular Packages
-          </div>
-          <h2 className="bg-gradient-to-r from-sky-500 to-cyan-400 bg-clip-text text-transparent text-3xl lg:text-4xl font-bold mb-4">
-            Quick Picks for Your Kashmir Trip
-          </h2>
-          <p className="text-sm md:text-base text-gray-600 max-w-2xl mx-auto leading-relaxed">
-            Handpicked packages designed for every kind of traveler.
-          </p>
-        </motion.div>
+    <section className="relative overflow-hidden bg-white py-10">
+      <div className="mx-auto max-w-7xl px-3 lg:px-4">
+        <div className="relative mb-8">
+          <img
+            src="/LittleMountainRight.svg"
+            alt=""
+            aria-hidden="true"
+            className="pointer-events-none absolute left-0 top-1/2 w-25 -translate-y-[55%] md:-translate-y-[80%] select-none sm:w-30 lg:w-50 hidden"
+          />
+          <img
+            src="/LittleMountainRight.svg"
+            alt=""
+            aria-hidden="true"
+            className="pointer-events-none absolute right-0 top-1/2 w-25 -translate-y-[55%] md:-translate-y-[80%] select-none sm:w-30 lg:w-50 hidden"
+          />
 
-        {/* Carousel */}
-        <div className="relative">
-          <motion.div
-            className="flex overflow-x-auto pb-6 scrollbar-hide snap-x snap-mandatory gap-6 px-6 -mx-6"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            variants={{
-              visible: {
-                transition: {
-                  staggerChildren: 0.1,
-                },
-              },
-            }}
-          >
-            {dummyPackages.map((pkg, index) => (
-              <motion.div
-                key={pkg.id}
-                variants={{
-                  hidden: { opacity: 0, x: 20 },
-                  visible: { opacity: 1, x: 0 },
-                }}
-              >
-                <PackageCard pkg={pkg} />
-              </motion.div>
-            ))}
-          </motion.div>
+          <h2 className="whitespace-nowrap text-center font-heading text-2xl font-bold bg-linear-to-r from-sky-600 to-cyan-300 bg-clip-text text-transparent sm:text-2xl lg:text-4xl">
+            Kashmir Popular Packages
+          </h2>
+        </div>
+
+        <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide">
+          {PACKAGES.map((pkg) => (
+            <PackageCard key={pkg.id} pkg={pkg} />
+          ))}
         </div>
       </div>
+
+      <svg width="0" height="0" className="absolute">
+        <defs>
+          <linearGradient id={ICON_GRADIENT_ID} x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="#0ea5e9" />
+            <stop offset="100%" stopColor="#22d3ee" />
+          </linearGradient>
+        </defs>
+      </svg>
 
       <style jsx>{`
         .scrollbar-hide {

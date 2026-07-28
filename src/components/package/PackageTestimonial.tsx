@@ -1,7 +1,8 @@
 "use client";
 
-import { useRef } from "react";
-import { Star, BadgeCheck, ChevronLeft, ChevronRight } from "lucide-react";
+import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Star, Quote, MapPin } from "lucide-react";
 
 interface Testimonial {
   id?: string | number;
@@ -9,47 +10,55 @@ interface Testimonial {
   location?: string;
   rating?: number | string;
   description?: string;
+  avatar?: string;
+  photo?: string;
 }
+
+const FALLBACK_PHOTO =
+  "https://images.unsplash.com/photo-1609947017136-9daf32a5eb16?w=900&auto=format&fit=crop&q=80";
 
 const defaultPackageData = {
   testimonials: [
     {
       id: 1,
       name: "Priya Sharma",
-      location: "Delhi, India",
+      location: "Dal Lake, Srinagar",
       rating: 5,
+      avatar: "https://i.pravatar.cc/150?img=47",
+      photo:
+        "https://images.unsplash.com/photo-1598091383021-15ddea10925d?w=900&auto=format&fit=crop&q=80",
       description:
         "Absolutely magical experience! The houseboat stay on Dal Lake was a dream. Every detail was perfectly arranged — from the shikara ride to the Wazwan dinner.",
     },
     {
       id: 2,
       name: "Rahul Mehta",
-      location: "Mumbai, India",
+      location: "Gulmarg",
       rating: 4.5,
+      avatar: "https://i.pravatar.cc/150?img=12",
+      photo:
+        "https://images.unsplash.com/photo-1593693411515-c20261bcad6e?w=900&auto=format&fit=crop&q=80",
       description:
         "Gulmarg was breathtaking. The Gondola ride gave us views we'll never forget. The team was responsive and made sure everything ran smoothly.",
     },
     {
       id: 3,
       name: "Ananya Iyer",
-      location: "Bengaluru, India",
+      location: "Pahalgam Valley",
       rating: 5,
+      avatar: "https://i.pravatar.cc/150?img=32",
+      photo:
+        "https://images.unsplash.com/photo-1561287437-c69a30664793?w=900&auto=format&fit=crop&q=80",
       description:
         "Kashmir surpassed all our expectations. Pahalgam's meadows, the Mughal Gardens, the food — it was a flawless 7-day trip. Highly recommend this package!",
     },
     {
       id: 4,
-      name: "Vikram Singh",
-      location: "Jaipur, India",
-      rating: 4,
-      description:
-        "Great itinerary and comfortable stays throughout. Sonamarg was the highlight for us. Would have loved slightly more free time in Srinagar.",
-    },
-    {
-      id: 5,
       name: "Sneha Kulkarni",
-      location: "Pune, India",
+      location: "Sonamarg",
       rating: 5,
+      avatar: "https://i.pravatar.cc/150?img=51",
+      photo: FALLBACK_PHOTO,
       description:
         "The houseboat experience alone is worth the trip. Our guide was knowledgeable and friendly. We came back already planning our next Kashmir visit!",
     },
@@ -58,23 +67,142 @@ const defaultPackageData = {
 
 function StarRating({ rating }: { rating: number }) {
   return (
-    <div className="flex gap-1">
-      {Array.from({ length: 5 }).map((_, i) => {
-        let fill = Math.min(Math.max(rating - i, 0), 1);
-        if (fill < 0.3 && fill !== 0) fill = 0.4;
-        const percent = fill * 100;
-        return (
-          <div key={i} className="relative h-5 w-5">
-            <Star className="absolute text-gray-300 h-5 w-5" />
+    <div className="flex items-center gap-0.5">
+      {Array.from({ length: 5 }).map((_, i) => (
+        <Star
+          key={i}
+          className={`h-4 w-4 ${
+            i < Math.round(rating)
+              ? "fill-amber-400 text-amber-400"
+              : "fill-slate-200 text-slate-200"
+          }`}
+        />
+      ))}
+    </div>
+  );
+}
+
+const CARD_PADDING = 20; // px — matches p-5
+const PHOTO_COLLAPSED_HEIGHT = 96;
+const PHOTO_EXPANDED_HEIGHT = 300;
+const READ_MORE_THRESHOLD = 140;
+
+function TestimonialCard({ t }: { t: Testimonial }) {
+  const [hovered, setHovered] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(true);
+  const [expanded, setExpanded] = useState(false);
+
+  useEffect(() => {
+    const mql = window.matchMedia("(min-width: 640px)");
+    const update = () => setIsDesktop(mql.matches);
+    update();
+    mql.addEventListener("change", update);
+    return () => mql.removeEventListener("change", update);
+  }, []);
+
+  const rating = Number(t.rating || 0);
+  const avatar = t.avatar || `https://i.pravatar.cc/150?u=${encodeURIComponent(t.name || "guest")}`;
+  const photo = t.photo || FALLBACK_PHOTO;
+  const description = t.description || "Amazing experience.";
+  const isLong = description.length > READ_MORE_THRESHOLD;
+
+  return (
+    <div className="relative flex h-96 w-75 shrink-0 snap-start flex-col overflow-hidden rounded-2xl bg-[#F7F7F4] p-5 sm:w-85">
+      {/* Header — avatar + name, blurs but stays visible on hover */}
+      <motion.div
+        animate={{
+          opacity: hovered ? 0.35 : 1,
+          filter: hovered ? "blur(3px)" : "blur(0px)",
+        }}
+        transition={{ duration: 0.4 }}
+        className="relative z-10 flex shrink-0 items-center gap-3"
+      >
+        <img
+          src={avatar}
+          alt={t.name || "Guest"}
+          className="h-14 w-14 shrink-0 rounded-full object-cover"
+        />
+        <h3 className="text-lg font-bold text-slate-900">{t.name || "Guest"}</h3>
+      </motion.div>
+
+      {/* Quote + rating — fade away on hover; scrolls internally if expanded */}
+      <AnimatePresence>
+        {!hovered && (
+          <motion.div
+            key="quote"
+            initial={{ opacity: 1 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="relative z-10 mt-4 flex min-h-0 flex-1 flex-col"
+            style={{ paddingBottom: PHOTO_COLLAPSED_HEIGHT + 16 }}
+          >
             <div
-              className="absolute overflow-hidden"
-              style={{ width: `${percent}%` }}
+              className={`min-h-0 flex-1 ${
+                expanded ? "testimonial-scroll overflow-y-auto pr-1" : "overflow-hidden"
+              }`}
             >
-              <Star className="text-sky-500 fill-sky-500 h-5 w-5" />
+              <p className="flex gap-1.5 text-[15px] leading-relaxed text-slate-700">
+                <Quote className="h-4 w-4 shrink-0 -scale-x-100 text-sky-400" />
+                <span className={expanded ? "" : "line-clamp-3"}>{description}</span>
+              </p>
             </div>
-          </div>
-        );
-      })}
+
+            {isLong && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setExpanded((v) => !v);
+                }}
+                className="mt-1 self-start shrink-0 text-xs font-semibold text-sky-500 hover:text-sky-600"
+              >
+                {expanded ? "Read less" : "Read more"}
+              </button>
+            )}
+
+            <div className="mt-2 flex shrink-0 items-center gap-2">
+              <StarRating rating={rating} />
+              <span className="text-sm text-slate-500">({rating.toFixed(1)}/5)</span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Photo — pinned to the bottom with fixed left/right/bottom padding; only
+          its height animates, so it grows straight up in place with no zoom/bleed.
+          Hover/tap is scoped to the photo itself so it doesn't block Read More. */}
+      <motion.div
+        onMouseEnter={() => isDesktop && setHovered(true)}
+        onMouseLeave={() => isDesktop && setHovered(false)}
+        onClick={() => !isDesktop && setHovered((v) => !v)}
+        initial={false}
+        animate={{
+          height: hovered ? PHOTO_EXPANDED_HEIGHT : PHOTO_COLLAPSED_HEIGHT,
+        }}
+        transition={{ duration: 1.8, ease: [0.22, 1, 0.36, 1] }}
+        style={{ left: CARD_PADDING, right: CARD_PADDING, bottom: CARD_PADDING }}
+        className="absolute z-20 cursor-pointer overflow-hidden rounded-2xl"
+      >
+        <img
+          src={photo}
+          alt={t.location || t.name || ""}
+          className="absolute inset-0 h-full w-full object-cover object-top"
+        />
+        <motion.div
+          animate={{ opacity: hovered ? 1 : 0 }}
+          transition={{ duration: 0.4, delay: hovered ? 0.35 : 0 }}
+          className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/75 via-black/20 to-transparent p-4 text-white"
+        >
+          <p className="font-bold">{t.name}</p>
+          {t.location && (
+            <p className="mt-1 flex items-center gap-1 text-sm text-white/90">
+              <MapPin className="h-3.5 w-3.5 shrink-0" />
+              {t.location}
+            </p>
+          )}
+        </motion.div>
+      </motion.div>
     </div>
   );
 }
@@ -82,151 +210,39 @@ function StarRating({ rating }: { rating: number }) {
 export default function PackageTestimonials({
   PackageData = defaultPackageData,
 }: {
-  PackageData?: any;
+  PackageData?: { testimonials: Testimonial[] };
 }) {
-  const sliderRef = useRef<HTMLDivElement>(null);
   const testimonials: Testimonial[] = PackageData?.testimonials || [];
-
-  const scroll = (dir: "left" | "right") => {
-    if (!sliderRef.current) return;
-    const scrollAmount = sliderRef.current.offsetWidth * 0.8;
-    sliderRef.current.scrollBy({
-      left: dir === "left" ? -scrollAmount : scrollAmount,
-      behavior: "smooth",
-    });
-  };
-
-  const avgRating =
-    testimonials.length > 0
-      ? (
-          testimonials.reduce(
-            (sum: number, t: Testimonial) => sum + Number(t.rating || 0),
-            0,
-          ) / testimonials.length
-        ).toFixed(1)
-      : "0.0";
-
-  function ratingPercentage(star: number) {
-    const total = testimonials.length;
-    if (total === 0) return 0;
-    const count = testimonials.filter(
-      (item: Testimonial) => Math.floor(Number(item.rating)) === star,
-    ).length;
-    return Math.round((count / total) * 100);
-  }
+  if (testimonials.length === 0) return null;
 
   return (
-    <section className="py-8 bg-gradient-to-br from-sky-50 to-white">
-      <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-10">
-        {/* LEFT PANEL */}
-        <div className="rounded-3xl bg-gradient-to-br from-white to-sky-50 p-7 shadow-xl border border-sky-100">
-          <p className="text-sm font-semibold text-sky-600 tracking-wide">
-            Guest Reviews
-          </p>
+    <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+      <h2 className="mb-8 font-heading text-2xl font-extrabold leading-tight bg-linear-to-r from-sky-500 to-cyan-400 bg-clip-text text-transparent sm:text-3xl">
+        What our travellers say
+      </h2>
 
-          {/* AVG RATING */}
-          <div className="flex items-center gap-4 mt-3">
-            <h3 className="text-5xl font-bold text-gray-900">{avgRating}</h3>
-            <div className="flex flex-col">
-              <StarRating rating={Number(avgRating)} />
-              <p className="text-xs text-gray-500 mt-1">
-                Based on {testimonials.length}+ reviews
-              </p>
-            </div>
-          </div>
-
-          {/* RATING BARS */}
-          <div className="mt-6 space-y-3">
-            {[5, 4, 3, 2, 1].map((star) => {
-              const percent = ratingPercentage(star);
-              return (
-                <div key={star} className="flex items-center gap-3 text-xs">
-                  <span className="w-5 font-medium text-gray-700">{star}</span>
-                  <div className="h-2 flex-1 rounded-full bg-gray-200 overflow-hidden">
-                    <div
-                      className="h-full bg-gradient-to-r from-sky-400 to-cyan-500"
-                      style={{ width: `${percent}%` }}
-                    />
-                  </div>
-                  <span className="w-8 text-right text-gray-600">
-                    {percent}%
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* RIGHT – TESTIMONIAL CAROUSEL */}
-        <div className="lg:col-span-2">
-          <h2 className="text-2xl sm:text-3xl font-bold mt-2 mb-6">
-            Real feedback from guests
-          </h2>
-
-          <div className="relative">
-            <div
-              ref={sliderRef}
-              className="flex gap-6 overflow-x-auto snap-x snap-mandatory no-scrollbar"
-            >
-              {testimonials.map((t: Testimonial, index: number) => {
-                const rating = Number(t.rating || 0);
-                return (
-                  <div
-                    key={t.id || index}
-                    className="snap-start shrink-0 w-[92%] sm:w-[75%] md:w-[60%] lg:w-[420px] rounded-3xl bg-white border border-sky-100 shadow-xl p-7"
-                  >
-                    {/* HEADER */}
-                    <div className="flex items-start justify-between">
-                      <div className="flex gap-4">
-                        <div className="h-12 w-12 rounded-full bg-gradient-to-br from-sky-500 to-cyan-500 text-white flex items-center justify-center font-semibold text-lg">
-                          {t.name?.charAt(0) || "G"}
-                        </div>
-                        <div>
-                          <p className="font-semibold text-gray-900">
-                            {t.name || "Guest"}
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            {t.location || "India"}
-                          </p>
-                        </div>
-                      </div>
-                      <BadgeCheck className="text-sky-500 h-5 w-5" />
-                    </div>
-
-                    {/* RATING */}
-                    <div className="mt-4 flex items-center gap-3">
-                      <span className="text-xl font-bold">
-                        {rating.toFixed(1)}
-                      </span>
-                      <StarRating rating={rating} />
-                    </div>
-
-                    {/* REVIEW */}
-                    <p className="mt-4 text-sm text-gray-700">
-                      "{t.description || "Amazing experience."}"
-                    </p>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* ARROWS */}
-            <button
-              onClick={() => scroll("left")}
-              className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-white shadow border border-sky-100 items-center justify-center text-sky-500 hover:bg-sky-50 transition"
-            >
-              <ChevronLeft />
-            </button>
-
-            <button
-              onClick={() => scroll("right")}
-              className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-white shadow border border-sky-100 items-center justify-center text-sky-500 hover:bg-sky-50 transition"
-            >
-              <ChevronRight />
-            </button>
-          </div>
-        </div>
+      <div className="no-scrollbar flex snap-x snap-mandatory gap-6 overflow-x-auto pb-2">
+        {testimonials.map((t, index) => (
+          <TestimonialCard key={t.id ?? index} t={t} />
+        ))}
       </div>
+
+      <style jsx global>{`
+        .testimonial-scroll {
+          scrollbar-width: thin;
+          scrollbar-color: #38bdf8 transparent;
+        }
+        .testimonial-scroll::-webkit-scrollbar {
+          width: 5px;
+        }
+        .testimonial-scroll::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .testimonial-scroll::-webkit-scrollbar-thumb {
+          background: linear-gradient(180deg, #38bdf8, #0ea5e9);
+          border-radius: 10px;
+        }
+      `}</style>
     </section>
   );
 }

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import HeroSection from "@/components/home/HeroSection";
+
 import FeaturedPackages from "@/components/home/FeaturedPackages";
 import TourCategories from "@/components/home/TourCategories";
 import WhyKashmir from "@/components/home/WhyKashmir";
@@ -12,8 +12,13 @@ import HowItWorks from "@/components/home/Howitworks";
 import MidPageCTA from "@/components/home/Midpagecta";
 import TopDestinations from "@/components/home/Topdestinations";
 import PopularPackagesCarousel from "@/components/home/PopularPackagesCarousel";
-import HomeFaq from "@/components/home/HomeFaq";
-import { getPublishedPackages } from "./package/page";
+import { getPublishedPackages } from "./kashmir-tour-packages/page";
+import Hero from "@/components/home/AnimatedHeroHome";
+import AboutUs from "@/components/home/AboutUs";
+import CtaGradientBanner from "@/components/home/cta/CtaGradientBanner";
+import CtaSplitImage from "@/components/home/cta/CtaSplitImage";
+import CtaGlassOverlay from "@/components/home/cta/CtaGlassOverlay";
+
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.ekashmirtourpackage.com";
 
@@ -74,18 +79,21 @@ export default async function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
       />
       <Navbar />
-      <HeroSection />
+      <Hero />
+      <AboutUs />
+      <TopDestinations />
+      <PopularPackagesCarousel />
+      <CtaGradientBanner />
       <FeaturedPackages />
       <TourCategories packages={packages.length > 0 ? packages : undefined} />
       <ActivityCarousel />
+      <CtaSplitImage />
       <HowItWorks />
-      <PopularPackagesCarousel />
       <WhyKashmir />
       <MidPageCTA />
-      <TopDestinations />
       <Testimonials />
+      <CtaGlassOverlay />
       <CallToAction />
-      <HomeFaq />
       <Footer />
     </main>
   );

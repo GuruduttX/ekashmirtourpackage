@@ -64,7 +64,7 @@ export async function getPublishedPackages(): Promise<PackageCard[]> {
     await connectDB();
     const packages = await Package.find({ status: "published" })
       .select(
-        "title slug category days destination price heroImage childImages isTransferIncluded isStayIncluded isBreakfastIncluded isSightseeingIncluded inclusions"
+        "title slug category themes days destination price heroImage childImages isTransferIncluded isStayIncluded isBreakfastIncluded isSightseeingIncluded inclusions"
       )
       .sort({ createdAt: -1 })
       .lean();
@@ -81,6 +81,7 @@ export async function getPublishedPackages(): Promise<PackageCard[]> {
         days: pkg.days ?? 0,
         location: pkg.destination || "Kashmir",
         idealFor: pkg.category,
+        themes: pkg.themes ?? [],
         inclusions: buildInclusions(pkg as any),
         price: formatPrice(pkg.price ?? 0),
         originalPrice: "",

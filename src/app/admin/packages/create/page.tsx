@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   CheckCircle2, XCircle, Plus, Trash2, Star, FileText, AlignLeft,
-  Clock, Navigation, Map, Users, Info, SlidersHorizontal, ChevronsUpDown, ImageIcon,
+  Clock, Navigation, Map, MapPin, Users, Info, SlidersHorizontal, ChevronsUpDown, ImageIcon,
 } from 'lucide-react';
 
 import CMSHeader from '@/components/admin/cms/CMSHeader';
@@ -18,16 +18,19 @@ import CMSActions from '@/components/admin/cms/CMSActions';
 import FaqHandler, { FaqItem } from '@/components/admin/cms/FaqHandler';
 import DANDestination from '@/components/admin/cms/package/DANDestination';
 import SourceCitySelector from '@/components/admin/cms/package/SourceCitySelector';
+import ThemeSelector from '@/components/admin/cms/package/ThemeSelector';
 import DurationSection from '@/components/admin/cms/package/DurationSection';
 import PackageOverview from '@/components/admin/cms/package/PackageOverview';
-import ItineraryMaker from '@/components/admin/cms/package/ItineraryMaker';
+import ItineraryMaker, { type ItineraryDay } from '@/components/admin/cms/package/ItineraryMaker';
 
 // ─── Types ───────────────────────────────────────────────
 interface DurationItem  { id: string; days: string; place: string }
 interface SimpleItem    { id: string; description: string }
-interface ItineraryItem { id: string; day: number; title: string; description: string }
 interface ChildImage    { id: string; image: string; alt: string }
-interface Testimonial   { id: string; name: string; description: string; rating: string }
+interface Testimonial   {
+  id: string; name: string; description: string; rating: string;
+  location: string; avatar: string; avatarAlt: string; photo: string; photoAlt: string;
+}
 interface Segment       { id: string; from: string; to: string }
 
 interface PkgForm {
@@ -35,6 +38,7 @@ interface PkgForm {
   price: string; rating: string; reviews: string;
   duration: string; days: string; nights: string;
   destination: string; overview: string;
+  mapEmbedUrl: string;
   refund: string; cancel: string; confirmation: string; payment: string;
   metaTitle: string; metaDescription: string;
   schemaTitle: string; schemaDescription: string;
@@ -49,6 +53,7 @@ const INITIAL: PkgForm = {
   price: '', rating: '', reviews: '',
   duration: '', days: '', nights: '',
   destination: '', overview: '',
+  mapEmbedUrl: '',
   refund: '', cancel: '', confirmation: '', payment: '',
   metaTitle: '', metaDescription: '',
   schemaTitle: '', schemaDescription: '',
@@ -82,11 +87,12 @@ export default function CreatePackagePage() {
   const [inclusions,   setInclusions]   = useState<SimpleItem[]>([]);
   const [exclusions,   setExclusions]   = useState<SimpleItem[]>([]);
   const [kbyg,         setKbyg]         = useState<SimpleItem[]>([]);
-  const [itinerary,    setItinerary]    = useState<ItineraryItem[]>([]);
+  const [itineraryDays, setItineraryDays] = useState<ItineraryDay[]>([]);
   const [breakdown,    setBreakdown]    = useState<DurationItem[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [childImages,  setChildImages]  = useState<ChildImage[]>([]);
   const [availableSrc, setAvailableSrc] = useState<string[]>([]);
+  const [themes,       setThemes]       = useState<string[]>([]);
   const [route,        setRoute]        = useState({ source: '', destination: '', segments: [] as Segment[] });
 
   const [isLoaded,     setIsLoaded]     = useState(false);
@@ -106,11 +112,12 @@ export default function CreatePackagePage() {
         if (d.inclusions)  setInclusions(d.inclusions);
         if (d.exclusions)  setExclusions(d.exclusions);
         if (d.kbyg)        setKbyg(d.kbyg);
-        if (d.itinerary)   setItinerary(d.itinerary);
+        if (d.itineraryDays) setItineraryDays(d.itineraryDays);
         if (d.breakdown)   setBreakdown(d.breakdown);
         if (d.testimonials) setTestimonials(d.testimonials);
         if (d.childImages) setChildImages(d.childImages);
         if (d.availableSrc) setAvailableSrc(d.availableSrc);
+        if (d.themes)      setThemes(d.themes);
         if (d.route)       setRoute(d.route);
       }
     } catch { /* ignore */ }
@@ -122,10 +129,10 @@ export default function CreatePackagePage() {
     if (!isLoaded) return;
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
       form, faqs, highlights, inclusions, exclusions,
-      kbyg, itinerary, breakdown, testimonials, childImages, availableSrc, route,
+      kbyg, itineraryDays, breakdown, testimonials, childImages, availableSrc, themes, route,
     }));
-  }, [form, faqs, highlights, inclusions, exclusions, kbyg, itinerary,
-      breakdown, testimonials, childImages, availableSrc, route, isLoaded]);
+  }, [form, faqs, highlights, inclusions, exclusions, kbyg, itineraryDays,
+      breakdown, testimonials, childImages, availableSrc, themes, route, isLoaded]);
 
   const f = (field: keyof PkgForm, value: string | boolean) => {
     setForm((prev) => {
@@ -149,6 +156,7 @@ export default function CreatePackagePage() {
     days:    Number(form.days)    || 0,
     nights:  Number(form.nights)  || 0,
     duration: form.duration, destination: form.destination, overview: form.overview,
+    mapEmbedUrl: form.mapEmbedUrl,
     refund: form.refund, cancel: form.cancel, confirmation: form.confirmation, payment: form.payment,
     heroImage: { image: form.heroImage, alt: form.heroAlt },
     metaTitle: form.metaTitle, metaDescription: form.metaDescription,
@@ -159,8 +167,8 @@ export default function CreatePackagePage() {
     isSightseeingIncluded: form.isSightseeingIncluded,
     faqs, highlights, inclusions, exclusions,
     knowBeforeYouGo: kbyg,
-    itinerary, durationbreakdown: breakdown.map((b) => ({ ...b, days: Number(b.days) })),
-    testimonials, childImages, availableSrc,
+    itinerary_days: itineraryDays, durationbreakdown: breakdown.map((b) => ({ ...b, days: Number(b.days) })),
+    testimonials, childImages, availableSrc, themes,
     routes: route,
     status,
   });
@@ -360,6 +368,18 @@ export default function CreatePackagePage() {
           </div>
         </CMSSection>
 
+        {/* Themes */}
+        <CMSSection
+          title="Themes"
+          icon={<SlidersHorizontal className="w-4 h-4" />}
+          defaultOpen={false}
+          badge={themes.length || undefined}
+        >
+          <div className="mt-1">
+            <ThemeSelector themes={themes} setThemes={setThemes} />
+          </div>
+        </CMSSection>
+
         {/* Routes */}
         <CMSSection
           title="Routes"
@@ -456,6 +476,26 @@ export default function CreatePackagePage() {
           </div>
         </CMSSection>
 
+        {/* Location Map */}
+        <CMSSection
+          title="Location Map"
+          icon={<MapPin className="w-4 h-4" />}
+          defaultOpen
+        >
+          <div className="space-y-2 mt-1">
+            <label className="text-sm text-slate-400">Google Maps Embed URL</label>
+            <textarea
+              className={ta}
+              placeholder="Paste the embed src, e.g. https://www.google.com/maps/embed?pb=... — or paste the full <iframe> code from Google Maps > Share > Embed a map"
+              value={form.mapEmbedUrl}
+              onChange={(e) => f('mapEmbedUrl', e.target.value)}
+            />
+            <p className="text-xs text-slate-500">
+              In Google Maps: search the location → Share → Embed a map → Copy HTML. Paste it here as-is (the src URL is extracted automatically). Leave blank to hide the map on the package page.
+            </p>
+          </div>
+        </CMSSection>
+
         {/* Highlights */}
         <CMSSection
           title="Trip Highlights"
@@ -511,10 +551,10 @@ export default function CreatePackagePage() {
           title="Itinerary"
           icon={<FileText className="w-4 h-4" />}
           defaultOpen={false}
-          badge={itinerary.length || undefined}
+          badge={itineraryDays.length || undefined}
         >
           <div className="mt-1">
-            <ItineraryMaker itinerary={itinerary} setItinerary={setItinerary} />
+            <ItineraryMaker itineraryDays={itineraryDays} setItineraryDays={setItineraryDays} />
           </div>
         </CMSSection>
 
@@ -676,6 +716,18 @@ export default function CreatePackagePage() {
                     }
                   />
                 </div>
+                <input
+                  className={inp}
+                  placeholder="Location (e.g. Pahalgam Valley)"
+                  value={t.location}
+                  onChange={(e) =>
+                    setTestimonials((p) =>
+                      p.map((i) =>
+                        i.id === t.id ? { ...i, location: e.target.value } : i,
+                      ),
+                    )
+                  }
+                />
                 <textarea
                   className={`${ta} min-h-20`}
                   placeholder="Review text"
@@ -690,6 +742,49 @@ export default function CreatePackagePage() {
                     )
                   }
                 />
+
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div>
+                    <p className="mb-1 text-xs text-slate-500">Reviewer Photo</p>
+                    <CMSMediaSection
+                      image={t.avatar}
+                      alt={t.avatarAlt}
+                      editorType="Package"
+                      onChange={(field, value) =>
+                        setTestimonials((p) =>
+                          p.map((i) =>
+                            i.id === t.id
+                              ? {
+                                  ...i,
+                                  [field === "image" ? "avatar" : "avatarAlt"]: value,
+                                }
+                              : i,
+                          ),
+                        )
+                      }
+                    />
+                  </div>
+                  <div>
+                    <p className="mb-1 text-xs text-slate-500">Location Photo (shown on hover)</p>
+                    <CMSMediaSection
+                      image={t.photo}
+                      alt={t.photoAlt}
+                      editorType="Package"
+                      onChange={(field, value) =>
+                        setTestimonials((p) =>
+                          p.map((i) =>
+                            i.id === t.id
+                              ? {
+                                  ...i,
+                                  [field === "image" ? "photo" : "photoAlt"]: value,
+                                }
+                              : i,
+                          ),
+                        )
+                      }
+                    />
+                  </div>
+                </div>
               </div>
             ))}
             <button
@@ -698,7 +793,10 @@ export default function CreatePackagePage() {
               onClick={() =>
                 setTestimonials((p) => [
                   ...p,
-                  { id: uid(), name: "", description: "", rating: "" },
+                  {
+                    id: uid(), name: "", description: "", rating: "",
+                    location: "", avatar: "", avatarAlt: "", photo: "", photoAlt: "",
+                  },
                 ])
               }
             >

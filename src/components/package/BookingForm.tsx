@@ -1,15 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import { MessageCircle } from "lucide-react";
+import { whatsappLink } from "@/components/home/cta/whatsapp";
 
-export default function BookingCard({ pkg }: { pkg: any }) {
+interface BookingPkg {
+  title: string;
+  price: string;
+}
+
+export default function BookingCard({ pkg }: { pkg: BookingPkg }) {
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
-    email: "",
-    travelDate: "",
-    travelerCount: "",
-    message: "",
   });
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -19,13 +22,10 @@ export default function BookingCard({ pkg }: { pkg: any }) {
     message: string;
   }>({ type: null, message: "" });
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
 
-    // Clear specific field error when typing
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: "" }));
     }
@@ -35,27 +35,16 @@ export default function BookingCard({ pkg }: { pkg: any }) {
     const newErrors: { [key: string]: string } = {};
     let isValid = true;
 
-    // Name Validation
     if (!formData.name.trim()) {
       newErrors.name = "Name is required.";
       isValid = false;
     }
 
-    // Phone Validation
     if (!formData.phone.trim()) {
       newErrors.phone = "Phone number is required.";
       isValid = false;
     } else if (!/^\+?[\d\s-]{10,}$/.test(formData.phone.trim())) {
       newErrors.phone = "Valid phone number required.";
-      isValid = false;
-    }
-
-    // Email Validation (Optional but formatted if present)
-    if (
-      formData.email.trim() &&
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())
-    ) {
-      newErrors.email = "Valid email address required.";
       isValid = false;
     }
 
@@ -72,25 +61,10 @@ export default function BookingCard({ pkg }: { pkg: any }) {
     setIsSubmitting(true);
 
     try {
-      // Construct CRM Comments (Only include optional fields if they have values)
-      let comments = `Inquiry Source:- Package Booking Form Package Name:- ${pkg.title}`;
-      if (formData.travelDate) {
-        comments += ` Travel Date:- ${formData.travelDate}`;
-      }
-      if (formData.travelerCount) {
-        comments += ` Traveler Count:- ${formData.travelerCount}`;
-      }
-      if (formData.email.trim()) {
-        comments += ` Email Address:- ${formData.email.trim()}`;
-      }
-      if (formData.message.trim()) {
-        comments += ` User Message:- ${formData.message.trim()}`;
-      }
-
       const payload = {
         name: formData.name.trim(),
         phone: formData.phone.trim(),
-        serviceType: comments,
+        serviceType: `Inquiry Source:- Package Booking Form Package Name:- ${pkg.title}`,
       };
 
       const response = await fetch("/api/simbark", {
@@ -114,15 +88,7 @@ export default function BookingCard({ pkg }: { pkg: any }) {
         message: "Your enquiry has been submitted successfully.",
       });
 
-      // Clear form on success
-      setFormData({
-        name: "",
-        phone: "",
-        email: "",
-        travelDate: "",
-        travelerCount: "",
-        message: "",
-      });
+      setFormData({ name: "", phone: "" });
     } catch (error: any) {
       setStatus({
         type: "error",
@@ -135,22 +101,20 @@ export default function BookingCard({ pkg }: { pkg: any }) {
   };
 
   return (
-    <div className="sticky top-28 w-full min-w-0 px-2 sm:px-0">
-      <div className="rounded-3xl border border-sky-100/60 bg-white p-6 sm:p-8 shadow-[0_12px_40px_rgba(0,0,0,0.06)]">
+    <div className="w-full min-w-0 px-2 sm:px-0">
+      <div className="rounded-3xl border border-sky-100/60 bg-white p-5 sm:p-6 shadow-[0_12px_40px_rgba(0,0,0,0.06)]">
+        {/* Price header */}
         <div className="mb-4 border-b border-slate-100 pb-4">
-          <p className="mb-1.5 text-xs font-medium uppercase tracking-[0.24em] text-sky-500">
-            Enquiry Form
+          <p className="text-xs font-medium uppercase tracking-[0.24em] text-sky-500">
+            Trips starts from
           </p>
-          <h3 className="font-heading text-xl font-bold text-slate-900">
-            Plan Your Trip
-          </h3>
-          <p className="mt-2 text-sm leading-5 text-slate-500">
-            Share your dates and group size for{" "}
-            <span className="font-medium text-slate-700">{pkg.title}</span>.
+          <p className="mt-1 font-heading text-2xl font-extrabold text-slate-900">
+            {pkg.price}
           </p>
+          <p className="text-xs text-slate-500">Per person</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="min-w-0 space-y-3.5">
+        <form onSubmit={handleSubmit} className="min-w-0 space-y-2.5">
           {/* Status Messages */}
           {status.message && (
             <div
@@ -167,7 +131,7 @@ export default function BookingCard({ pkg }: { pkg: any }) {
           <div className="min-w-0">
             <label
               htmlFor="name"
-              className="mb-1.5 block text-sm font-medium text-slate-700"
+              className="mb-1 block text-xs font-medium text-slate-700"
             >
               Name
             </label>
@@ -178,7 +142,7 @@ export default function BookingCard({ pkg }: { pkg: any }) {
               value={formData.name}
               onChange={handleChange}
               placeholder="Your full name"
-              className={`w-full rounded-2xl border bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:bg-white ${
+              className={`w-full rounded-xl border bg-slate-50 px-3.5 py-2.5 text-sm text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:bg-white ${
                 errors.name
                   ? "border-red-400 focus:border-red-500"
                   : "border-slate-200 focus:border-sky-400"
@@ -189,120 +153,55 @@ export default function BookingCard({ pkg }: { pkg: any }) {
             )}
           </div>
 
-          <div className="min-w-0 grid gap-4 sm:grid-cols-2">
-            <div className="min-w-0">
-              <label
-                htmlFor="phone"
-                className="mb-1.5 block text-sm font-medium text-slate-700"
-              >
-                Phone Number
-              </label>
-              <input
-                id="phone"
-                name="phone"
-                type="tel"
-                value={formData.phone}
-                onChange={handleChange}
-                placeholder="+91 98765 43210"
-                className={`w-full min-w-0 rounded-2xl border bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:bg-white ${
-                  errors.phone
-                    ? "border-red-400 focus:border-red-500"
-                    : "border-slate-200 focus:border-sky-400"
-                }`}
-              />
-              {errors.phone && (
-                <p className="mt-1 text-xs text-red-500">{errors.phone}</p>
-              )}
-            </div>
-            <div className="min-w-0 hidden md:block">
-              <label
-                htmlFor="email"
-                className="mb-1.5 block text-sm font-medium text-slate-700"
-              >
-                Email
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="you@example.com"
-                className={`w-full min-w-0 rounded-2xl border bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:bg-white ${
-                  errors.email
-                    ? "border-red-400 focus:border-red-500"
-                    : "border-slate-200 focus:border-sky-400"
-                }`}
-              />
-              {errors.email && (
-                <p className="mt-1 text-xs text-red-500">{errors.email}</p>
-              )}
-            </div>
-          </div>
-
-          <div className="hidden min-w-0 md:grid gap-4 sm:grid-cols-2">
-            <div className="min-w-0">
-              <label
-                htmlFor="travelDate"
-                className="mb-1.5 block text-sm font-medium text-slate-700"
-              >
-                Travel Date
-              </label>
-              <input
-                id="travelDate"
-                name="travelDate"
-                type="date"
-                value={formData.travelDate}
-                onChange={handleChange}
-                className="w-full min-w-0 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition-colors focus:border-sky-400 focus:bg-white"
-              />
-            </div>
-            <div className="min-w-0">
-              <label
-                htmlFor="travelerCount"
-                className="mb-1.5 block text-sm font-medium text-slate-700"
-              >
-                Traveler Count
-              </label>
-              <input
-                id="travelerCount"
-                name="travelerCount"
-                type="number"
-                min="1"
-                value={formData.travelerCount}
-                onChange={handleChange}
-                placeholder="2"
-                className="w-full min-w-0 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:border-sky-400 focus:bg-white"
-              />
-            </div>
-          </div>
-
-          <div className="min-w-0 hidden md:block">
+          <div className="min-w-0">
             <label
-              htmlFor="message"
-              className="mb-1.5 block text-sm font-medium text-slate-700"
+              htmlFor="phone"
+              className="mb-1 block text-xs font-medium text-slate-700"
             >
-              Message
+              Phone Number
             </label>
-            <textarea
-              id="message"
-              name="message"
-              rows={4}
-              value={formData.message}
+            <input
+              id="phone"
+              name="phone"
+              type="tel"
+              value={formData.phone}
               onChange={handleChange}
-              placeholder="Share preferences or any special request."
-              className="w-full min-w-0 resize-none rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:border-sky-400 focus:bg-white"
+              placeholder="+91 98765 43210"
+              className={`w-full min-w-0 rounded-xl border bg-slate-50 px-3.5 py-2.5 text-sm text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:bg-white ${
+                errors.phone
+                  ? "border-red-400 focus:border-red-500"
+                  : "border-slate-200 focus:border-sky-400"
+              }`}
             />
+            {errors.phone && (
+              <p className="mt-1 text-xs text-red-500">{errors.phone}</p>
+            )}
           </div>
 
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full rounded-2xl bg-[#3B82F6] py-4 text-[0.95rem] font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#2563EB] disabled:cursor-not-allowed disabled:opacity-75 disabled:hover:translate-y-0"
+            className="w-full rounded-xl bg-linear-to-r from-sky-500 to-cyan-400 py-3 text-sm font-semibold text-white shadow-md shadow-sky-200 transition-all duration-300 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-75 disabled:hover:translate-y-0"
           >
-            {isSubmitting ? "Sending..." : "Send Enquiry"}
+            {isSubmitting ? "Sending..." : "Book Now"}
           </button>
         </form>
+
+        {/* WhatsApp */}
+        <a
+          href={whatsappLink(
+            `Hi! I'm interested in the ${pkg.title} package. Can you help?`
+          )}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-3 flex items-center justify-center gap-2 text-xs text-slate-500"
+        >
+          Any Doubt?
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-green-200 bg-green-50 px-3 py-1 font-medium text-green-600 transition-colors hover:bg-green-100">
+            <MessageCircle className="h-3.5 w-3.5" />
+            WhatsApp
+          </span>
+        </a>
       </div>
     </div>
   );

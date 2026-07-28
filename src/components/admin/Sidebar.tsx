@@ -6,6 +6,9 @@ import {
   LayoutDashboard,
   BookOpen,
   MapPin,
+  Navigation,
+  Tag,
+  Clock,
   X,
   Compass,
   ExternalLink,
@@ -16,6 +19,9 @@ const menu = [
   { name: 'Dashboard', slug: '/admin', icon: LayoutDashboard, desc: 'Overview & stats' },
   { name: 'Blogs', slug: '/admin/blogs', icon: BookOpen, desc: 'Manage articles' },
   { name: 'Packages', slug: '/admin/packages', icon: MapPin, desc: 'Tour packages' },
+  { name: 'City Hubs', slug: '/admin/city-hubs', icon: Navigation, desc: 'Origin-city pages' },
+  { name: 'Theme Hubs', slug: '/admin/theme-hubs', icon: Tag, desc: 'Theme-based pages' },
+  { name: 'Duration Hubs', slug: '/admin/duration-hubs', icon: Clock, desc: 'Duration-based pages' },
 ];
 
 interface SidebarProps {

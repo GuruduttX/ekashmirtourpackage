@@ -1,8 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import type { CSSProperties } from "react";
+import { motion, Variants } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import { Users, Award, Route } from "lucide-react";
 import EnquiryPopupForm from "@/utils/EnquiryPopupForm";
 
 type Snowflake = {
@@ -15,12 +18,186 @@ type Snowflake = {
   drift: number;
 };
 
-const STATS = [
-  { value: "4,200+", label: "Happy Travelers" },
-  { value: "15 yrs", label: "Of Experience" },
-  { value: "40+", label: "Curated Routes" },
+type DestinationCard = {
+  slug: string;
+  name: string;
+  cta: string;
+  image: string;
+  position: "left-back" | "left-front" | "right-back" | "right-front";
+  rotate: number;
+  delay: number;
+};
+
+const DESTINATION_CARDS: DestinationCard[] = [
+  {
+    slug: "gulmarg",
+    name: "Gulmarg",
+    cta: "Explore",
+    image:
+      "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?q=80&w=800&auto=format&fit=crop",
+    position: "left-back",
+    rotate: -8,
+    delay: 0,
+  },
+  {
+    slug: "sonmarg",
+    name: "Sonmarg",
+    cta: "Discover",
+    image:
+      "https://images.unsplash.com/photo-1639647383258-abee94a76f84?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    position: "left-front",
+    rotate: 6,
+    delay: 0.15,
+  },
+  {
+    slug: "pahalgam",
+    name: "Pahalgam",
+    cta: "Visit",
+    image:
+      "https://images.unsplash.com/photo-1666688449550-26a765798090?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    position: "right-back",
+    rotate: -7,
+    delay: 0.3,
+  },
+  {
+    slug: "dal-lake",
+    name: "Dal Lake",
+    cta: "Book Now",
+    image:
+      "https://images.unsplash.com/photo-1600845747913-e33543f94892?q=80&w=2144&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    position: "right-front",
+    rotate: 6,
+    delay: 0.45,
+  },
 ];
 
+const POSITION_STYLES: Record<DestinationCard["position"], CSSProperties> = {
+  "left-back": { left: "1.5rem", bottom: "9.5rem", zIndex: 10 },
+  "left-front": { left: "13rem", bottom: "6.5rem", zIndex: 20 },
+  "right-back": { right: "13rem", bottom: "9.5rem", zIndex: 10 },
+  "right-front": { right: "1.5rem", bottom: "6.5rem", zIndex: 20 },
+};
+
+function DestinationPolaroid({ card }: { card: DestinationCard }) {
+  return (
+    <div
+      className="pointer-events-auto absolute hidden w-44 lg:block xl:w-52"
+      style={POSITION_STYLES[card.position]}
+    >
+      {/* Entrance pop-in — settles into resting rotation, also owns hover */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.5, y: 80, rotate: 0 }}
+        animate={{
+          opacity: 1,
+          scale: 1,
+          y: 0,
+          rotate: card.rotate,
+          transition: {
+            duration: 0.8,
+            delay: 1.0 + card.delay,
+            ease: [0.16, 1, 0.3, 1],
+          },
+        }}
+        whileHover={{
+          scale: 1.08,
+          rotate: 0,
+          zIndex: 40,
+          transition: {
+            duration: 0.18,
+            delay: 0,
+            ease: "easeOut",
+          },
+        }}
+      >
+        {/* Continuous gentle float loop, independent layer */}
+        <motion.div
+          animate={{ y: [0, -14, 0] }}
+          transition={{
+            duration: 3.6,
+            delay: 1.8 + card.delay,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        >
+          <Link
+            href={`/destinations/${card.slug}/`}
+            aria-label={`${card.cta} ${card.name}`}
+            className="block"
+          >
+            <div
+              className="rounded-2xl bg-white p-2 pb-3 shadow-xl"
+              style={{
+                boxShadow:
+                  "0 14px 34px rgba(4,10,28,0.38), 0 3px 8px rgba(4,10,28,0.22)",
+              }}
+            >
+              <div className="relative h-36 w-full overflow-hidden rounded-t-xl rounded-b-[3px] xl:h-44">
+                <Image
+                  src={card.image}
+                  alt={`${card.name} — Kashmir`}
+                  fill
+                  sizes="208px"
+                  className="object-cover"
+                />
+              </div>
+              <div className="mt-2 flex items-center justify-between px-1">
+                <span className="font-heading text-[0.78rem] font-semibold uppercase tracking-wide text-stone-800">
+                  {card.name}
+                </span>
+                <span className="text-[0.8rem] text-amber-600">→</span>
+              </div>
+              <div className="px-1 text-[0.68rem] font-light text-stone-500">
+                {card.cta}
+              </div>
+            </div>
+          </Link>
+        </motion.div>
+      </motion.div>
+    </div>
+  );
+}
+
+const STATS = [
+  {
+    value: "4,200+",
+    label: "Happy Travelers",
+    Icon: Users,
+    color: "#38BDF8",
+    glow: "rgba(56,189,248,0.25)",
+    gradient: "linear-gradient(120deg, #BAE6FD 0%, #38BDF8 60%, #0EA5E9 100%)",
+  },
+  {
+    value: "20 yrs",
+    label: "Of Experience",
+    Icon: Award,
+    color: "#FBBF24",
+    glow: "rgba(251,191,36,0.25)",
+    gradient: "linear-gradient(120deg, #FDE68A 0%, #FBBF24 60%, #F59E0B 100%)",
+  },
+  {
+    value: "40+",
+    label: "Curated Routes",
+    Icon: Route,
+    color: "#34D399",
+    glow: "rgba(52,211,153,0.25)",
+    gradient: "linear-gradient(120deg, #A7F3D0 0%, #34D399 60%, #10B981 100%)",
+  },
+];
+
+const stripVariant: Variants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.18, delayChildren: 1.1 } },
+};
+
+const capsuleVariants:Variants = {
+  hidden: { opacity: 0, y: 46, scale: 0.85 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
+  },
+};
 export default function HeroSection() {
   const [snowflakes, setSnowflakes] = useState<Snowflake[]>([]);
   const[isOpen, setOpen] = useState(false);
@@ -41,11 +218,11 @@ export default function HeroSection() {
 
   return (
     <section className="relative flex h-[92vh] min-h-175 flex-col">
-      <EnquiryPopupForm isOpen={isOpen} onClose={()=> setOpen(false)}/>
+      <EnquiryPopupForm isOpen={isOpen} onClose={() => setOpen(false)} />
       {/* ── Kashmir hero image ── */}
       <Image
         src="/Home/kashmir-hero.webp"
-        alt="Kashmir landscape — snow-capped mountains and frozen lake"
+        alt="Kashmir landscape with mountains and valley scenery"
         fill
         priority
         className="object-cover object-center"
@@ -55,10 +232,9 @@ export default function HeroSection() {
       {/* ── Base mood overlay — deepens image slightly for premium feel ── */}
       <div
         className="absolute inset-0"
-      // style={{
-      //   background:"linear-gradient(135deg, rgba(4,12,32,0.45) 0%, rgba(10,30,65,0.22) 50%, rgba(4,12,32,0.08) 100%)"
-      //     // "linear-gradient(135deg, rgba(4,12,32,0.72) 0%, rgba(10,30,65,0.38) 42%, rgba(4,12,32,0.18) 100%)",
-      // }}
+        style={{
+          background: "rgba(0, 0, 0, 0.38)",
+        }}
       />
 
       {/* ── Left reading lane — keeps text crisp without hiding the right scenery ── */}
@@ -74,7 +250,8 @@ export default function HeroSection() {
       <div
         className="absolute inset-x-0 top-0 h-32"
         style={{
-          background: "linear-gradient(180deg, rgba(4,10,28,0.55) 0%, transparent 100%)",
+          background:
+            "linear-gradient(180deg, rgba(4,10,28,0.55) 0%, transparent 100%)",
         }}
       />
 
@@ -187,21 +364,83 @@ export default function HeroSection() {
           />
 
           {/* Surface shimmer highlights — short bright strokes on pile top */}
-          <path d="M90,118 C115,114 138,112 160,114" stroke="white" strokeWidth="1.2" fill="none" opacity="0.7" />
-          <path d="M295,106 C318,100 338,96 358,93" stroke="white" strokeWidth="1.2" fill="none" opacity="0.65" />
-          <path d="M500,102 C525,100 545,94 568,90" stroke="white" strokeWidth="1.2" fill="none" opacity="0.7" />
-          <path d="M706,86 C730,90 752,96 776,100" stroke="white" strokeWidth="1.2" fill="none" opacity="0.65" />
-          <path d="M916,92 C940,88 962,86 984,88" stroke="white" strokeWidth="1.2" fill="none" opacity="0.7" />
-          <path d="M1130,104 C1156,102 1178,96 1202,92" stroke="white" strokeWidth="1.2" fill="none" opacity="0.65" />
-          <path d="M1368,106 C1395,113 1422,121 1440,127" stroke="white" strokeWidth="1.2" fill="none" opacity="0.6" />
+          <path
+            d="M90,118 C115,114 138,112 160,114"
+            stroke="white"
+            strokeWidth="1.2"
+            fill="none"
+            opacity="0.7"
+          />
+          <path
+            d="M295,106 C318,100 338,96 358,93"
+            stroke="white"
+            strokeWidth="1.2"
+            fill="none"
+            opacity="0.65"
+          />
+          <path
+            d="M500,102 C525,100 545,94 568,90"
+            stroke="white"
+            strokeWidth="1.2"
+            fill="none"
+            opacity="0.7"
+          />
+          <path
+            d="M706,86 C730,90 752,96 776,100"
+            stroke="white"
+            strokeWidth="1.2"
+            fill="none"
+            opacity="0.65"
+          />
+          <path
+            d="M916,92 C940,88 962,86 984,88"
+            stroke="white"
+            strokeWidth="1.2"
+            fill="none"
+            opacity="0.7"
+          />
+          <path
+            d="M1130,104 C1156,102 1178,96 1202,92"
+            stroke="white"
+            strokeWidth="1.2"
+            fill="none"
+            opacity="0.65"
+          />
+          <path
+            d="M1368,106 C1395,113 1422,121 1440,127"
+            stroke="white"
+            strokeWidth="1.2"
+            fill="none"
+            opacity="0.6"
+          />
 
           {/* Tiny sparkle dots scattered on the pile surface */}
           {[
-            [145, 113], [230, 120], [310, 102], [395, 92], [475, 101],
-            [555, 89], [640, 82], [720, 87], [800, 101], [870, 103],
-            [945, 90], [1025, 97], [1105, 103], [1185, 91], [1270, 89], [1380, 110],
+            [145, 113],
+            [230, 120],
+            [310, 102],
+            [395, 92],
+            [475, 101],
+            [555, 89],
+            [640, 82],
+            [720, 87],
+            [800, 101],
+            [870, 103],
+            [945, 90],
+            [1025, 97],
+            [1105, 103],
+            [1185, 91],
+            [1270, 89],
+            [1380, 110],
           ].map(([cx, cy], i) => (
-            <circle key={i} cx={cx} cy={cy} r="1.8" fill="white" opacity="0.75" />
+            <circle
+              key={i}
+              cx={cx}
+              cy={cy}
+              r="1.8"
+              fill="white"
+              opacity="0.75"
+            />
           ))}
         </svg>
       </div>
@@ -238,7 +477,6 @@ export default function HeroSection() {
       <div className="relative z-10 flex flex-1 items-center">
         <div className="mx-auto w-full max-w-7xl px-6 pb-4 pt-5 lg:px-14">
           <div className="text-center">
-
             {/* Overline pill */}
             <div
               className="mb-7 inline-flex items-center gap-2.5 rounded-full px-4 py-1.5 anim-fade-in"
@@ -258,14 +496,27 @@ export default function HeroSection() {
 
             {/* Heading */}
             <h1
-              className="hero-line mb-5 font-heading font-bold leading-[1.10] text-white"
+              className="hero-line mb-5 font-heading font-extrabold leading-[1.10] text-white"
               style={{
                 animationDelay: "200ms",
-                fontSize: "clamp(1.75rem, 5.5vw, 4.8rem)",
+                fontSize: "clamp(1.75rem, 5.5vw, 3.5rem)",
                 textShadow: "0 2px 24px rgba(4,10,28,0.55)",
               }}
             >
-              Discover the{" "}
+              <span
+                style={{
+                  background:
+                    "linear-gradient(120deg, #F59E0B 0%, #FBBF24 50%, #F59E0B 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                  filter: "drop-shadow(0 4px 18px rgba(255, 200, 50, 0.65))",
+                  textShadow: "0 0 3px rgba(255,215,120,0.2)",
+                }}
+              >
+                Kashmir
+              </span>{" "}
+              Tour Packages by{" "}
               <span
                 className="font-medium"
                 style={{
@@ -278,12 +529,12 @@ export default function HeroSection() {
                   textShadow: "0 0 3px rgba(255,215,120,0.2)",
                 }}
               >
-                Cold Beauty
+                Sartaj
               </span>{" "}
-              of Kashmir
+              a 20-year local expert
             </h1>
 
-            {/* Subtext */}
+            {/* Answer block */}
             <p
               className="anim-fade-in-up mb-9 mx-auto max-w-xl text-[1rem] font-light leading-[1.88] text-white/78 sm:text-[1.06rem]"
               style={{
@@ -291,9 +542,15 @@ export default function HeroSection() {
                 textShadow: "0 1px 10px rgba(4,10,28,0.50)",
               }}
             >
-              Silent mountains. Frozen lakes. The kind of stillness that reaches
-              into you and{" "}
-              <span className="font-normal text-sky-200">rearranges things.</span>
+              Plan a Kashmir trip with packages, stays, cabs and local
+              sightseeing shaped around Srinagar, Gulmarg, Pahalgam and
+              Sonamarg. Sartaj helps you compare routes, seasons and inclusions
+              before you book, so your itinerary is practical, transparent and
+              paced for your family, honeymoon or group.
+              <span className="font-normal text-sky-200">
+                {" "}
+                Get a custom quote before you travel.
+              </span>
             </p>
 
             {/* CTAs */}
@@ -307,30 +564,35 @@ export default function HeroSection() {
                   backdropFilter: "blur(18px)",
                   WebkitBackdropFilter: "blur(18px)",
                   border: "1px solid rgba(255,255,255,0.38)",
-                  boxShadow: "0 4px 20px rgba(4,10,28,0.20), inset 0 1px 0 rgba(255,255,255,0.20)",
+                  boxShadow:
+                    "0 4px 20px rgba(4,10,28,0.20), inset 0 1px 0 rgba(255,255,255,0.20)",
                 }}
               >
                 Explore Packages
               </Link>
 
               <button
-                onClick={()=> setOpen(true)}
+                onClick={() => setOpen(true)}
                 className="pop-in w-full rounded-2xl py-3.5 text-center text-[0.92rem] font-semibold transition-all duration-300 hover:-translate-y-0.5 sm:w-auto sm:px-8"
                 style={{
                   animationDelay: "840ms",
-                  background: "linear-gradient(120deg, #F59E0B 0%, #FBBF24 50%, #F59E0B 100%)",
+                  background:
+                    "linear-gradient(120deg, #F59E0B 0%, #FBBF24 50%, #F59E0B 100%)",
                   color: "#1C1917",
-                  boxShadow: "0 4px 20px rgba(245,158,11,0.45), 0 1px 0 rgba(255,255,255,0.20) inset",
+                  boxShadow:
+                    "0 4px 20px rgba(245,158,11,0.45), 0 1px 0 rgba(255,255,255,0.20) inset",
                   border: "1px solid rgba(245,158,11,0.60)",
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.background = "linear-gradient(120deg, #FBBF24 0%, #FCD34D 50%, #FBBF24 100%)";
+                  e.currentTarget.style.background =
+                    "linear-gradient(120deg, #FBBF24 0%, #FCD34D 50%, #FBBF24 100%)";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.background = "linear-gradient(120deg, #F59E0B 0%, #FBBF24 50%, #F59E0B 100%)";
+                  e.currentTarget.style.background =
+                    "linear-gradient(120deg, #F59E0B 0%, #FBBF24 50%, #F59E0B 100%)";
                 }}
               >
-                Book Now →
+                Get-Quote →
               </button>
             </div>
 
@@ -340,20 +602,25 @@ export default function HeroSection() {
               style={{ animationDelay: "960ms" }}
             >
               <div className="flex -space-x-2">
-                {["bg-sky-400", "bg-amber-400", "bg-emerald-400", "bg-violet-400"].map(
-                  (col, i) => (
-                    <div
-                      key={i}
-                      className={`h-6 w-6 rounded-full border-2 border-white/30 ${col} flex items-center justify-center text-[0.55rem] font-bold text-white`}
-                    >
-                      {["A", "S", "R", "P"][i]}
-                    </div>
-                  )
-                )}
+                {[
+                  "bg-sky-400",
+                  "bg-amber-400",
+                  "bg-emerald-400",
+                  "bg-violet-400",
+                ].map((col, i) => (
+                  <div
+                    key={i}
+                    className={`h-6 w-6 rounded-full border-2 border-white/30 ${col} flex items-center justify-center text-[0.55rem] font-bold text-white`}
+                  >
+                    {["A", "S", "R", "P"][i]}
+                  </div>
+                ))}
               </div>
               <span className="text-[0.7rem] text-white/55 font-light">
                 Trusted by{" "}
-                <span className="text-amber-300 font-medium">4,200+ travelers</span>{" "}
+                <span className="text-amber-300 font-medium">
+                  4,200+ travelers
+                </span>{" "}
                 from across India
               </span>
             </div>
@@ -361,84 +628,98 @@ export default function HeroSection() {
         </div>
       </div>
 
+      {/* ── Floating destination cards — desktop only ── */}
+      <div className="pointer-events-none absolute inset-0 z-20 hidden lg:block">
+        {DESTINATION_CARDS.map((card) => (
+          <DestinationPolaroid key={card.slug} card={card} />
+        ))}
+      </div>
+
       {/* ════════════════════════════════════════
-          STATS STRIP — half on hero, half on next section
-          ════════════════════════════════════════ */}
+    STATS STRIP — trail waypoints, half on hero
+    ════════════════════════════════════════ */}
       <div
         className="absolute inset-x-0 bottom-0 z-30 px-4 sm:px-6 lg:px-14"
         style={{ transform: "translateY(50%)" }}
       >
-        <div className="mx-auto max-w-7xl">
-          <div
-            className="relative grid grid-cols-3 overflow-hidden rounded-2xl"
-            style={{
-              background:
-                "linear-gradient(135deg, rgba(8,18,42,0.88) 0%, rgba(14,28,58,0.92) 100%)",
-              backdropFilter: "blur(28px)",
-              WebkitBackdropFilter: "blur(28px)",
-              border: "1px solid rgba(255,255,255,0.13)",
-              boxShadow:
-                "0 8px 32px rgba(4,10,28,0.45), inset 0 1px 0 rgba(255,255,255,0.10)",
-            }}
+        <div className="relative mx-auto max-w-5xl">
+          {/* Dashed trail connecting the waypoints */}
+          <svg
+            className="pointer-events-none absolute inset-0 hidden h-full w-full sm:block"
+            viewBox="0 0 800 100"
+            preserveAspectRatio="none"
+            aria-hidden="true"
           >
-            {/* Colored top accent bar */}
-            <div
-              className="absolute inset-x-0 top-0 h-0.5 rounded-t-2xl"
-              style={{
-                background:
-                  "linear-gradient(90deg, #38BDF8 0%, #FBBF24 50%, #34D399 100%)",
-              }}
+            <motion.path
+              d="M 90,50 Q 300,10 400,50 T 710,50"
+              fill="none"
+              stroke="rgba(148,197,255,0.35)"
+              strokeWidth="2"
+              strokeDasharray="1 10"
+              strokeLinecap="round"
+              initial={{ pathLength: 0, opacity: 0 }}
+              animate={{ pathLength: 1, opacity: 1 }}
+              transition={{ duration: 1.6, delay: 1.0, ease: "easeInOut" }}
             />
+          </svg>
 
-            {[
-              {
-                value: "4,200+",
-                label: "Happy Travelers",
-                icon: "✈",
-                color: "#38BDF8",
-                glow: "rgba(56,189,248,0.20)",
-                gradient: "linear-gradient(120deg, #BAE6FD 0%, #38BDF8 60%, #0EA5E9 100%)",
-              },
-              {
-                value: "15 yrs",
-                label: "Of Experience",
-                icon: "🏔",
-                color: "#FBBF24",
-                glow: "rgba(251,191,36,0.20)",
-                gradient: "linear-gradient(120deg, #FDE68A 0%, #FBBF24 60%, #F59E0B 100%)",
-              },
-              {
-                value: "40+",
-                label: "Curated Routes",
-                icon: "🗺",
-                color: "#34D399",
-                glow: "rgba(52,211,153,0.20)",
-                gradient: "linear-gradient(120deg, #A7F3D0 0%, #34D399 60%, #10B981 100%)",
-              },
-            ].map((s, i, arr) => (
-              <div
+          <motion.div
+            className="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+            variants={stripVariant}
+            initial="hidden"
+            animate="visible"
+          >
+            {STATS.map((s) => (
+              <motion.div
                 key={s.label}
-                className="stat-rise relative flex flex-col items-center justify-center gap-1.5 px-2 py-4 text-center sm:flex-row sm:gap-4 sm:px-6 sm:py-5 sm:text-left"
+                variants={capsuleVariants}
+                whileHover={{ y: -6, scale: 1.04 }}
+                className="group relative flex flex-1 items-center gap-3 overflow-hidden rounded-full px-5 py-3.5 sm:px-6 sm:py-4"
                 style={{
-                  borderRight: i < arr.length - 1 ? "1px solid rgba(255,255,255,0.08)" : "none",
-                  animationDelay: `${940 + i * 110}ms`,
+                  background:
+                    "linear-gradient(135deg, rgba(3,7,18,0.92) 0%, rgba(8,47,73,0.88) 100%)",
+                  border: `1px solid ${s.color}40`,
+                  boxShadow: `0 16px 40px rgba(4,10,28,0.45), 0 0 0 1px rgba(255,255,255,0.06) inset, 0 0 24px ${s.glow}`,
+                  backdropFilter: "blur(18px)",
+                  WebkitBackdropFilter: "blur(18px)",
                 }}
               >
-                {/* Icon dot */}
+                {/* Ambient pulse ring behind icon */}
+                <motion.div
+                  className="absolute left-5 top-1/2 h-9 w-9 -translate-y-1/2 rounded-full sm:left-6 sm:h-11 sm:w-11"
+                  style={{ background: s.glow }}
+                  animate={{ scale: [1, 1.35, 1], opacity: [0.5, 0, 0.5] }}
+                  transition={{
+                    duration: 2.6,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
+                />
+
                 <div
-                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[0.65rem] sm:h-9 sm:w-9 sm:text-sm"
+                  className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full sm:h-11 sm:w-11"
                   style={{
-                    background: s.glow,
-                    border: `1px solid ${s.color}55`,
+                    background: "rgba(255,255,255,0.08)",
+                    border: `1px solid ${s.color}80`,
                   }}
                 >
-                  {s.icon}
+                  <s.Icon
+                    size={16}
+                    strokeWidth={2.2}
+                    color={s.color}
+                    className="sm:hidden"
+                  />
+                  <s.Icon
+                    size={19}
+                    strokeWidth={2.2}
+                    color={s.color}
+                    className="hidden sm:block"
+                  />
                 </div>
 
-                {/* Value + label stacked */}
-                <div>
+                <div className="relative">
                   <div
-                    className="font-heading text-base font-bold leading-none sm:text-xl md:text-2xl"
+                    className="font-heading text-base font-extrabold leading-none sm:text-xl"
                     style={{
                       background: s.gradient,
                       WebkitBackgroundClip: "text",
@@ -448,13 +729,13 @@ export default function HeroSection() {
                   >
                     {s.value}
                   </div>
-                  <div className="mt-1 text-[0.55rem] font-light tracking-wide text-white/50 uppercase sm:text-[0.65rem] sm:tracking-widest">
+                  <div className="mt-1 text-[0.6rem] font-semibold tracking-wide text-white/70 uppercase sm:text-[0.66rem] sm:tracking-widest">
                     {s.label}
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </div>
 

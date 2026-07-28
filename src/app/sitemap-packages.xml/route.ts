@@ -61,7 +61,7 @@ export async function GET() {
           .join("");
 
         return `  <url>
-    <loc>${SITE_URL}/package/${pkg.slug}</loc>
+    <loc>${SITE_URL}/kashmir-tour-packages/${pkg.slug}</loc>
     <lastmod>${lastmod}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>${imageBlocks}

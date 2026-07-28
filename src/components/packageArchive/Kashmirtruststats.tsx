@@ -1,5 +1,9 @@
-import { Users, CalendarCheck, Star, MapPin } from "lucide-react";
+"use client";
+
+import { useState } from "react";
+import { Users, CalendarCheck, Star, MapPin, Phone, MessageCircleMore } from "lucide-react";
 import CountUp from "@/utils/CountUp";
+import EnquiryPopupForm from "@/utils/EnquiryPopupForm";
 
 const stats = [
   {
@@ -29,14 +33,18 @@ const stats = [
 ];
 
 export default function KashmirTrustStats() {
+  const [isEnquiryOpen, setEnquiryOpen] = useState(false);
+
   return (
-    <section className="py-16 sm:py-20 bg-sky-50">
+    <section className="py-10 sm:py-14 bg-sky-50">
+      <EnquiryPopupForm isOpen={isEnquiryOpen} onClose={() => setEnquiryOpen(false)} />
+
       <div className="max-w-7xl mx-auto px-5 sm:px-6">
-        <div className="bg-white rounded-3xl shadow-lg p-6 sm:p-8 md:p-10 lg:p-14">
+        <div className="bg-white rounded-3xl shadow-lg px-6 py-8 sm:px-8 sm:py-10 md:px-10 md:py-10 lg:px-14 lg:py-12">
           {/* HEADER */}
-          <div className="mb-10 sm:mb-12">
+          <div className="mb-8 sm:mb-10">
             <div className="flex items-start gap-3">
-              <span className="w-1.5 h-8 sm:h-10 bg-sky-500 rounded-full mt-1 flex-shrink-0" />
+              <span className="w-1.5 h-8 sm:h-10 bg-sky-500 rounded-full mt-1 shrink-0" />
               <div>
                 <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">
                   Trusted Kashmir Tour Experience
@@ -57,7 +65,7 @@ export default function KashmirTrustStats() {
               return (
                 <div key={index} className="flex items-start gap-3 sm:gap-4">
                   {/* ICON */}
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-sky-100 flex items-center justify-center flex-shrink-0">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-sky-100 flex items-center justify-center shrink-0">
                     <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-sky-500" />
                   </div>
 
@@ -77,11 +85,30 @@ export default function KashmirTrustStats() {
 
                   {/* DIVIDER (desktop only) */}
                   {index !== stats.length - 1 && (
-                    <div className="ml-4 sm:ml-6 hidden md:block bg-gradient-to-b from-sky-100 via-cyan-400 to-sky-100 h-16 w-0.5 flex-shrink-0" />
+                    <div className="ml-4 sm:ml-6 hidden md:block bg-linear-to-b from-sky-100 via-cyan-400 to-sky-100 h-16 w-0.5 shrink-0" />
                   )}
                 </div>
               );
             })}
+          </div>
+
+          {/* CTAs */}
+          <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center justify-center gap-3 border-t border-sky-100 pt-6 sm:pt-8">
+            <button
+              type="button"
+              onClick={() => setEnquiryOpen(true)}
+              className="group flex w-full sm:w-auto items-center justify-center gap-2 rounded-full bg-linear-to-r from-sky-500 to-cyan-400 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-sky-500/25 transition-all hover:-translate-y-0.5 hover:shadow-sky-500/40"
+            >
+              <MessageCircleMore className="h-4 w-4" />
+              Enquire Now
+            </button>
+            <a
+              href="tel:+916272828"
+              className="flex w-full sm:w-auto items-center justify-center gap-2 rounded-full border border-sky-200 bg-white px-6 py-3 text-sm font-semibold text-sky-600 transition-all hover:-translate-y-0.5 hover:border-sky-300 hover:bg-sky-50"
+            >
+              <Phone className="h-4 w-4" />
+              Call Us Now
+            </a>
           </div>
         </div>
       </div>

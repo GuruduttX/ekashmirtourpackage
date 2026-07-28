@@ -41,11 +41,13 @@ export default function PackageInclusionsStrip({ packageData }: Props) {
             <div
               key={index}
               className={`flex items-center gap-2 text-sm ${
-                item.checked ? "text-gray-800" : "text-gray-300"
+                item.checked ? "text-sky-600" : "text-gray-300"
               }`}
             >
-              <span>{item.icon}</span>
-              <span className="font-medium">{item.label}</span>
+              <span className={item.checked ? "text-sky-500" : undefined}>
+                {item.icon}
+              </span>
+              <span className="font-semibold">{item.label}</span>
             </div>
           ))}
         </div>
