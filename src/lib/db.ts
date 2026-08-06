@@ -27,3 +27,5 @@ export async function connectDB(): Promise<typeof mongoose> {
   cached.conn = await cached.promise;
   return cached.conn;
 }
+
+export default connectDB;
