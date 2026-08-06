@@ -58,24 +58,24 @@ export default function PackageFaqSection({ faqs = defaultFaqs }: Props) {
           {list.map((faq, index) => (
             <details
               key={faq.id ?? index}
-              className="group relative bg-white rounded-3xl border border-sky-100 shadow-sm transition-all duration-300 hover:shadow-md hover:border-cyan-100 hover:-translate-y-1"
+              className="group relative bg-white rounded-2xl sm:rounded-3xl border border-sky-100 shadow-sm transition-all duration-300 hover:shadow-md hover:border-cyan-100 hover:-translate-y-1"
             >
-              <summary className="list-none cursor-pointer px-6 py-6 flex items-center justify-between gap-6">
-                <div className="flex items-start gap-4">
-                  <div className="flex items-center justify-center w-9 h-9 rounded-full bg-cyan-50 text-cyan-600 font-semibold text-sm shrink-0">
+              <summary className="list-none cursor-pointer px-3 py-3.5 sm:px-6 sm:py-6 flex items-center justify-between gap-2 sm:gap-6">
+                <div className="flex items-start gap-2.5 sm:gap-4 min-w-0">
+                  <div className="flex items-center justify-center w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-cyan-50 text-cyan-600 font-semibold text-xs sm:text-sm shrink-0">
                     {index + 1}
                   </div>
-                  <h3 className="font-semibold text-gray-900 text-base md:text-lg leading-snug pt-1">
+                  <h3 className="font-semibold text-gray-900 text-sm sm:text-base md:text-lg leading-snug pt-0.5 sm:pt-1">
                     {faq.question}
                   </h3>
                 </div>
-                <span className="w-8 h-8 flex items-center justify-center shrink-0 rounded-full bg-sky-50 text-sky-500 transition-all duration-300 group-open:bg-sky-500 group-open:text-white group-open:rotate-180">
-                  <ChevronDown size={20} />
+                <span className="w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center shrink-0 rounded-full bg-sky-50 text-sky-500 transition-all duration-300 group-open:bg-sky-500 group-open:text-white group-open:rotate-180">
+                  <ChevronDown className="w-4 h-4 sm:w-5 sm:h-5" />
                 </span>
               </summary>
-              <div className="px-6 pb-6 pt-0">
+              <div className="px-3 pb-4 pt-0 sm:px-6 sm:pb-6">
                 <div className="md:pl-[52px]">
-                  <div className="pl-4 border-l-2 border-cyan-100">
+                  <div className="pl-3 sm:pl-4 border-l-2 border-cyan-100">
                     <p className="text-gray-700 leading-relaxed text-sm md:text-base">
                       {faq.answer}
                     </p>

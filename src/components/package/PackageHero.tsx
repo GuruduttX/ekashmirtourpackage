@@ -85,7 +85,7 @@ export default function PackageHero({
   const roundedRating = Math.round(rating);
 
   return (
-    <section className="w-full bg-white px-4 pt-24 pb-6 sm:px-6 sm:pt-28 lg:px-8">
+    <section className="w-full bg-white px-4 pt-24  pb-6 sm:px-6 sm:pt-28 lg:px-8">
       <div className="mx-auto max-w-7xl">
         {/* Breadcrumbs — left-aligned with the grid; scrolls horizontally on mobile */}
         {breadcrumbs.length > 0 && (

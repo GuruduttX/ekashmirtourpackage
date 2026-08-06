@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { motion, useScroll, useTransform, Variants } from "framer-motion";
 import { useRef, useState } from "react";
 import { ArrowRight, MapPin, Compass } from "lucide-react";
@@ -164,14 +163,14 @@ export default function PackagesArchiveHero({
 
       <section
         ref={containerRef}
-        className="relative w-full overflow-hidden bg-white"
+        className="relative w-full overflow-hidden bg-white pt-8 md:pt-15"
       >
         <EnquiryPopupForm isOpen={isOpen} onClose={()=> setOpen(false)}/>
         {/* ══════════ HERO CONTENT GRID ══════════ */}
-        <div className="relative z-10 max-w-7xl mx-auto px-5 sm:px-8 lg:px-14 pt-24 sm:pt-28 pb-0 grid grid-cols-1 lg:grid-cols-[1fr_1.1fr] gap-12 lg:gap-6 items-start">
+        <div className="relative z-10 max-w-7xl mx-auto px-5 sm:px-8 lg:px-14 pt-2 sm:pt-6 lg:pt-8 pb-0 grid grid-cols-1 lg:grid-cols-[1fr_1.1fr] gap-6 lg:gap-6 items-start">
           {/* ────── LEFT — Editorial text block ────── */}
           <motion.div
-            className="flex flex-col text-center lg:text-left pt-4 lg:pt-10"
+            className="flex flex-col text-center lg:text-left lg:pt-2"
             variants={stagger}
             initial="hidden"
             animate="visible"
@@ -179,7 +178,7 @@ export default function PackagesArchiveHero({
             {/* Eyebrow */}
             <motion.div
               variants={fadeUp}
-              className="flex items-center justify-center lg:justify-start gap-3 mb-7"
+              className="flex items-center justify-center lg:justify-start gap-3 mb-5 sm:mb-7"
             >
               <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-sky-50 border border-sky-200">
                 <Compass className="w-3 h-3 text-sky-500" />
@@ -197,8 +196,8 @@ export default function PackagesArchiveHero({
             </motion.div>
 
             {/* Display heading — editorial large */}
-            <motion.div variants={fadeUp} className="mb-5">
-              <h1 className="text-[2.5rem] font-semibold leading-[1.0] text-gray-900 sm:text-[4rem] lg:text-[4.4rem]">
+            <motion.div variants={fadeUp} className="mb-4 sm:mb-5">
+              <h1 className="text-[2rem] font-semibold leading-[1.05] text-gray-900 sm:text-[4rem] lg:text-[4rem] sm:leading-none">
                 {title}
                 <br />
                 <span
@@ -219,14 +218,14 @@ export default function PackagesArchiveHero({
             {/* Subtitle pill */}
             <motion.p
               variants={fadeUp}
-              className="mb-6 text-base font-normal italic leading-relaxed text-gray-400 sm:text-lg"
+              className="mb-4 sm:mb-6 text-sm font-normal italic leading-relaxed text-gray-400 sm:text-lg"
             >
               — {subtitle}
             </motion.p>
 
             {/* Horizontal rule */}
             <motion.div
-              className="w-10 h-px bg-gradient-to-r from-sky-400 to-cyan-400 mb-7 mx-auto lg:mx-0"
+              className="w-10 h-px bg-gradient-to-r from-sky-400 to-cyan-400 mb-4 sm:mb-7 mx-auto lg:mx-0"
               initial={{ width: 0, opacity: 0 }}
               animate={{ width: 40, opacity: 1 }}
               transition={{
@@ -239,7 +238,7 @@ export default function PackagesArchiveHero({
             {/* Description */}
             <motion.p
               variants={fadeUp}
-              className="mx-auto lg:mx-0 text-gray-500 text-[0.97rem] leading-[1.9] font-light max-w-[460px] mb-10"
+              className="mx-auto lg:mx-0 text-gray-500 text-sm sm:text-[0.97rem] leading-[1.7] sm:leading-[1.9] font-light max-w-[460px] mb-6 sm:mb-10"
             >
               {description}
             </motion.p>
@@ -247,7 +246,7 @@ export default function PackagesArchiveHero({
             {/* CTA */}
             <motion.div
               variants={fadeUp}
-              className="flex flex-wrap items-center justify-center lg:justify-start gap-4 mb-14"
+              className="flex flex-wrap items-center justify-center lg:justify-start gap-4 mb-8 sm:mb-14"
             >
               <motion.a
                 href={ctaHref}
@@ -284,9 +283,9 @@ export default function PackagesArchiveHero({
               {stats.map((stat, i) => (
                 <div
                   key={i}
-                  className="flex flex-col items-center py-4 px-2 hover:bg-sky-50/60 transition-colors"
+                  className="flex flex-col items-center py-2.5 sm:py-4 px-2 hover:bg-sky-50/60 transition-colors"
                 >
-                  <span className="text-xl font-semibold text-gray-900 sm:text-2xl">
+                  <span className="text-lg font-semibold text-gray-900 sm:text-2xl">
                     {stat.value}
                   </span>
                   <span className="text-[0.6rem] tracking-widest uppercase text-gray-400 font-medium mt-1">

@@ -1,100 +1,72 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { NAV_LINKS, NAV_SERVICES } from "@/lib/constants";
+import { NAV_LINKS } from "@/lib/constants";
 import EnquiryPopupForm from "@/utils/EnquiryPopupForm";
-
-/* ── Brand icon ─────────────────────────────────────────── */
-function MountainIcon() {
-  return (
-    <svg width="30" height="24" viewBox="0 0 28 22" fill="none" aria-hidden="true">
-      <path d="M10 14 L16 4 L22 14Z" fill="#1E3A5F" />
-      <path d="M16 4 L18.5 9 L13.5 9Z" fill="#93C5FD" opacity="0.9" />
-      <path d="M0 20 L8 8 L16 20Z" fill="#3B82F6" opacity="0.85" />
-      <path d="M8 8 L11 13.5 L5 13.5Z" fill="#DBEAFE" opacity="0.95" />
-      <path d="M0 20 L28 20" stroke="#3B82F6" strokeWidth="1.2" strokeOpacity="0.4" />
-    </svg>
-  );
-}
-
-/* ── Package data for dropdown ──────────────────────────── */
-const DROPDOWN_PACKAGES = [
-  {
-    key: "5-6",
-    title: "Gulmarg Snow Retreat",
-    duration: "5 Nights · 6 Days",
-    location: "Gulmarg",
-    price: "₹32,999",
-    tag: "Most Popular",
-    tagColor: "#38BDF8",
-    rating: 4.9,
-    reviews: 186,
-    image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?auto=format&fit=crop&w=600&q=80",
-  },
-  {
-    key: "4-5",
-    title: "Dal Lake Houseboat",
-    duration: "4 Nights · 5 Days",
-    location: "Srinagar",
-    price: "₹24,999",
-    tag: "Romantic",
-    tagColor: "#F472B6",
-    rating: 4.8,
-    reviews: 142,
-    image: "https://images.unsplash.com/photo-1601979031925-424e53b6caaa?auto=format&fit=crop&w=600&q=80",
-  },
-  {
-    key: "6-7",
-    title: "Pahalgam Valley Trek",
-    duration: "6 Nights · 7 Days",
-    location: "Pahalgam",
-    price: "₹38,499",
-    tag: "Adventure",
-    tagColor: "#34D399",
-    rating: 4.9,
-    reviews: 98,
-    image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=600&q=80",
-  },
-  {
-    key: "8-9",
-    title: "Kashmir Grand Circuit",
-    duration: "8 Nights · 9 Days",
-    location: "Full Kashmir",
-    price: "₹54,999",
-    tag: "Premium",
-    tagColor: "#FBBF24",
-    rating: 5.0,
-    reviews: 64,
-    image: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=600&q=80",
-  },
-];
-
-const DURATION_FILTERS = [
-  { key: "all", label: "All Days Package", count: 4 },
-  { key: "4-5", label: "4 – 5 Days Package", count: 1 },
-  { key: "5-6", label: "5 – 6 Days Package", count: 1 },
-  { key: "6-7", label: "6 – 7 Days Package", count: 1 },
-  { key: "8-9", label: "8 – 9 Days Package", count: 1 },
-];
-
-const DESTINATIONS = ["All Cities", "Gulmarg", "Srinagar", "Pahalgam", "Sonamarg"];
+import { useNavPackages, formatPrice, type NavPackage } from "@/components/layout/useNavPackages";
 
 /* ══════════════════════════════════════════════════════════
    PACKAGES MEGA DROPDOWN
    ══════════════════════════════════════════════════════════ */
-function PackagesDropdown({ onClose }: { onClose: () => void }) {
+function PackagesDropdown({
+  onClose,
+  packages,
+  isLoading,
+  hasError,
+}: {
+  onClose: () => void;
+  packages: NavPackage[];
+  isLoading: boolean;
+  hasError: boolean;
+}) {
   const [activeDuration, setActiveDuration] = useState("all");
   const [activeCity, setActiveCity] = useState("All Cities");
 
-  const filtered = DROPDOWN_PACKAGES.filter((p) => {
-    const durationOk = activeDuration === "all" || p.key === activeDuration;
-    const cityOk = activeCity === "All Cities" || p.location === activeCity;
+  // Filters are derived from whatever is actually published, so the dropdown
+  // never advertises a duration or destination with nothing behind it.
+  const durationFilters = useMemo(() => {
+    const byDays = new Map<number, number>();
+    packages.forEach((p) => {
+      if (p.days > 0) byDays.set(p.days, (byDays.get(p.days) ?? 0) + 1);
+    });
+    return [
+      { key: "all", label: "All Days Package", count: packages.length },
+      ...[...byDays.entries()]
+        .sort((a, b) => a[0] - b[0])
+        .map(([days, count]) => ({
+          key: String(days),
+          label: `${days} Day${days === 1 ? "" : "s"} Package`,
+          count,
+        })),
+    ];
+  }, [packages]);
+
+  const destinations = useMemo(
+    () => [
+      "All Cities",
+      ...[...new Set(packages.map((p) => p.destination).filter(Boolean))].sort(),
+    ],
+    [packages]
+  );
+
+  const filtered = packages.filter((p) => {
+    const durationOk = activeDuration === "all" || String(p.days) === activeDuration;
+    const cityOk = activeCity === "All Cities" || p.destination === activeCity;
     return durationOk && cityOk;
   });
 
-  const visible = filtered.length ? filtered : DROPDOWN_PACKAGES.slice(0, 2);
+  const stats = useMemo(() => {
+    const rated = packages.filter((p) => p.rating > 0);
+    const bestRated = rated.length ? Math.max(...rated.map((p) => p.rating)) : 0;
+    const totalReviews = packages.reduce((sum, p) => sum + (p.reviews ?? 0), 0);
+    return [
+      { label: "Best Rated", value: bestRated ? `${bestRated.toFixed(1)} ★` : "—" },
+      { label: "Destinations", value: `${destinations.length - 1} +` },
+      { label: "Reviews", value: `${totalReviews} +` },
+    ];
+  }, [packages, destinations.length]);
 
   return (
     <div
@@ -129,15 +101,11 @@ function PackagesDropdown({ onClose }: { onClose: () => void }) {
         <div className="flex items-center gap-2">
           <span className="text-sky-500 text-[0.72rem] font-bold">✦</span>
           <span className="text-[0.75rem] font-semibold tracking-wide text-slate-800">
-            Exclusive Deals — Up to 30% Off on Selected Packages
+            Handpicked Kashmir itineraries, built by locals
           </span>
         </div>
         <div className="flex items-center gap-5">
-          {[
-            { label: "Best Rated", value: "4.9 ★" },
-            { label: "Destinations", value: "4 +" },
-            { label: "Travelers", value: "4K +" },
-          ].map((s) => (
+          {stats.map((s) => (
             <div key={s.label} className="flex items-center gap-1.5 text-[0.7rem]">
               <span className="text-slate-400">{s.label}</span>
               <span className="font-bold text-sky-600">{s.value}</span>
@@ -148,7 +116,6 @@ function PackagesDropdown({ onClose }: { onClose: () => void }) {
 
       {/* ── Body ── */}
       <div className="flex" style={{ minHeight: "330px" }}>
-
         {/* Left: Duration filters */}
         <div
           className="flex w-[210px] shrink-0 flex-col py-4"
@@ -157,7 +124,7 @@ function PackagesDropdown({ onClose }: { onClose: () => void }) {
           <p className="mb-2 px-4 text-[0.58rem] font-bold tracking-[0.22em] text-sky-500/70 uppercase">
             Duration
           </p>
-          {DURATION_FILTERS.map((f) => {
+          {durationFilters.map((f) => {
             const active = activeDuration === f.key;
             return (
               <button
@@ -191,13 +158,12 @@ function PackagesDropdown({ onClose }: { onClose: () => void }) {
 
         {/* Right: City chips + package cards */}
         <div className="flex flex-1 flex-col p-4">
-
           {/* City chips */}
           <div className="mb-3.5 flex flex-wrap items-center gap-2">
             <span className="mr-1 text-[0.6rem] font-semibold tracking-widest text-sky-500/70 uppercase">
               🌍 Destination
             </span>
-            {DESTINATIONS.map((city) => {
+            {destinations.map((city) => {
               const active = activeCity === city;
               return (
                 <button
@@ -218,94 +184,111 @@ function PackagesDropdown({ onClose }: { onClose: () => void }) {
           </div>
 
           {/* Package cards */}
-          <div className="grid flex-1 gap-3" style={{ gridTemplateColumns: "repeat(2, 1fr)" }}>
-            {visible.slice(0, 2).map((pkg) => (
-              <Link
-                key={pkg.key}
-                href="/kashmir-tour-packages/"
-                onClick={onClose}
-                className="group overflow-hidden rounded-xl transition-all duration-250 hover:-translate-y-0.5"
-                style={{
-                  background: "#ffffff",
-                  border: "1px solid rgba(15,23,42,0.08)",
-                  boxShadow: "0 2px 12px rgba(15,23,42,0.06)",
-                }}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLElement).style.border = "1px solid rgba(56,189,248,0.45)";
-                  (e.currentTarget as HTMLElement).style.boxShadow = "0 8px 30px rgba(14,165,233,0.15)";
-                  (e.currentTarget as HTMLElement).style.background = "rgba(56,189,248,0.04)";
-                }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLElement).style.border = "1px solid rgba(15,23,42,0.08)";
-                  (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 12px rgba(15,23,42,0.06)";
-                  (e.currentTarget as HTMLElement).style.background = "#ffffff";
-                }}
-              >
-                {/* Image */}
-                <div className="relative h-36 overflow-hidden">
-                  <Image
-                    src={pkg.image}
-                    alt={pkg.title}
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    sizes="320px"
-                  />
-                  {/* Dark gradient over image bottom */}
-                  <div
-                    className="absolute inset-0"
-                    style={{ background: "linear-gradient(180deg, transparent 40%, rgba(6,14,35,0.55) 100%)" }}
-                  />
-                  {/* Tag */}
-                  <span
-                    className="absolute left-2.5 top-2.5 rounded-full px-2.5 py-1 text-[0.6rem] font-bold text-white"
-                    style={{ background: pkg.tagColor, boxShadow: `0 2px 10px ${pkg.tagColor}60` }}
-                  >
-                    {pkg.tag}
-                  </span>
-                  {/* Rating */}
-                  <div
-                    className="absolute bottom-2 right-2 flex items-center gap-1 rounded-full px-2 py-0.5"
-                    style={{ background: "rgba(6,14,35,0.75)", backdropFilter: "blur(6px)", border: "1px solid rgba(255,255,255,0.12)" }}
-                  >
-                    <span className="text-[0.58rem] text-amber-400">★</span>
-                    <span className="text-[0.63rem] font-semibold text-white">{pkg.rating}</span>
-                    <span className="text-[0.58rem] text-white/50">({pkg.reviews})</span>
+          {isLoading ? (
+            <div className="grid flex-1 gap-3" style={{ gridTemplateColumns: "repeat(2, 1fr)" }}>
+              {[0, 1].map((i) => (
+                <div
+                  key={i}
+                  className="animate-pulse overflow-hidden rounded-xl"
+                  style={{ background: "rgba(15,23,42,0.04)", border: "1px solid rgba(15,23,42,0.08)" }}
+                >
+                  <div className="h-36 w-full" style={{ background: "rgba(15,23,42,0.07)" }} />
+                  <div className="space-y-2 p-3">
+                    <div className="h-3 w-3/4 rounded" style={{ background: "rgba(15,23,42,0.08)" }} />
+                    <div className="h-2.5 w-1/2 rounded" style={{ background: "rgba(15,23,42,0.06)" }} />
                   </div>
                 </div>
-
-                {/* Card body */}
-                <div className="p-3">
-                  <h4 className="mb-1.5 text-[0.82rem] font-semibold text-slate-900 leading-tight">
-                    {pkg.title}
-                  </h4>
-                  <div className="mb-2.5 flex items-center gap-3 text-[0.66rem] text-slate-500">
-                    <span className="flex items-center gap-1">⏱ {pkg.duration}</span>
-                    <span className="flex items-center gap-1">📍 {pkg.location}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="text-[0.6rem] text-slate-400">Starting from</div>
-                      <div
-                        className="text-[0.92rem] font-bold"
-                        style={{ color: "#0284C7" }}
+              ))}
+            </div>
+          ) : hasError ? (
+            <div className="flex flex-1 items-center justify-center text-[0.78rem] text-slate-500">
+              Couldn&apos;t load packages right now.
+            </div>
+          ) : filtered.length === 0 ? (
+            <div className="flex flex-1 items-center justify-center text-[0.78rem] text-slate-500">
+              No packages match these filters.
+            </div>
+          ) : (
+            <div className="grid flex-1 gap-3" style={{ gridTemplateColumns: "repeat(2, 1fr)" }}>
+              {filtered.slice(0, 2).map((pkg) => (
+                <Link
+                  key={pkg.id}
+                  href={`/package/${pkg.slug}`}
+                  onClick={onClose}
+                  className="group overflow-hidden rounded-xl transition-all duration-250 hover:-translate-y-0.5"
+                  style={{
+                    background: "#ffffff",
+                    border: "1px solid rgba(15,23,42,0.08)",
+                    boxShadow: "0 2px 12px rgba(15,23,42,0.06)",
+                  }}
+                >
+                  {/* Image */}
+                  <div className="relative h-36 overflow-hidden" style={{ background: "rgba(15,23,42,0.05)" }}>
+                    {pkg.image && (
+                      <Image
+                        src={pkg.image}
+                        alt={pkg.title}
+                        fill
+                        unoptimized
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                        sizes="320px"
+                      />
+                    )}
+                    <div
+                      className="absolute inset-0"
+                      style={{ background: "linear-gradient(180deg, transparent 40%, rgba(6,14,35,0.55) 100%)" }}
+                    />
+                    {pkg.themes[0] && (
+                      <span
+                        className="absolute left-2.5 top-2.5 rounded-full px-2.5 py-1 text-[0.6rem] font-bold text-white"
+                        style={{ background: "#38BDF8", boxShadow: "0 2px 10px rgba(56,189,248,0.38)" }}
                       >
-                        {pkg.price}
+                        {pkg.themes[0]}
+                      </span>
+                    )}
+                    {pkg.rating > 0 && (
+                      <div
+                        className="absolute bottom-2 right-2 flex items-center gap-1 rounded-full px-2 py-0.5"
+                        style={{ background: "rgba(6,14,35,0.75)", backdropFilter: "blur(6px)", border: "1px solid rgba(255,255,255,0.12)" }}
+                      >
+                        <span className="text-[0.58rem] text-amber-400">★</span>
+                        <span className="text-[0.63rem] font-semibold text-white">{pkg.rating}</span>
+                        <span className="text-[0.58rem] text-white/50">({pkg.reviews})</span>
                       </div>
-                    </div>
-                    <span
-                      className="rounded-lg px-3 py-1.5 text-[0.7rem] font-semibold text-white transition-all"
-                      style={{
-                        background: "linear-gradient(135deg, #0EA5E9, #38BDF8)",
-                        boxShadow: "0 2px 10px rgba(14,165,233,0.40)",
-                      }}
-                    >
-                      View →
-                    </span>
+                    )}
                   </div>
-                </div>
-              </Link>
-            ))}
-          </div>
+
+                  {/* Card body */}
+                  <div className="p-3">
+                    <h4 className="mb-1.5 text-[0.82rem] font-semibold capitalize text-slate-900 leading-tight">
+                      {pkg.title}
+                    </h4>
+                    <div className="mb-2.5 flex items-center gap-3 text-[0.66rem] text-slate-500">
+                      {pkg.duration && <span className="flex items-center gap-1">⏱ {pkg.duration}</span>}
+                      {pkg.destination && <span className="flex items-center gap-1">📍 {pkg.destination}</span>}
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="text-[0.6rem] text-slate-400">Starting from</div>
+                        <div className="text-[0.92rem] font-bold" style={{ color: "#0284C7" }}>
+                          {formatPrice(pkg.price)}
+                        </div>
+                      </div>
+                      <span
+                        className="rounded-lg px-3 py-1.5 text-[0.7rem] font-semibold text-white transition-all"
+                        style={{
+                          background: "linear-gradient(135deg, #0EA5E9, #38BDF8)",
+                          boxShadow: "0 2px 10px rgba(14,165,233,0.40)",
+                        }}
+                      >
+                        View →
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
@@ -315,7 +298,7 @@ function PackagesDropdown({ onClose }: { onClose: () => void }) {
         style={{ borderTop: "1px solid rgba(15,23,42,0.08)" }}
       >
         <Link
-          href="#packages"
+          href="/kashmir-tour-packages/"
           onClick={onClose}
           className="flex flex-1 items-center justify-center gap-2 rounded-xl py-3 text-[0.82rem] font-semibold text-white transition-all hover:brightness-110"
           style={{
@@ -325,12 +308,14 @@ function PackagesDropdown({ onClose }: { onClose: () => void }) {
         >
           🔍 Explore All Packages →
         </Link>
-        <button
+        <Link
+          href="/cab-service"
+          onClick={onClose}
           className="flex items-center gap-2 rounded-xl px-5 py-3 text-[0.82rem] font-semibold text-sky-600 transition-all hover:bg-sky-50"
           style={{ border: "1px solid rgba(56,189,248,0.40)" }}
         >
-          🔥 Hot Deals
-        </button>
+          🚕 Book a Cab
+        </Link>
       </div>
 
       {/* ── Trust footer strip ── */}
@@ -349,82 +334,8 @@ function PackagesDropdown({ onClose }: { onClose: () => void }) {
           </div>
         ))}
         <div className="text-[0.67rem] text-sky-600/90">
-          Need help? <span className="cursor-pointer font-semibold text-sky-600 underline underline-offset-2">Talk to us →</span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ══════════════════════════════════════════════════════════
-   SERVICES DROPDOWN
-   ══════════════════════════════════════════════════════════ */
-function ServicesDropdown({ onClose }: { onClose: () => void }) {
-  return (
-    <div
-      className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-[520px] rounded-2xl overflow-hidden z-50"
-      style={{
-        background: "rgba(255,255,255,0.98)",
-        backdropFilter: "blur(32px)",
-        WebkitBackdropFilter: "blur(32px)",
-        border: "1px solid rgba(56,189,248,0.25)",
-        boxShadow:
-          "0 24px 60px rgba(15,23,42,0.16), 0 0 0 1px rgba(56,189,248,0.05)",
-      }}
-    >
-      <div
-        className="h-0.5 w-full"
-        style={{
-          background:
-            "linear-gradient(90deg, transparent, #38BDF8 30%, #93C5FD 60%, transparent)",
-        }}
-      />
-      <div className="p-5">
-        <p className="text-[0.6rem] font-semibold tracking-[0.28em] text-sky-500/80 uppercase mb-4 px-1">
-          What We Offer
-        </p>
-        <div className="grid grid-cols-2 gap-2">
-          {NAV_SERVICES.map((svc) => (
-            <Link
-              key={svc.title}
-              href="/cab-service/srinagar-to-gulmarg/"
-              onClick={onClose}
-              className="group flex items-center gap-3 rounded-xl px-3 py-2.5 transition-all duration-200"
-              style={{ border: "1px solid rgba(15,23,42,0.06)" }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.background =
-                  "rgba(56,189,248,0.06)";
-                (e.currentTarget as HTMLElement).style.borderColor =
-                  "rgba(56,189,248,0.30)";
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.background =
-                  "transparent";
-                (e.currentTarget as HTMLElement).style.borderColor =
-                  "rgba(15,23,42,0.06)";
-              }}
-            >
-              <span className="text-xl leading-none">{svc.icon}</span>
-              <div>
-                <div className="text-[0.78rem] font-semibold text-slate-900 group-hover:text-sky-600 transition-colors">
-                  {svc.title}
-                </div>
-                <div className="text-[0.65rem] text-slate-500 leading-tight mt-0.5">
-                  {svc.desc}
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
-        <div className="mt-4 border-t border-slate-200/70 pt-3 flex items-center justify-between">
-          <span className="text-[0.68rem] text-slate-400">
-            All services customisable for your trip
-          </span>
-          <Link
-            href="#contact"
-            onClick={onClose}
-            className="text-[0.72rem] font-medium text-sky-600 hover:text-sky-500 transition-colors"
-          >
+          Need help?{" "}
+          <Link href="/contact" onClick={onClose} className="font-semibold text-sky-600 underline underline-offset-2">
             Talk to us →
           </Link>
         </div>
@@ -443,6 +354,7 @@ export default function Navbar() {
   const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
   const [isOpen, setOpen] = useState(false);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const { packages, isLoading, hasError, load: loadPackages } = useNavPackages();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
@@ -452,6 +364,7 @@ export default function Navbar() {
 
   const openDropdown = (key: string) => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
+    if (key === "packages") loadPackages();
     setActiveDropdown(key);
   };
 
@@ -543,15 +456,12 @@ export default function Navbar() {
                         onMouseEnter={() => openDropdown("packages")}
                         onMouseLeave={scheduleClose}
                       >
-                        <PackagesDropdown onClose={closeDropdown} />
-                      </div>
-                    )}
-                    {isActive && link.dropdown === "services" && (
-                      <div
-                        onMouseEnter={() => openDropdown("services")}
-                        onMouseLeave={scheduleClose}
-                      >
-                        <ServicesDropdown onClose={closeDropdown} />
+                        <PackagesDropdown
+                          onClose={closeDropdown}
+                          packages={packages}
+                          isLoading={isLoading}
+                          hasError={hasError}
+                        />
                       </div>
                     )}
                   </li>
@@ -571,7 +481,7 @@ export default function Navbar() {
                     "0 0 0 1px rgba(56,189,248,0.45), 0 4px 16px rgba(14,165,233,0.35)",
                 }}
               >
-                Let's Feel Some Snow
+                Let&apos;s Feel Some Snow
               </button>
             </div>
 
@@ -628,10 +538,11 @@ export default function Navbar() {
                 <div key={link.label}>
                   <div
                     className="flex cursor-pointer items-center justify-between rounded-xl px-3 py-2.5 transition-colors hover:bg-sky-50"
-                    onClick={() =>
-                      hasDropdown &&
-                      setMobileExpanded(isExpanded ? null : link.dropdown!)
-                    }
+                    onClick={() => {
+                      if (!hasDropdown) return;
+                      if (link.dropdown === "packages") loadPackages();
+                      setMobileExpanded(isExpanded ? null : link.dropdown!);
+                    }}
                   >
                     <Link
                       href={link.href}
@@ -663,31 +574,46 @@ export default function Navbar() {
                     isExpanded &&
                     link.dropdown === "packages" && (
                       <div className="ml-3 mt-1 flex flex-col gap-1 border-l border-sky-200 pl-3">
-                        {DROPDOWN_PACKAGES.map((pkg) => (
+                        {isLoading && (
+                          <p className="px-2 py-2 text-[0.72rem] text-slate-400">Loading packages…</p>
+                        )}
+                        {hasError && (
+                          <p className="px-2 py-2 text-[0.72rem] text-slate-400">
+                            Couldn&apos;t load packages.
+                          </p>
+                        )}
+                        {!isLoading && !hasError && packages.length === 0 && (
+                          <p className="px-2 py-2 text-[0.72rem] text-slate-400">No packages yet.</p>
+                        )}
+                        {packages.map((pkg) => (
                           <Link
-                            key={pkg.key}
-                            href="#packages"
+                            key={pkg.id}
+                            href={`/package/${pkg.slug}`}
                             onClick={() => setMobileOpen(false)}
                             className="flex items-center gap-2.5 rounded-lg px-2 py-2 hover:bg-sky-50"
                           >
-                            <div className="relative h-9 w-12 shrink-0 overflow-hidden rounded-lg">
-                              <Image
-                                src={pkg.image}
-                                alt={pkg.title}
-                                fill
-                                className="object-cover"
-                                sizes="48px"
-                              />
+                            <div
+                              className="relative h-9 w-12 shrink-0 overflow-hidden rounded-lg"
+                              style={{ background: "rgba(15,23,42,0.05)" }}
+                            >
+                              {pkg.image && (
+                                <Image
+                                  src={pkg.image}
+                                  alt={pkg.title}
+                                  fill
+                                  unoptimized
+                                  className="object-cover"
+                                  sizes="48px"
+                                />
+                              )}
                             </div>
                             <div>
-                              <div className="text-[0.78rem] font-medium text-slate-800">
+                              <div className="text-[0.78rem] font-medium capitalize text-slate-800">
                                 {pkg.title}
                               </div>
                               <div className="text-[0.65rem] text-slate-400">
                                 {pkg.duration} ·{" "}
-                                <span style={{ color: pkg.tagColor }}>
-                                  {pkg.price}
-                                </span>
+                                <span className="text-sky-600">{formatPrice(pkg.price)}</span>
                               </div>
                             </div>
                           </Link>
@@ -695,31 +621,12 @@ export default function Navbar() {
                       </div>
                     )}
 
-                  {hasDropdown &&
-                    isExpanded &&
-                    link.dropdown === "services" && (
-                      <div className="ml-3 mt-1 flex flex-col gap-1 border-l border-sky-200 pl-3">
-                        {NAV_SERVICES.map((svc) => (
-                          <Link
-                            key={svc.title}
-                            href="#services"
-                            onClick={() => setMobileOpen(false)}
-                            className="flex items-center gap-2.5 rounded-lg px-2 py-2 hover:bg-sky-50"
-                          >
-                            <span className="text-base">{svc.icon}</span>
-                            <span className="text-[0.78rem] font-medium text-slate-700">
-                              {svc.title}
-                            </span>
-                          </Link>
-                        ))}
-                      </div>
-                    )}
                 </div>
               );
             })}
 
             <Link
-              href="#packages"
+              href="/kashmir-tour-packages/"
               onClick={() => setMobileOpen(false)}
               className="mt-3 rounded-xl py-3 text-center text-sm font-semibold text-white"
               style={{

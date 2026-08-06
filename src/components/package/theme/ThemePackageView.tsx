@@ -170,7 +170,7 @@ export default async function ThemePackageView({ themeHub }: { themeHub: ThemeHu
 
       <Navbar />
 
-      <div className="mx-auto w-full max-w-7xl px-4 pt-24 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-7xl px-4 pt-20 sm:pt-24 sm:px-6 lg:px-8">
         <Breadcrumbs
           items={[
             { label: "Kashmir Tour Packages", href: "/kashmir-tour-packages" },

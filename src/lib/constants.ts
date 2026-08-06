@@ -1,26 +1,11 @@
 export const NAV_LINKS = [
-  { label: "Home",        href: "/",            dropdown: null },
-  { label: "Packages",    href: "/package",    dropdown: "packages" },
-  { label: "Services",    href: "/services",    dropdown: "services" },
-  { label: "About",       href: "/about",       dropdown: null },
-  { label: "Why Kashmir", href: "/whyKashmir", dropdown: null },
-  { label: "Contact",     href: "/contact",     dropdown: null },
-] as const;
-
-export const NAV_PACKAGES = [
-  { icon: "⛷️", title: "Gulmarg Snow Retreat",    duration: "5N / 6D", price: "₹32,999", tag: "Popular",   color: "#38BDF8" },
-  { icon: "🛶", title: "Dal Lake Houseboat",       duration: "4N / 5D", price: "₹24,999", tag: "Romantic",  color: "#F472B6" },
-  { icon: "🥾", title: "Pahalgam Valley Trek",     duration: "6N / 7D", price: "₹38,499", tag: "Adventure", color: "#34D399" },
-  { icon: "✨", title: "Kashmir Grand Circuit",    duration: "8N / 9D", price: "₹54,999", tag: "Premium",   color: "#FBBF24" },
-] as const;
-
-export const NAV_SERVICES = [
-  { icon: "🚗", title: "Luxury Transport",    desc: "Chauffeur-driven comfort & airport transfers" },
-  { icon: "🧭", title: "Guided Tours",        desc: "Expert local knowledge & curated itineraries" },
-  { icon: "🛶", title: "Shikara Rides",       desc: "Serene Dal Lake experience at dawn & dusk" },
-  { icon: "📸", title: "Photography Tours",   desc: "Capture Kashmir's soul with a pro photographer" },
-  { icon: "⛷️", title: "Ski & Snow Sports",  desc: "Gulmarg's world-class slopes & gondola" },
-  { icon: "🍽️", title: "Kashmiri Cuisine",   desc: "Authentic Wazwan & local dining experiences" },
+  { label: "Home",        href: "/",                       dropdown: null },
+  { label: "Packages",    href: "/kashmir-tour-packages/", dropdown: "packages" },
+  { label: "Temples",     href: "/temples",                dropdown: null },
+  { label: "Cab Service", href: "/cab-service",            dropdown: null },
+  { label: "About",       href: "/about",                  dropdown: null },
+  { label: "Why Kashmir", href: "/whyKashmir",             dropdown: null },
+  { label: "Contact",     href: "/contact",                dropdown: null },
 ] as const;
 
 
