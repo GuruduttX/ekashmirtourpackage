@@ -72,7 +72,7 @@ export default function PremiumFAQ() {
   };
 
   return (
-    <section className="relative w-full py-16 lg:py-24 bg-white overflow-hidden">
+    <section className="relative w-full py-2 lg:py-6 bg-white overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
         <motion.div
           variants={staggerContainer}

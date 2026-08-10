@@ -82,89 +82,100 @@ export default function TrustShowcase() {
         </motion.div>
 
         <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6 lg:gap-8"
-        >
-          {/* COMMUNITY CARD */}
-          <motion.div
-            variants={fadeUpVariant}
-            className={`lg:col-span-7 ${cardClasses} min-h-[350px] flex flex-col justify-end p-8 sm:p-10 bg-sky-50`}
-          >
-            <div className="relative z-10">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white border border-slate-200 mb-6 shadow-sm">
-                <Users className="w-4 h-4 text-sky-500" />
-                <span className="text-slate-800 text-xs font-bold uppercase tracking-wider">
-                  The Community
-                </span>
-              </div>
-              <h3 className="text-4xl sm:text-5xl font-bold text-slate-900 mb-4 tracking-tight">
-                10,000+ <span className="text-sky-500">Travelers</span>
-              </h3>
-              <p className="text-slate-600 text-base sm:text-lg font-light max-w-md">
-                Trusted by travelers from across India and beyond to craft safe,
-                immersive, and luxurious Kashmir escapes.
-              </p>
-            </div>
-          </motion.div>
+  variants={staggerContainer}
+  initial="hidden"
+  whileInView="visible"
+  viewport={{ once: true, margin: "-100px" }}
+  /* Mobile: flex + scroll snap | Desktop (md+): grid layout */
+  className="flex md:grid overflow-x-auto snap-x snap-mandatory md:snap-none md:grid-cols-2 lg:grid-cols-12 gap-6 lg:gap-8 pb-6 md:pb-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+>
+  {/* COMMUNITY CARD */}
+  <motion.div
+    variants={fadeUpVariant}
+    /* Mobile: takes needed space (up to 380px) | Desktop: follows grid */
+    className={`flex-none w-[85vw] max-w-[380px] md:w-auto md:max-w-none snap-start lg:col-span-7 ${cardClasses} min-h-[350px] flex flex-col justify-end p-8 sm:p-10 bg-sky-50`}
+  >
+    <div className="relative z-10">
+      <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white border border-slate-200 mb-6 shadow-sm">
+        <Users className="w-4 h-4 text-sky-500" />
+        <span className="text-slate-800 text-xs font-bold uppercase tracking-wider">
+          The Community
+        </span>
+      </div>
+      <h3 className="text-4xl sm:text-5xl font-bold text-slate-900 mb-4 tracking-tight">
+        10,000+ <br/> <span className="text-sky-500">Travelers</span>
+      </h3>
+      <p className="text-slate-600 text-base sm:text-lg font-light max-w-md">
+        Trusted by travelers from across India and beyond to craft safe,
+        immersive, and luxurious Kashmir escapes.
+      </p>
+    </div>
+  </motion.div>
 
-          {/* RATING CARD */}
-          <motion.div
-            variants={fadeUpVariant}
-            className={`lg:col-span-5 ${cardClasses} p-8 sm:p-10 flex flex-col justify-center`}
-          >
-            <div className="flex items-center gap-2 mb-6">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} className="w-6 h-6 fill-sky-400 text-sky-400" />
-              ))}
-            </div>
-            <h3 className="text-4xl sm:text-5xl font-bold text-slate-900 mb-4 tracking-tight">
-              4.9/5
-            </h3>
-            <p className="text-slate-600 text-base sm:text-lg font-light">
-              Average rating based on hundreds of verified reviews. Excellence
-              isn't just a goal; it's our standard.
-            </p>
-          </motion.div>
+  {/* RATING CARD */}
+  <motion.div
+    variants={fadeUpVariant}
+    className={`flex-none w-[85vw] max-w-[350px] md:w-auto md:max-w-none snap-start lg:col-span-5 ${cardClasses} p-8 sm:p-10 flex flex-col justify-center`}
+  >
+    <div className="flex items-center gap-2 mb-6">
+      {[...Array(5)].map((_, i) => (
+        <Star key={i} className="w-6 h-6 fill-sky-400 text-sky-400" />
+      ))}
+    </div>
+    <h3 className="text-4xl sm:text-5xl font-bold text-slate-900 mb-4 tracking-tight">
+      4.9/5
+    </h3>
+    <p className="text-slate-600 text-base sm:text-lg font-light">
+      Average rating based on hundreds of verified reviews. Excellence
+      isn't just a goal; it's our standard.
+    </p>
+  </motion.div>
 
-          {/* LOCAL EXPERTS CARD */}
-          <motion.div variants={fadeUpVariant} className={`lg:col-span-4 ${cardClasses} p-8`}>
-            <div className="w-12 h-12 rounded-xl bg-sky-50 border border-sky-100 flex items-center justify-center mb-6 group-hover:bg-sky-100 transition-colors duration-300">
-              <MapPin className="w-6 h-6 text-sky-500" />
-            </div>
-            <h4 className="text-xl font-bold text-slate-900 mb-3">Local Kashmir Experts</h4>
-            <p className="text-slate-600 text-sm leading-relaxed font-light">
-              Born and raised in the valley. We know the hidden trails, the best
-              local artisans, and the secrets of real Kashmiri hospitality.
-            </p>
-          </motion.div>
+  {/* LOCAL EXPERTS CARD */}
+  <motion.div 
+    variants={fadeUpVariant} 
+    className={`flex-none w-[85vw] max-w-[300px] md:w-auto md:max-w-none snap-start lg:col-span-4 ${cardClasses} p-8`}
+  >
+    <div className="w-12 h-12 rounded-xl bg-sky-50 border border-sky-100 flex items-center justify-center mb-6 group-hover:bg-sky-100 transition-colors duration-300">
+      <MapPin className="w-6 h-6 text-sky-500" />
+    </div>
+    <h4 className="text-xl font-bold text-slate-900 mb-3">Local Kashmir Experts</h4>
+    <p className="text-slate-600 text-sm leading-relaxed font-light">
+      Born and raised in the valley. We know the hidden trails, the best
+      local artisans, and the secrets of real Kashmiri hospitality.
+    </p>
+  </motion.div>
 
-          {/* 24/7 SUPPORT CARD */}
-          <motion.div variants={fadeUpVariant} className={`lg:col-span-4 ${cardClasses} p-8`}>
-            <div className="w-12 h-12 rounded-xl bg-sky-50 border border-sky-100 flex items-center justify-center mb-6 group-hover:bg-sky-100 transition-colors duration-300">
-              <Clock className="w-6 h-6 text-sky-500" />
-            </div>
-            <h4 className="text-xl font-bold text-slate-900 mb-3">24/7 Travel Support</h4>
-            <p className="text-slate-600 text-sm leading-relaxed font-light">
-              From the moment you land to your departure, our dedicated
-              concierge team is always available to ensure a frictionless journey.
-            </p>
-          </motion.div>
+  {/* 24/7 SUPPORT CARD */}
+  <motion.div 
+    variants={fadeUpVariant} 
+    className={`flex-none w-[85vw] max-w-[300px] md:w-auto md:max-w-none snap-start lg:col-span-4 ${cardClasses} p-8`}
+  >
+    <div className="w-12 h-12 rounded-xl bg-sky-50 border border-sky-100 flex items-center justify-center mb-6 group-hover:bg-sky-100 transition-colors duration-300">
+      <Clock className="w-6 h-6 text-sky-500" />
+    </div>
+    <h4 className="text-xl font-bold text-slate-900 mb-3">24/7 Travel Support</h4>
+    <p className="text-slate-600 text-sm leading-relaxed font-light">
+      From the moment you land to your departure, our dedicated
+      concierge team is always available to ensure a frictionless journey.
+    </p>
+  </motion.div>
 
-          {/* HANDPICKED EXPERIENCES CARD */}
-          <motion.div variants={fadeUpVariant} className={`lg:col-span-4 ${cardClasses} p-8`}>
-            <div className="w-12 h-12 rounded-xl bg-sky-50 border border-sky-100 flex items-center justify-center mb-6 group-hover:bg-sky-100 transition-colors duration-300">
-              <Sparkles className="w-6 h-6 text-sky-500" />
-            </div>
-            <h4 className="text-xl font-bold text-slate-900 mb-3">Handpicked Stays</h4>
-            <p className="text-slate-600 text-sm leading-relaxed font-light">
-              We personally verify every luxury houseboat, boutique hotel, and
-              premium resort before adding it to your personalized itinerary.
-            </p>
-          </motion.div>
-        </motion.div>
+  {/* HANDPICKED EXPERIENCES CARD */}
+  <motion.div 
+    variants={fadeUpVariant} 
+    className={`flex-none w-[85vw] max-w-[300px] md:w-auto md:max-w-none snap-start lg:col-span-4 ${cardClasses} p-8`}
+  >
+    <div className="w-12 h-12 rounded-xl bg-sky-50 border border-sky-100 flex items-center justify-center mb-6 group-hover:bg-sky-100 transition-colors duration-300">
+      <Sparkles className="w-6 h-6 text-sky-500" />
+    </div>
+    <h4 className="text-xl font-bold text-slate-900 mb-3">Handpicked Stays</h4>
+    <p className="text-slate-600 text-sm leading-relaxed font-light">
+      We personally verify every luxury houseboat, boutique hotel, and
+      premium resort before adding it to your personalized itinerary.
+    </p>
+  </motion.div>
+</motion.div>
       </div>
     </section>
   );

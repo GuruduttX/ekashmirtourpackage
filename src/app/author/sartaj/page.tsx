@@ -36,6 +36,7 @@ const jsonLd = {
 // ============================================================================
 export default function SartajAuthorPage() {
   return (
+    <>
     <main className="bg-white text-slate-900 min-h-screen">
       <script
         type="application/ld+json"
@@ -52,7 +53,9 @@ export default function SartajAuthorPage() {
       <PackagesSection />
       <TourDetails />
       
-      <Footer />
+     
     </main>
+     <Footer />
+     </>
   );
 }

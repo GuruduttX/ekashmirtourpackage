@@ -19,17 +19,23 @@ export async function GET(req: Request) {
   try {
     await connectDB();
     const { searchParams } = new URL(req.url);
+    const admin = searchParams.get('admin') === 'true';
+    const all = searchParams.get('all') === 'true';
     const packageId = searchParams.get('packageId');
 
-    if (!packageId) {
+    if (admin) {
+      const reviews = await Review.find({}).sort({ createdAt: -1 });
+      return NextResponse.json({ success: true, data: reviews }, { status: 200 });
+    }
+
+    if (!all && !packageId) {
       return NextResponse.json({ success: false, message: 'packageId is required' }, { status: 400 });
     }
 
-    // Only fetch approved reviews to show to the public
-    const reviews = await Review.find({ 
-      packageId, 
-      status: 'approved' 
-    }).sort({ createdAt: -1 });
+    const query: Record<string, unknown> = { status: 'approved' };
+    if (!all) query.packageId = packageId;
+
+    const reviews = await Review.find(query).sort({ createdAt: -1 });
 
     return NextResponse.json({ success: true, data: reviews }, { status: 200 });
   } catch (error: any) {

@@ -44,7 +44,7 @@ const images = [
 
 export const GallerySection = () => {
   const { ref, isVisible } = useScrollReveal({ threshold: 0.2 });
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
   // Prevent background scrolling when lightbox is open
   useEffect(() => {
@@ -90,7 +90,7 @@ export const GallerySection = () => {
           
           {/* Close Button */}
           <button 
-            onClick={() => setSelectedIndex(0)}
+            onClick={() => setSelectedIndex(null)}
             className="absolute top-4 right-4 md:top-8 md:right-8 text-white/70 hover:text-white z-50 p-2 bg-white/10 hover:bg-white/20 rounded-full transition-colors"
           >
             <X size={24} />
