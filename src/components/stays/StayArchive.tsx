@@ -28,7 +28,25 @@ function resolvePageSize() {
   );
 }
 
-export default function StayArchive({ stays }: { stays: Stay[] }) {
+type Props = {
+  stays: Stay[];
+  /** Section heading — defaults to the hub wording. */
+  heading?: string;
+  /** Sub-copy under the heading. */
+  intro?: string;
+  /**
+   * Category chips. Off for type pages (every card is the same category, so a
+   * filter there is noise) and on for the hub and place pages.
+   */
+  showFilters?: boolean;
+};
+
+export default function StayArchive({
+  stays,
+  heading = "Every kind of stay in Kashmir",
+  intro = "Houseboats, hotels, mountain resorts and family homestays — with the real starting price for each, not a teaser rate.",
+  showFilters = true,
+}: Props) {
   const [filter, setFilter] = useState<StayCategory | typeof ALL>(ALL);
   const [page, setPage] = useState(1);
   // Server renders the mobile page size; the effect corrects it on mount so the
@@ -90,12 +108,9 @@ export default function StayArchive({ stays }: { stays: Stay[] }) {
       <div className="flex flex-col items-center gap-6 text-center md:flex-row md:items-end md:justify-between md:text-left">
         <div>
           <h2 className="font-heading text-3xl font-bold text-slate-900 sm:text-4xl">
-            Every kind of stay in Kashmir
+            {heading}
           </h2>
-          <p className="mt-3 max-w-2xl text-slate-600">
-            Houseboats, hotels, mountain resorts and family homestays — with the
-            real starting price for each, not a teaser rate.
-          </p>
+          <p className="mt-3 max-w-2xl text-slate-600">{intro}</p>
         </div>
       </div>
 
@@ -103,6 +118,7 @@ export default function StayArchive({ stays }: { stays: Stay[] }) {
       <div
         role="tablist"
         aria-label="Filter stays by type"
+        hidden={!showFilters || categories.length < 3}
         className="no-scrollbar mt-8 flex snap-x gap-2 overflow-x-auto pb-1"
       >
         {categories.map((category) => {

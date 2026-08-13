@@ -246,6 +246,11 @@ body {
 .animate-marquee-paused {
   animation-play-state: paused;
 }
+/* An infinite marquee has no end state to settle into, so readers who asked
+   for less motion get a static strip rather than a slower one. */
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee { animation: none; }
+}
 
 /* Hero heading — each line slides up with blur wipe */
 @keyframes heroLine {

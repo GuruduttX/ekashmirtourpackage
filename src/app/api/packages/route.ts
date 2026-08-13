@@ -11,7 +11,10 @@ export async function GET(request: NextRequest) {
     const query = status ? { status } : {};
     const packages = await Package.find(query).sort({ createdAt: -1 }).lean();
     return Response.json({ packages });
-  } catch {
+  } catch (error) {
+    // Log before swallowing: a bare `catch {}` here made a 500 impossible to
+    // diagnose from the server output.
+    console.error('[api/packages] GET failed:', error);
     return Response.json({ error: 'Failed to fetch packages' }, { status: 500 });
   }
 }

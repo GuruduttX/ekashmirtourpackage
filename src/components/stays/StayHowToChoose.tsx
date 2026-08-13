@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
@@ -10,7 +11,6 @@ import {
   Hotel,
   MessageCircle,
   Mountain,
-  Plus,
   Ship,
   Sparkles,
   Users,
@@ -21,238 +21,97 @@ import type { Stay, StayCategory } from "@/data/stays";
 /**
  * SOP §2.8 — the "how to choose" block for the stays hub.
  *
- * An expanding bento: collapsed panels show only icon, title and price; the
- * active one grows to reveal the description, who it suits, and Sartaj's take.
- * Desktop expands sideways on hover, mobile expands downwards on tap.
- *
- * Prices are read from the stay data, never hard-coded, so this section can
- * never contradict the cards above it.
+ * Two-pane selector: a narrow rail of stay types on the left (a horizontal
+ * scroller on mobile), and a photo panel on the right carrying the full detail
+ * for whichever type is selected. The photo, price and link all come from the
+ * stay data, so this section can never contradict the cards above it.
  */
-
-type Accent = {
-  /** Gradient for the icon tile. */
-  icon: string;
-  /** Soft tag pill. */
-  chip: string;
-  /** Border + glow when the panel is active. */
-  active: string;
-  /** Tint behind the "local's take" note. */
-  take: string;
-};
 
 type Guide = {
   category: StayCategory;
-  slug: string;
   icon: LucideIcon;
   summary: string;
   bestFor: string;
   take: string;
-  accent: Accent;
 };
 
 const GUIDES: Guide[] = [
   {
     category: "Houseboat",
-    slug: "dal-lake-houseboats",
     icon: Ship,
     summary:
-      "Carved cedar boats moored on Dal and Nigeen, with private decks on the water.",
+      "Carved cedar boats moored on Dal and Nigeen, with private decks opening straight onto the water.",
     bestFor: "Couples & first-timers",
     take: "Book one or two nights, not five. The magic is real, but everything ashore needs a shikara.",
-    accent: {
-      icon: "from-sky-400 to-sky-500 shadow-sky-200/60",
-      chip: "bg-sky-50 text-sky-700 ring-sky-100",
-      active: "border-sky-200 shadow-sky-100",
-      take: "bg-sky-50/70 text-sky-900/80",
-    },
   },
   {
     category: "Hotel",
-    slug: "srinagar-hotels",
     icon: Hotel,
     summary:
-      "Lake-facing and city hotels in Srinagar, Pahalgam and Sonamarg with full service.",
+      "Lake-facing and city hotels in Srinagar, Pahalgam and Sonamarg with full service and easy access.",
     bestFor: "Families & busy itineraries",
     take: "The right call for sightseeing days. Insist on a lake-facing room in writing, not a lake-facing hotel.",
-    accent: {
-      icon: "from-teal-400 to-teal-500 shadow-teal-200/60",
-      chip: "bg-teal-50 text-teal-700 ring-teal-100",
-      active: "border-teal-200 shadow-teal-100",
-      take: "bg-teal-50/70 text-teal-900/80",
-    },
   },
   {
     category: "Resort",
-    slug: "gulmarg-resorts",
     icon: Mountain,
     summary:
-      "Pine-wood mountain resorts in Gulmarg and hillside luxury above Dal Lake.",
+      "Pine-wood mountain resorts in Gulmarg and hillside luxury above Dal Lake, built for slow mornings.",
     bestFor: "Honeymooners & skiers",
     take: "Stay up in Gulmarg, never Tangmarg. In January that 13 km climb closes without warning.",
-    accent: {
-      icon: "from-violet-400 to-violet-500 shadow-violet-200/60",
-      chip: "bg-violet-50 text-violet-700 ring-violet-100",
-      active: "border-violet-200 shadow-violet-100",
-      take: "bg-violet-50/70 text-violet-900/80",
-    },
   },
   {
     category: "Homestay",
-    slug: "kashmir-homestays",
     icon: Home,
     summary:
-      "Family-run walnut-wood homes in Pahalgam, Aru and Yusmarg with home-cooked meals.",
+      "Family-run walnut-wood homes in Pahalgam, Aru and Yusmarg, with meals cooked by your hosts.",
     bestFor: "Budget & slow travellers",
     take: "The only way to eat proper Wazwan outside a wedding. Below ₹1,500, expect a shared bathroom.",
-    accent: {
-      icon: "from-emerald-400 to-emerald-500 shadow-emerald-200/60",
-      chip: "bg-emerald-50 text-emerald-700 ring-emerald-100",
-      active: "border-emerald-200 shadow-emerald-100",
-      take: "bg-emerald-50/70 text-emerald-900/80",
-    },
   },
 ];
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
-/* ------------------------------------------------------------------ */
-/* Panel                                                               */
-/* ------------------------------------------------------------------ */
-
-function ChoicePanel({
-  guide,
-  price,
-  isActive,
-  onActivate,
-  onToggle,
-}: {
-  guide: Guide;
-  price?: number;
-  isActive: boolean;
-  onActivate: () => void;
-  onToggle: () => void;
-}) {
-  const Icon = guide.icon;
+export default function StayHowToChoose({ stays }: { stays: Stay[] }) {
+  const [active, setActive] = useState<StayCategory>(GUIDES[0].category);
+  const [failed, setFailed] = useState<Record<string, boolean>>({});
   const reduceMotion = useReducedMotion();
 
-  return (
-    <motion.div
-      layout={!reduceMotion}
-      transition={{ duration: 0.45, ease: EASE }}
-      onMouseEnter={onActivate}
-      onFocusCapture={onActivate}
-      className={`group relative overflow-hidden rounded-2xl border bg-white transition-colors duration-300 lg:min-h-80 ${
-        isActive
-          ? `shadow-lg ${guide.accent.active}`
-          : "border-slate-200 shadow-sm hover:border-slate-300"
-      } ${isActive ? "lg:flex-[2.4]" : "lg:flex-1"}`}
-    >
-      {/* The whole collapsed panel is the toggle — one target, no clutter */}
-      <button
-        type="button"
-        aria-expanded={isActive}
-        onClick={onToggle}
-        className="flex w-full items-center gap-4 p-5 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-sky-400 lg:flex-col lg:items-start lg:gap-0"
-      >
-        <span
-          className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-linear-to-br shadow-md transition-transform duration-300 group-hover:scale-105 ${guide.accent.icon}`}
-        >
-          <Icon className="h-6 w-6 text-white" />
-        </span>
+  /** Cheapest price, lead photo and target page for each category. */
+  const meta = useMemo(() => {
+    const map = new Map<
+      StayCategory,
+      { price: number; image: string; alt: string; slug: string }
+    >();
 
-        <span className="min-w-0 flex-1 lg:mt-5 lg:w-full">
-          <span className="block font-heading text-xl font-bold text-slate-900">
-            {guide.category}
-          </span>
-          {price !== undefined && (
-            <span className="mt-0.5 block text-sm text-slate-500">
-              from{" "}
-              <span className="font-semibold text-slate-900">
-                ₹{price.toLocaleString("en-IN")}
-              </span>{" "}
-              /night
-            </span>
-          )}
-        </span>
-
-        {/* Affordance — rotates into a cross when open */}
-        <motion.span
-          aria-hidden="true"
-          animate={{ rotate: isActive ? 45 : 0 }}
-          transition={{ duration: 0.3, ease: EASE }}
-          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-slate-200 text-slate-400 lg:absolute lg:right-5 lg:top-5"
-        >
-          <Plus className="h-4 w-4" />
-        </motion.span>
-      </button>
-
-      {/* Revealed detail */}
-      <AnimatePresence initial={false}>
-        {isActive && (
-          <motion.div
-            key="detail"
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.35, ease: EASE }}
-            className="overflow-hidden"
-          >
-            <div className="px-5 pb-5 lg:max-w-md">
-              <p className="text-sm leading-relaxed text-slate-600">
-                {guide.summary}
-              </p>
-
-              <span
-                className={`mt-4 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold ring-1 ring-inset ${guide.accent.chip}`}
-              >
-                <Users className="h-3.5 w-3.5" />
-                {guide.bestFor}
-              </span>
-
-              <p
-                className={`mt-4 rounded-xl px-4 py-3 text-xs leading-relaxed ${guide.accent.take}`}
-              >
-                <span className="font-semibold">Sartaj&rsquo;s take — </span>
-                {guide.take}
-              </p>
-
-              <Link
-                href={`/stays/${guide.slug}/`}
-                className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-slate-900 transition-colors hover:text-sky-600"
-              >
-                Explore {guide.category.toLowerCase()} stays
-                <ArrowRight className="h-4 w-4 transition-transform duration-300 hover:translate-x-0.5" />
-              </Link>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* Section                                                             */
-/* ------------------------------------------------------------------ */
-
-export default function StayHowToChoose({ stays }: { stays: Stay[] }) {
-  // Open the first panel by default so the section never reads as empty.
-  const [active, setActive] = useState<string | null>(GUIDES[0].category);
-
-  const priceByCategory = new Map<StayCategory, number>();
-  for (const stay of stays) {
-    const current = priceByCategory.get(stay.category);
-    if (current === undefined || stay.priceFrom < current) {
-      priceByCategory.set(stay.category, stay.priceFrom);
+    for (const stay of stays) {
+      const existing = map.get(stay.category);
+      if (!existing) {
+        map.set(stay.category, {
+          price: stay.priceFrom,
+          image: stay.gallery[0]?.image ?? stay.image,
+          alt: stay.gallery[0]?.alt ?? stay.alt,
+          slug: stay.slug,
+        });
+      } else if (stay.priceFrom < existing.price) {
+        existing.price = stay.priceFrom;
+        existing.slug = stay.slug;
+      }
     }
-  }
+
+    return map;
+  }, [stays]);
+
+  const guides = GUIDES.filter((guide) => meta.has(guide.category));
+  const current = guides.find((guide) => guide.category === active) ?? guides[0];
+  const currentMeta = meta.get(current.category)!;
 
   return (
-    <section className="bg-slate-50/70 py-10">
+    <section className="bg-sky-50/60 py-10">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* ---------- Heading ---------- */}
         <div className="text-center">
-          <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-sky-600 shadow-sm">
+          <span className="inline-flex items-center gap-2 rounded-full border border-sky-200/70 bg-white px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-sky-600 shadow-sm">
             <Compass className="h-3.5 w-3.5" /> How to choose
           </span>
 
@@ -266,25 +125,144 @@ export default function StayHowToChoose({ stays }: { stays: Stay[] }) {
           </p>
         </div>
 
-        {/* ---------- Expanding bento ---------- */}
-        <div
-          onMouseLeave={() => setActive(GUIDES[0].category)}
-          className="mt-8 flex flex-col gap-3 lg:flex-row lg:items-stretch lg:gap-4"
-        >
-          {GUIDES.map((guide) => (
-            <ChoicePanel
-              key={guide.category}
-              guide={guide}
-              price={priceByCategory.get(guide.category)}
-              isActive={active === guide.category}
-              onActivate={() => setActive(guide.category)}
-              onToggle={() =>
-                setActive((current) =>
-                  current === guide.category ? null : guide.category,
-                )
-              }
-            />
-          ))}
+        {/* ---------- Two-pane selector ---------- */}
+        <div className="mt-8 flex flex-col gap-4 lg:flex-row">
+          {/* Left rail — 30% on desktop, a scroller on mobile */}
+          <div className="no-scrollbar -mx-4 flex snap-x gap-3 overflow-x-auto px-4 sm:-mx-6 sm:px-6 lg:mx-0 lg:w-[30%] lg:shrink-0 lg:flex-col lg:gap-3 lg:overflow-visible lg:px-0">
+            {guides.map((guide) => {
+              const Icon = guide.icon;
+              const isActive = guide.category === active;
+              const price = meta.get(guide.category)!.price;
+
+              return (
+                <button
+                  key={guide.category}
+                  type="button"
+                  aria-pressed={isActive}
+                  onClick={() => setActive(guide.category)}
+                  onMouseEnter={() => setActive(guide.category)}
+                  className={`group relative w-44 shrink-0 snap-start overflow-hidden rounded-2xl border p-4 text-left transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 lg:w-auto lg:flex-1 ${
+                    isActive
+                      ? "border-sky-300 bg-white shadow-md shadow-sky-100"
+                      : "border-slate-200 bg-white/70 hover:border-sky-200 hover:bg-white"
+                  }`}
+                >
+                  {/* Active marker slides between cards */}
+                  {isActive && (
+                    <motion.span
+                      layoutId="stay-choice-marker"
+                      transition={{ duration: 0.4, ease: EASE }}
+                      className="absolute inset-y-0 left-0 w-1 rounded-r-full bg-linear-to-b from-sky-500 to-cyan-400"
+                    />
+                  )}
+
+                  <div className="flex items-center gap-3">
+                    <span
+                      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-colors duration-300 ${
+                        isActive
+                          ? "bg-linear-to-br from-sky-500 to-cyan-400 shadow-md shadow-sky-200"
+                          : "bg-sky-50 group-hover:bg-sky-100"
+                      }`}
+                    >
+                      <Icon
+                        className={`h-5 w-5 ${isActive ? "text-white" : "text-sky-500"}`}
+                      />
+                    </span>
+
+                    <span className="min-w-0">
+                      <span className="block font-heading text-base font-bold text-slate-900">
+                        {guide.category}
+                      </span>
+                      <span className="block text-xs text-slate-500">
+                        from ₹{price.toLocaleString("en-IN")}
+                      </span>
+                    </span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Right pane — photo + full detail for the selected type.
+              `flex-1` is lg-only on purpose: in the mobile column layout its
+              0% flex-basis would override the height and collapse the panel. */}
+          <div className="relative h-125 w-full overflow-hidden rounded-3xl bg-sky-100 shadow-lg shadow-sky-100 sm:h-112 lg:h-112 lg:flex-1">
+            {/* Background photo */}
+            <AnimatePresence initial={false}>
+              <motion.div
+                key={current.category}
+                initial={{ opacity: 0, scale: reduceMotion ? 1 : 1.06 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.6, ease: EASE }}
+                className="absolute inset-0"
+              >
+                {failed[current.category] ? (
+                  <div className="h-full w-full bg-linear-to-br from-sky-300 via-sky-200 to-cyan-100" />
+                ) : (
+                  <Image
+                    src={currentMeta.image}
+                    alt={currentMeta.alt}
+                    fill
+                    unoptimized
+                    sizes="(max-width: 1024px) 100vw, 70vw"
+                    className="object-cover"
+                    onError={() =>
+                      setFailed((prev) => ({ ...prev, [current.category]: true }))
+                    }
+                  />
+                )}
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Black backdrop so the copy reads on any photo */}
+            <div className="absolute inset-0 bg-linear-to-t from-slate-950 via-slate-950/75 to-slate-950/25" />
+
+            {/* Price badge */}
+            <div className="absolute right-5 top-5 z-10 rounded-full bg-white/90 px-4 py-2 text-sm font-bold text-sky-600 shadow-md backdrop-blur-md">
+              from ₹{currentMeta.price.toLocaleString("en-IN")}
+              <span className="text-xs font-medium text-slate-500"> /night</span>
+            </div>
+
+            {/* Detail */}
+            <div className="absolute inset-x-0 bottom-0 z-10 p-6 sm:p-8">
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={current.category}
+                  initial={{ opacity: 0, y: reduceMotion ? 0 : 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: reduceMotion ? 0 : -12 }}
+                  transition={{ duration: 0.4, ease: EASE }}
+                >
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/15 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-md">
+                    <Users className="h-3.5 w-3.5" />
+                    {current.bestFor}
+                  </span>
+
+                  <h3 className="mt-3 font-heading text-2xl font-bold text-white sm:text-3xl">
+                    {current.category}
+                  </h3>
+
+                  <p className="mt-2 max-w-xl text-sm leading-relaxed text-slate-200 sm:text-base">
+                    {current.summary}
+                  </p>
+
+                  <p className="mt-4 max-w-xl border-l-2 border-sky-400 pl-3 text-xs leading-relaxed text-slate-300 sm:text-sm">
+                    <span className="font-semibold text-white">Sartaj&rsquo;s take — </span>
+                    {current.take}
+                  </p>
+
+                  <Link
+                    href={`/stays/${currentMeta.slug}/`}
+                    className="mt-5 inline-flex items-center gap-2 rounded-full bg-linear-to-r from-sky-500 to-cyan-400 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-sky-900/30 transition-transform hover:-translate-y-0.5"
+                  >
+                    Explore {current.category.toLowerCase()} stays
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          </div>
         </div>
 
         {/* ---------- Enquiry CTA ---------- */}

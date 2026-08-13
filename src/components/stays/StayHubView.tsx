@@ -1,6 +1,7 @@
 import StayHubHero from "@/components/stays/StayHubHero";
 import StayArchive from "@/components/stays/StayArchive";
 import StayHowToChoose from "@/components/stays/StayHowToChoose";
+import StayFaqSection from "@/components/stays/StayFaqSection";
 import type { Stay } from "@/data/stays";
 
 /**
@@ -25,7 +26,9 @@ export default function StayHubView({ stays }: { stays: Stay[] }) {
       <StayHowToChoose stays={stays} />
 
       {/* TODO: <StayAcrossLinks /> — into Destinations, Cab hub, Package hub. */}
-      {/* TODO: <StayFaqSection /> — emits FAQPage schema. */}
+
+      {/* FAQ — hub-level questions, emits FAQPage schema. */}
+      <StayFaqSection stays={stays} />
       {/* TODO: <StayEnquiryCTA /> — sticky Get Quote + WhatsApp. */}
     </>
   );

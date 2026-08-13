@@ -1,20 +1,24 @@
 /**
  * TEMPORARY placeholder data for the /stays pages.
  *
- * Per the build plan we ship UI first, then derive the Mongoose model from the
- * fields the UI actually needs. Everything here mirrors the SOP §2.8 blueprint
- * (options table → how to choose → Sartaj tip → FAQ → enquiry CTA).
+ * Each entry is an INDIVIDUAL PROPERTY. Type pages (/stays/houseboats) and
+ * place pages (/stays/srinagar-stays) are built by filtering this list — see
+ * src/data/stayTaxonomy.ts for those.
  *
- * DATA-HONESTY: every price below is an unverified example figure and must be
- * confirmed by Sartaj [VERIFY 2026-27] before this goes live. No review /
- * rating data here on purpose — AggregateRating is only allowed once genuine
- * on-page reviews exist.
+ * ─────────────────────────────────────────────────────────────────────────
+ * DO NOT PUBLISH AS-IS.
  *
- * IMAGES: these are STOCK PLACEHOLDERS on Unsplash so the cards render during
- * development. They are generic hotel/lake/mountain shots, NOT the actual
- * properties. Per SOP B5 they must all be replaced with real Kashmir
- * photography of the real stays before launch — stock imagery of a property you
- * are selling is both an E-E-A-T problem and a trust problem.
+ * • Property names are generic placeholders, not real businesses. Publishing
+ *   invented property names, addresses or tariffs would be fabricated records.
+ *   Every one must be replaced with a real, verified property before launch.
+ * • Every price is an unverified example figure [VERIFY 2026-27].
+ * • Photos are generic Unsplash stock, NOT these properties (SOP B5 requires
+ *   real Kashmir photography of the real stays).
+ * • No review / rating data on purpose — AggregateRating is only allowed once
+ *   genuine on-page reviews exist.
+ *
+ * This all becomes CMS-backed later; the shape below is the contract.
+ * ─────────────────────────────────────────────────────────────────────────
  */
 
 /** Placeholder image helper — delete this once real photos are uploaded. */
@@ -23,14 +27,12 @@ const img = (id: string) =>
 
 export type StayOption = {
   id: string;
-  /** e.g. "Deluxe Houseboat", "3-star hotel" */
+  /** e.g. "Deluxe room", "Heritage suite" */
   propertyType: string;
-  /** e.g. "Dal Lake — Ghat 9", "Boulevard Road" */
   area: string;
   /** per night, INR */
   priceFrom: number;
   amenities: string[];
-  /** e.g. "Couples wanting a classic Dal Lake night" */
   bestFor: string;
 };
 
@@ -40,7 +42,6 @@ export type StayFaq = {
   answer: string;
 };
 
-/** One slide in the archive card's image carousel. */
 export type StayGalleryImage = {
   id: string;
   image: string;
@@ -50,33 +51,35 @@ export type StayGalleryImage = {
 export type StayCategory = "Houseboat" | "Hotel" | "Resort" | "Homestay";
 
 export type Stay = {
+  /** Property slug — the fallback branch of /stays/[slug]. */
   slug: string;
-  /** H1 — exact intent, e.g. "Dal Lake Houseboats" */
+  /** Property name — the H1 on its own page. */
   title: string;
-  /** Which town/area this stay type belongs to — used for internal links. */
+  /** Town this property sits in, e.g. "Srinagar". */
   town: string;
-  /** Precise area shown on the card, e.g. "Dal Lake, Srinagar". */
+  /** Precise area shown on cards, e.g. "Dal Lake, Srinagar". */
   area: string;
-  /** Stay category — powers the archive filter and the hub grouping. */
   category: StayCategory;
+  /**
+   * Place slugs this property belongs to, WITHOUT the "-stays" suffix.
+   * A property is normally tagged with both its area and its town, so it shows
+   * on /stays/dal-lake-stays and /stays/srinagar-stays.
+   */
+  placeTags: string[];
   /** 40–60 word answer-first block. */
   answerBlock: string;
   /** Short one-liner for listings. */
   cardSummary: string;
-  /** Lowest nightly rate across all options, INR. Shown on the card. */
+  /** Lowest nightly rate across all options, INR. */
   priceFrom: number;
-  /** 2–3 short chips on the card, e.g. "Breakfast included". */
   highlights: string[];
-  /** Typical room capacity — small detail on the card. */
   sleeps: number;
-  /** Carousel images for the archive card (first is also the OG image). */
   gallery: StayGalleryImage[];
   image: string;
   alt: string;
   metaTitle?: string;
   metaDescription?: string;
   options: StayOption[];
-  /** "How to choose" body — houseboat vs hotel, location tips. */
   howToChoose: string[];
   /** Sartaj's on-ground truths (2–4). */
   sartajTips: string[];
@@ -90,84 +93,80 @@ export type Stay = {
 };
 
 export const STAYS: Stay[] = [
+  /* ---------------------------- Houseboats ---------------------------- */
   {
-    slug: "dal-lake-houseboats",
-    title: "Dal Lake Houseboats",
+    slug: "dal-lake-deluxe-houseboat",
+    title: "Dal Lake Deluxe Houseboat",
     town: "Srinagar",
     area: "Dal Lake, Srinagar",
     category: "Houseboat",
+    placeTags: ["dal-lake", "srinagar"],
     answerBlock:
-      "Dal Lake houseboats start from about ₹2,500 a night for a deluxe room including breakfast and shikara transfer. Ghat 9–16 stretches are the quietest; the Boulevard end is livelier but noisier. Book a lake-facing deck room for the classic Srinagar sunrise.",
-    cardSummary: "Hand-carved cedar boats with private decks opening onto the water.",
+      "A deluxe cedar houseboat moored on the quieter Ghat 9 stretch of Dal Lake, from ₹2,500 a night with breakfast and the shikara transfer included. Lake-facing deck rooms catch the sunrise straight over Hari Parbat.",
+    cardSummary: "Carved cedar boat on the quiet Ghat 9 stretch, breakfast included.",
     priceFrom: 2500,
     highlights: ["Breakfast included", "Shikara transfer", "Lake-facing deck"],
     sleeps: 4,
     gallery: [
       {
-        id: "hb-1",
+        id: "g1",
         image: img("1566073771259-6a8506099945"),
         alt: "Carved cedar houseboats moored along Dal Lake at sunrise with shikaras alongside",
       },
       {
-        id: "hb-2",
+        id: "g2",
         image: img("1571896349842-33c89424de2d"),
-        alt: "Walnut-wood living room inside a Dal Lake heritage houseboat with Kashmiri carpets",
+        alt: "Walnut-wood living room inside a Dal Lake houseboat with Kashmiri carpets",
       },
       {
-        id: "hb-3",
+        id: "g3",
         image: img("1582719478250-c89cae4dc85b"),
         alt: "Private houseboat deck set for breakfast overlooking Dal Lake",
       },
-      {
-        id: "hb-4",
-        image: img("1520250497591-112f2f40a3f4"),
-        alt: "Houseboat bedroom with hand-carved khatamband ceiling and lake view windows",
-      },
     ],
     image: img("1566073771259-6a8506099945"),
-    alt: "Traditional cedar houseboats moored on Dal Lake, Srinagar",
-    metaTitle: "Dal Lake Houseboats 2026 | Prices, Best Ghats & How to Choose",
+    alt: "Deluxe houseboat moored on Dal Lake, Srinagar",
+    metaTitle: "Dal Lake Deluxe Houseboat, Srinagar | Rates & Booking",
     metaDescription:
-      "Dal Lake houseboat stays from ₹2,500/night — deluxe vs heritage, which ghat to pick, what's included, and on-ground tips from a 20-year Srinagar local.",
+      "A deluxe Dal Lake houseboat from ₹2,500/night with breakfast and shikara transfer. Quiet Ghat 9 mooring, verified on the ground by a 20-year Srinagar local.",
     options: [
       {
-        id: "hb-deluxe",
-        propertyType: "Deluxe Houseboat",
+        id: "o1",
+        propertyType: "Deluxe room",
         area: "Dal Lake — Ghat 9",
         priceFrom: 2500,
         amenities: ["Breakfast", "Shikara transfer", "Room heater", "Wi-Fi"],
         bestFor: "Couples wanting a classic Dal Lake night",
       },
       {
-        id: "hb-heritage",
-        propertyType: "Heritage Houseboat",
-        area: "Dal Lake — Nigeen",
-        priceFrom: 4500,
-        amenities: ["All meals", "Private deck", "Walnut-wood interiors", "Heating"],
+        id: "o2",
+        propertyType: "Deck suite",
+        area: "Dal Lake — Ghat 9",
+        priceFrom: 3800,
+        amenities: ["All meals", "Private deck", "Ensuite bath", "Heating"],
         bestFor: "Honeymooners and photographers",
       },
     ],
     howToChoose: [
-      "Houseboat vs hotel: a houseboat is the experience, a hotel is the convenience. Most travellers do one night on the water and the rest on land.",
-      "Nigeen Lake is calmer and cleaner than the central Dal stretch near Boulevard Road.",
-      "Check that the tariff includes the shikara transfer — several boats charge it separately.",
+      "Deck rooms face the water; interior rooms look onto the walkway and cost noticeably less.",
+      "Confirm the shikara transfer is included — several boats bill it separately on checkout.",
     ],
     sartajTips: [
-      "Avoid the congested Dal stretch directly opposite Boulevard Road in peak season — it is the noisiest water in Srinagar.",
-      "In December–February confirm the boat has a working bukhari or heater before you pay an advance.",
+      "Ghat 9 is far enough from Boulevard Road to escape the evening noise but still a five-minute shikara from it.",
+      "In December–February confirm the bukhari is working before you pay an advance.",
     ],
     faqs: [
       {
-        id: "faq-1",
-        question: "How much does a Dal Lake houseboat cost per night?",
+        id: "f1",
+        question: "Is the shikara transfer included?",
         answer:
-          "Deluxe houseboats start around ₹2,500 per night with breakfast; heritage boats with all meals run ₹4,500 and up. Rates rise sharply during the Tulip Festival and Christmas week.",
+          "Yes, arrival and departure transfers are included in the tariff. Extra shikara trips during your stay are charged separately at the standard ₹600–800 per hour.",
       },
       {
-        id: "faq-2",
-        question: "Is a houseboat or a hotel better in Srinagar?",
+        id: "f2",
+        question: "Is there heating in winter?",
         answer:
-          "A houseboat gives you the lake experience but limited mobility after dark. A hotel on Boulevard Road is easier for sightseeing days. One night on a houseboat plus two in a hotel suits most itineraries.",
+          "Rooms have a wood-fired bukhari plus an electric heater. Between December and February we confirm both are working before we hold a booking.",
       },
     ],
     links: {
@@ -177,78 +176,78 @@ export const STAYS: Stay[] = [
     },
   },
   {
-    slug: "nigeen-lake-houseboats",
-    title: "Nigeen Lake Houseboats",
+    slug: "nigeen-heritage-houseboat",
+    title: "Nigeen Heritage Houseboat",
     town: "Srinagar",
     area: "Nigeen Lake, Srinagar",
     category: "Houseboat",
+    placeTags: ["nigeen-lake", "srinagar"],
     answerBlock:
-      "Nigeen Lake houseboats start around ₹3,200 a night and sit on noticeably cleaner, quieter water than central Dal. You trade five minutes of extra driving for no shikara traffic outside your window — the reason most repeat visitors move here on their second trip.",
-    cardSummary: "Quieter, cleaner water than Dal — the local's choice for a second visit.",
+      "A heritage houseboat on Nigeen Lake from ₹3,200 a night with all meals. The water here is cleaner and quieter than central Dal, with no shikara traffic outside the window — the trade is six extra kilometres to Boulevard Road.",
+    cardSummary: "Walnut-wood heritage boat on Nigeen's calm, uncrowded water.",
     priceFrom: 3200,
-    highlights: ["Quiet water", "All meals", "Sunset deck"],
+    highlights: ["All meals", "Quiet water", "Sunset deck"],
     sleeps: 4,
     gallery: [
       {
-        id: "ng-1",
+        id: "g1",
         image: img("1512918728675-ed5a9ecdebfd"),
         alt: "Houseboats moored on the calm water of Nigeen Lake, Srinagar",
       },
       {
-        id: "ng-2",
+        id: "g2",
         image: img("1611892440504-42a792e24d32"),
-        alt: "Carved wooden interior of a Nigeen Lake houseboat sitting room",
+        alt: "Carved wooden sitting room inside a Nigeen Lake heritage houseboat",
       },
       {
-        id: "ng-3",
+        id: "g3",
         image: img("1590490360182-c33d57733427"),
         alt: "Sunset from the deck of a houseboat on Nigeen Lake",
       },
     ],
     image: img("1512918728675-ed5a9ecdebfd"),
-    alt: "Houseboats on the quiet water of Nigeen Lake, Srinagar",
-    metaTitle: "Nigeen Lake Houseboats 2026 | Quieter Than Dal, Prices & Tips",
+    alt: "Heritage houseboat on Nigeen Lake, Srinagar",
+    metaTitle: "Nigeen Heritage Houseboat, Srinagar | Rates & Booking",
     metaDescription:
-      "Nigeen Lake houseboats from ₹3,200/night — cleaner, calmer water than central Dal, what's included, and why repeat visitors to Srinagar move here.",
+      "Heritage Nigeen Lake houseboat from ₹3,200/night with all meals — cleaner, quieter water than central Dal, with walnut-wood interiors and a sunset deck.",
     options: [
       {
-        id: "ng-deluxe",
-        propertyType: "Deluxe Houseboat",
+        id: "o1",
+        propertyType: "Heritage room",
         area: "Nigeen Lake",
         priceFrom: 3200,
-        amenities: ["Breakfast", "Shikara transfer", "Heating", "Wi-Fi"],
+        amenities: ["All meals", "Shikara transfer", "Heating", "Wi-Fi"],
         bestFor: "Travellers who want quiet water",
       },
       {
-        id: "ng-premium",
-        propertyType: "Premium Houseboat",
-        area: "Nigeen — west bank",
+        id: "o2",
+        propertyType: "Royal suite",
+        area: "Nigeen Lake — west bank",
         priceFrom: 5800,
         amenities: ["All meals", "Private deck", "Ensuite bath", "Heating"],
         bestFor: "Longer stays and slow mornings",
       },
     ],
     howToChoose: [
-      "Nigeen is about 6 km from Boulevard Road — budget an extra 15 minutes to every sightseeing start.",
-      "West-bank boats get the sunset; east-bank boats get the sunrise over Hari Parbat.",
-      "Fewer boats here means fewer vendors knocking on your deck through the day.",
+      "West-bank rooms get the sunset; east-bank rooms get sunrise over Hari Parbat.",
+      "Nigeen is about 6 km from Boulevard Road — add 15 minutes to every sightseeing start.",
     ],
     sartajTips: [
-      "If someone has told you Dal Lake is dirty, they stayed in the wrong stretch — book Nigeen and judge again.",
-      "Nigeen freezes at the edges in January. It photographs beautifully but confirm the boat's heating first.",
+      "If someone told you Dal Lake is dirty, they stayed in the wrong stretch. Book Nigeen and judge again.",
+      "The lake edge freezes in January. It photographs beautifully, but confirm the heating first.",
     ],
     faqs: [
       {
-        id: "faq-1",
-        question: "Is Nigeen Lake better than Dal Lake for a houseboat?",
-        answer:
-          "For quiet and water quality, yes. Nigeen has far fewer boats and almost no shikara traffic. Dal wins on convenience — it is closer to Boulevard Road, the Mughal Gardens and the Old City.",
-      },
-      {
-        id: "faq-2",
+        id: "f1",
         question: "How far is Nigeen Lake from Srinagar airport?",
         answer:
-          "Roughly 18 km, about 45 minutes depending on city traffic. Most houseboats will arrange an airport pickup for ₹700–1,300.",
+          "Roughly 18 km, about 45 minutes depending on city traffic. An airport pickup can be arranged for ₹700–1,300.",
+      },
+      {
+        id: "f2",
+        question: "Is Nigeen better than Dal for a houseboat?",
+        answer:
+          "For quiet and water quality, yes. Dal wins on convenience — it is closer to Boulevard Road, the Mughal Gardens and the Old City.",
       },
     ],
     links: {
@@ -257,79 +256,81 @@ export const STAYS: Stay[] = [
       cabRoute: "/cab-service/",
     },
   },
+
+  /* ------------------------------ Hotels ------------------------------ */
   {
-    slug: "srinagar-hotels",
-    title: "Srinagar Hotels",
+    slug: "boulevard-lake-view-hotel",
+    title: "Boulevard Lake View Hotel",
     town: "Srinagar",
     area: "Boulevard Road, Srinagar",
     category: "Hotel",
+    placeTags: ["boulevard-road", "dal-lake", "srinagar"],
     answerBlock:
-      "Srinagar hotels start from about ₹1,800 a night for a clean 3-star room. Boulevard Road puts you on the lake with sightseeing at your door; Rajbagh and Gogji Bagh are quieter and better value. Ask for a lake-facing floor, not a lake-facing building.",
-    cardSummary: "Lake-facing rooms minutes from Mughal Gardens and the Old City.",
-    priceFrom: 1800,
-    highlights: ["Breakfast included", "Central location", "24×7 reception"],
+      "A four-star hotel on Boulevard Road from ₹4,200 a night, with genuine lake-facing rooms from the third floor up. You are walking distance from the shikara ghats and a ten-minute drive from the Mughal Gardens.",
+    cardSummary: "Four-star on Boulevard Road with real lake-facing rooms upstairs.",
+    priceFrom: 4200,
+    highlights: ["Lake-view rooms", "Breakfast included", "Airport transfer"],
     sleeps: 3,
     gallery: [
       {
-        id: "ht-1",
+        id: "g1",
         image: img("1578683010236-d716f9a3f461"),
         alt: "Lake-facing hotel on Boulevard Road, Srinagar, with Dal Lake in the foreground",
       },
       {
-        id: "ht-2",
+        id: "g2",
         image: img("1540541338287-41700207dee6"),
         alt: "Twin-bed hotel room in Srinagar with a window overlooking Dal Lake",
       },
       {
-        id: "ht-3",
+        id: "g3",
         image: img("1445019980597-93fa8acb246c"),
         alt: "Hotel dining room in Srinagar serving Kashmiri breakfast with kahwa",
       },
     ],
     image: img("1578683010236-d716f9a3f461"),
     alt: "Lake-facing hotel on Boulevard Road, Srinagar",
-    metaTitle: "Hotels in Srinagar 2026 | Best Areas, Prices & Where to Book",
+    metaTitle: "Boulevard Lake View Hotel, Srinagar | Rates & Booking",
     metaDescription:
-      "Srinagar hotels from ₹1,800/night — Boulevard Road vs Rajbagh vs Gogji Bagh, what each area is really like, and which rooms actually face the lake.",
+      "Lake-facing four-star hotel on Boulevard Road, Srinagar, from ₹4,200/night with breakfast. Which floors actually see the lake, verified on the ground.",
     options: [
       {
-        id: "ht-3star",
-        propertyType: "3-star hotel",
-        area: "Rajbagh",
-        priceFrom: 1800,
-        amenities: ["Breakfast", "Room heater", "Wi-Fi", "Parking"],
-        bestFor: "Families keeping the budget sensible",
-      },
-      {
-        id: "ht-4star",
-        propertyType: "4-star lake-facing",
+        id: "o1",
+        propertyType: "Deluxe room",
         area: "Boulevard Road",
         priceFrom: 4200,
-        amenities: ["Breakfast", "Lake-view room", "Restaurant", "Airport transfer"],
+        amenities: ["Breakfast", "Lake-view room", "Restaurant", "Parking"],
         bestFor: "First-timers who want the Dal Lake view",
+      },
+      {
+        id: "o2",
+        propertyType: "Family suite",
+        area: "Boulevard Road",
+        priceFrom: 6800,
+        amenities: ["Breakfast", "Two bedrooms", "Lake-view balcony", "Heating"],
+        bestFor: "Families of four or more",
       },
     ],
     howToChoose: [
-      "Boulevard Road is walkable to the shikara ghats but the most expensive per square foot in the city.",
-      "Rajbagh and Gogji Bagh are ten minutes from the lake, noticeably quieter and often 30% cheaper.",
       "\"Lake-facing hotel\" and \"lake-facing room\" are different things — confirm the room, in writing.",
+      "Third floor and above gets the view; lower floors look at the road and parked cars.",
     ],
     sartajTips: [
-      "Rooms on the third floor and above on Boulevard Road get the view; lower floors look straight at parked cars.",
-      "In winter ask whether heating is central or a portable bukhari — it changes the night entirely.",
+      "Boulevard Road is the most expensive stretch per square foot in Srinagar. You are paying for the walk to the ghats.",
+      "Ask whether heating is central or a portable bukhari — in January it changes the night entirely.",
     ],
     faqs: [
       {
-        id: "faq-1",
-        question: "Which area is best to stay in Srinagar?",
+        id: "f1",
+        question: "Do all rooms face the lake?",
         answer:
-          "Boulevard Road for the lake view and walkability, Rajbagh or Gogji Bagh for quiet and value, and near Lal Chowk if you are shopping. All three are within a 15-minute drive of each other.",
+          "No. Only rooms on the third floor and above have an unobstructed lake view. We confirm the specific room category in writing before booking.",
       },
       {
-        id: "faq-2",
-        question: "How much is a hotel in Srinagar per night?",
+        id: "f2",
+        question: "Is it walkable to the shikara ghats?",
         answer:
-          "Clean 3-star rooms start around ₹1,800 per night with breakfast. Lake-facing 4-star rooms on Boulevard Road run ₹4,200 and up, and peak sharply during the Tulip Festival.",
+          "Yes — the nearest ghats are a two to five minute walk along Boulevard Road, which is the main reason this stretch costs what it does.",
       },
     ],
     links: {
@@ -339,164 +340,323 @@ export const STAYS: Stay[] = [
     },
   },
   {
-    slug: "srinagar-luxury-resorts",
-    title: "Srinagar Luxury Resorts",
+    slug: "rajbagh-city-hotel",
+    title: "Rajbagh City Hotel",
     town: "Srinagar",
-    area: "Cheshma Shahi & Nishat",
-    category: "Resort",
+    area: "Rajbagh, Srinagar",
+    category: "Hotel",
+    placeTags: ["rajbagh", "srinagar"],
     answerBlock:
-      "Srinagar's luxury resorts start near ₹14,000 a night and sit above the lake around Cheshma Shahi and Nishat, not on Boulevard Road. You are paying for grounds, quiet and a view down over the whole Dal — but you will drive to everything.",
-    cardSummary: "Hillside grounds above Dal Lake with the valley's best views.",
-    priceFrom: 14000,
-    highlights: ["Spa", "Fine dining", "Panoramic views"],
-    sleeps: 3,
+      "A clean three-star hotel in Rajbagh from ₹1,800 a night with breakfast. Ten minutes from Dal Lake and noticeably quieter than Boulevard Road, this is the sensible-budget choice for families running full sightseeing days.",
+    cardSummary: "Quiet three-star in Rajbagh, ten minutes from the lake.",
+    priceFrom: 1800,
+    highlights: ["Breakfast included", "Parking", "Family rooms"],
+    sleeps: 4,
     gallery: [
       {
-        id: "lx-1",
-        image: img("1631049307264-da0ec9d70304"),
-        alt: "Luxury resort terrace above Dal Lake near Cheshma Shahi, Srinagar",
-      },
-      {
-        id: "lx-2",
+        id: "g1",
         image: img("1596394516093-501ba68a0ba6"),
-        alt: "Suite interior at a Srinagar luxury resort with valley-facing windows",
+        alt: "Hotel exterior on a quiet residential street in Rajbagh, Srinagar",
       },
       {
-        id: "lx-3",
+        id: "g2",
+        image: img("1631049307264-da0ec9d70304"),
+        alt: "Comfortable twin hotel room with wooden panelling in Srinagar",
+      },
+      {
+        id: "g3",
         image: img("1618773928121-c32242e63f39"),
-        alt: "Resort garden and lawn overlooking the Dal Lake basin in Srinagar",
+        alt: "Hotel garden and seating area in Rajbagh, Srinagar",
       },
     ],
-    image: img("1631049307264-da0ec9d70304"),
-    alt: "Luxury resort overlooking Dal Lake, Srinagar",
-    metaTitle: "Luxury Resorts in Srinagar 2026 | Rates, Areas & What You Get",
+    image: img("1596394516093-501ba68a0ba6"),
+    alt: "Three-star city hotel in Rajbagh, Srinagar",
+    metaTitle: "Rajbagh City Hotel, Srinagar | Rates & Booking",
     metaDescription:
-      "Srinagar luxury resorts from ₹14,000/night around Cheshma Shahi and Nishat — what the premium actually buys, and when a Boulevard Road hotel is the smarter booking.",
+      "Clean three-star Srinagar hotel in Rajbagh from ₹1,800/night with breakfast — quieter than Boulevard Road and ten minutes from Dal Lake.",
     options: [
       {
-        id: "lx-suite",
-        propertyType: "Luxury resort room",
-        area: "Cheshma Shahi",
-        priceFrom: 14000,
-        amenities: ["Breakfast", "Spa", "Restaurant", "Airport transfer"],
-        bestFor: "Honeymooners wanting privacy and grounds",
+        id: "o1",
+        propertyType: "Standard room",
+        area: "Rajbagh",
+        priceFrom: 1800,
+        amenities: ["Breakfast", "Room heater", "Wi-Fi", "Parking"],
+        bestFor: "Families keeping the budget sensible",
       },
       {
-        id: "lx-villa",
-        propertyType: "Private villa",
-        area: "Nishat",
-        priceFrom: 26000,
-        amenities: ["All meals", "Private garden", "Butler service", "Heating"],
-        bestFor: "Special occasions and small family groups",
+        id: "o2",
+        propertyType: "Family room",
+        area: "Rajbagh",
+        priceFrom: 2900,
+        amenities: ["Breakfast", "Extra beds", "Heating", "Parking"],
+        bestFor: "Groups of four to five",
       },
     ],
     howToChoose: [
-      "These properties sit 6–9 km uphill from Boulevard Road — factor a cab into every outing.",
-      "The view is the product. If your room does not face the lake, the premium is largely wasted.",
-      "Shoulder season (Oct–Nov, Feb) can cut these rates by a third with no drop in service.",
+      "Rajbagh and Gogji Bagh sit ten minutes from the lake and often run 30% cheaper than Boulevard Road.",
+      "If you are out sightseeing from morning to night, you are paying for a bed, not a view.",
     ],
     sartajTips: [
-      "Ask for a room on the upper terrace level — the lower blocks at most of these resorts look into the hillside, not the lake.",
-      "Cheshma Shahi is a 10-minute drive from the Nishat and Shalimar gardens, so do all three in one morning.",
+      "This is where Srinagar families put their own visiting relatives — quiet streets, easy parking, no tourist mark-up.",
+      "Lal Chowk for shopping is a ten-minute drive, less if you go before 10 AM.",
     ],
     faqs: [
       {
-        id: "faq-1",
-        question: "Are luxury resorts in Srinagar worth it?",
+        id: "f1",
+        question: "How far is it from Dal Lake?",
         answer:
-          "If you want grounds, quiet and a panoramic view, yes. If your days are packed with sightseeing, a lake-facing Boulevard Road hotel costs a third as much and saves you two cab rides a day.",
+          "About 3 km, roughly ten minutes by car. A one-way taxi to the Boulevard Road ghats runs ₹200–300.",
       },
       {
-        id: "faq-2",
-        question: "How far are they from Srinagar airport?",
+        id: "f2",
+        question: "Is parking available?",
         answer:
-          "Around 20–24 km, roughly 50 minutes. Most properties include or arrange an airport transfer.",
+          "Yes, free on-site parking, which is genuinely hard to find on Boulevard Road if you are self-driving.",
       },
     ],
     links: {
       destination: "/destinations/srinagar/",
-      package: "/kashmir-tour-packages/honeymoon/",
+      package: "/kashmir-tour-packages/family/",
       cabRoute: "/cab-service/",
     },
   },
   {
-    slug: "gulmarg-resorts",
-    title: "Gulmarg Mountain Resorts",
-    town: "Gulmarg",
-    area: "Gulmarg, Baramulla",
-    category: "Resort",
+    slug: "lidder-riverside-hotel",
+    title: "Lidder Riverside Hotel",
+    town: "Pahalgam",
+    area: "Lidder Riverside, Pahalgam",
+    category: "Hotel",
+    placeTags: ["lidder-riverside", "pahalgam"],
     answerBlock:
-      "Gulmarg resorts start from about ₹5,500 a night in season and sit at 2,650 m, so heating matters more than the view. Staying in Gulmarg itself saves you the daily Tangmarg climb — critical in January when the road needs snow chains.",
-    cardSummary: "Pine-wood resorts at 2,650 m, walking distance from the Gondola.",
-    priceFrom: 5500,
-    highlights: ["Central heating", "Near Gondola", "All meals available"],
+      "A river-facing hotel on the Lidder in Pahalgam from ₹2,200 a night. Rooms above the water get the river noise instead of the pony-stand road, which is the single upgrade worth paying for in this town.",
+    cardSummary: "River-facing rooms on the Lidder, away from the market noise.",
+    priceFrom: 2200,
+    highlights: ["River-facing", "Breakfast included", "Parking"],
     sleeps: 4,
     gallery: [
       {
-        id: "rs-1",
+        id: "g1",
+        image: img("1522708323590-d24dbb6b0267"),
+        alt: "Hotel beside the Lidder river in Pahalgam surrounded by pine forest",
+      },
+      {
+        id: "g2",
+        image: img("1560448204-e02f11c3d0e2"),
+        alt: "Warm hotel room in Pahalgam with wooden panelling and a river view",
+      },
+      {
+        id: "g3",
+        image: img("1595576508898-0ad5c879a061"),
+        alt: "Pahalgam hotel garden looking towards the surrounding pine ridges",
+      },
+    ],
+    image: img("1522708323590-d24dbb6b0267"),
+    alt: "Riverside hotel on the Lidder in Pahalgam",
+    metaTitle: "Lidder Riverside Hotel, Pahalgam | Rates & Booking",
+    metaDescription:
+      "River-facing Pahalgam hotel on the Lidder from ₹2,200/night with breakfast — which rooms actually face the water, and how to reach Aru and Betaab.",
+    options: [
+      {
+        id: "o1",
+        propertyType: "Standard room",
+        area: "Pahalgam",
+        priceFrom: 2200,
+        amenities: ["Breakfast", "Room heater", "Parking", "Wi-Fi"],
+        bestFor: "Short one-night stops",
+      },
+      {
+        id: "o2",
+        propertyType: "River-view room",
+        area: "Lidder riverside",
+        priceFrom: 4800,
+        amenities: ["Breakfast", "River-view balcony", "Restaurant", "Heating"],
+        bestFor: "Families staying two nights or more",
+      },
+    ],
+    howToChoose: [
+      "River-facing rooms cost roughly double and are the one upgrade worth paying for in Pahalgam.",
+      "Stay two nights if you want Aru and Betaab without rushing either.",
+    ],
+    sartajTips: [
+      "Srinagar cabs cannot do local Pahalgam sightseeing — Aru, Betaab and Chandanwari need a local union taxi. Budget for it.",
+      "Main-market hotels sit on the pony-stand road, which is loud from 7 AM.",
+    ],
+    faqs: [
+      {
+        id: "f1",
+        question: "How many nights should I stay in Pahalgam?",
+        answer:
+          "Two. One night gives you the drive plus the market; two lets you do Aru and Betaab properly, and Chandanwari if the road is open.",
+      },
+      {
+        id: "f2",
+        question: "Can my Srinagar cab take me to Aru?",
+        answer:
+          "No. Local sightseeing around Pahalgam is reserved for Pahalgam union taxis. Your Srinagar cab brings you in and takes you out.",
+      },
+    ],
+    links: {
+      destination: "/destinations/pahalgam/",
+      package: "/kashmir-tour-packages/family/",
+      cabRoute: "/cab-service/srinagar-to-pahalgam/",
+    },
+  },
+  {
+    slug: "sonamarg-mountain-lodge",
+    title: "Sonamarg Mountain Lodge",
+    town: "Sonamarg",
+    area: "Sonamarg, Ganderbal",
+    category: "Hotel",
+    placeTags: ["sonamarg"],
+    answerBlock:
+      "A seasonal riverside lodge in Sonamarg from ₹2,800 a night, open roughly May to October. Staying overnight is the only way to reach Thajiwas glacier before the Srinagar day-trippers arrive around 11 AM.",
+    cardSummary: "Seasonal lodge by the Sindh, minutes from the Thajiwas trail.",
+    priceFrom: 2800,
+    highlights: ["Glacier access", "Riverside", "Seasonal only"],
+    sleeps: 4,
+    gallery: [
+      {
+        id: "g1",
+        image: img("1600585154340-be6161a56a0c"),
+        alt: "Lodge in Sonamarg beside the Sindh river with snow peaks behind",
+      },
+      {
+        id: "g2",
+        image: img("1600607687939-ce8a6c25118c"),
+        alt: "Simple twin room in a Sonamarg lodge with mountain-facing windows",
+      },
+      {
+        id: "g3",
+        image: img("1618221195710-dd6b41faaea6"),
+        alt: "Meadow and river at Sonamarg seen from a guest lodge verandah",
+      },
+    ],
+    image: img("1600585154340-be6161a56a0c"),
+    alt: "Riverside mountain lodge in Sonamarg",
+    metaTitle: "Sonamarg Mountain Lodge | Seasonal Rates & Booking",
+    metaDescription:
+      "Riverside Sonamarg lodge from ₹2,800/night, open May to October. Why an overnight beats a day trip, and how to reach Thajiwas glacier before the crowds.",
+    options: [
+      {
+        id: "o1",
+        propertyType: "Mountain room",
+        area: "Sonamarg town",
+        priceFrom: 2800,
+        amenities: ["Breakfast", "Room heater", "Parking"],
+        bestFor: "Amarnath-route travellers and glacier walks",
+      },
+      {
+        id: "o2",
+        propertyType: "Riverside deluxe",
+        area: "Sindh riverside",
+        priceFrom: 4500,
+        amenities: ["All meals", "Attached bath", "River view", "Bonfire"],
+        bestFor: "Summer travellers wanting to sleep by the river",
+      },
+    ],
+    howToChoose: [
+      "Check the opening window first — most Sonamarg properties operate May to October only.",
+      "Sonamarg is 80 km from Srinagar, about 2.5 hours. A long day trip, a comfortable overnight.",
+    ],
+    sartajTips: [
+      "Day-trippers reach Thajiwas around 11 AM. Stay the night, start at 8, and the glacier path is yours.",
+      "Pony rates to Thajiwas are negotiated, not fixed. Agree the price and the turnaround point before you mount.",
+    ],
+    faqs: [
+      {
+        id: "f1",
+        question: "Is the lodge open in winter?",
+        answer:
+          "No. The Zoji La road closes with snow and the property shuts from November to April. Confirm the opening window before booking anything outside May–October.",
+      },
+      {
+        id: "f2",
+        question: "Is an overnight in Sonamarg worth it?",
+        answer:
+          "If the glacier matters to you, yes. The 2.5-hour drive each way makes a rushed day trip, and an overnight puts you at Thajiwas hours before the buses.",
+      },
+    ],
+    links: {
+      destination: "/destinations/sonamarg/",
+      package: "/kashmir-tour-packages/family/",
+      cabRoute: "/cab-service/srinagar-to-sonamarg/",
+    },
+  },
+
+  /* ------------------------------ Resorts ----------------------------- */
+  {
+    slug: "gulmarg-pine-resort",
+    title: "Gulmarg Pine Resort",
+    town: "Gulmarg",
+    area: "Gulmarg, Baramulla",
+    category: "Resort",
+    placeTags: ["gulmarg"],
+    answerBlock:
+      "A pine-wood resort in Gulmarg's upper bowl from ₹5,500 a night in season, at 2,650 m and walking distance from the Gondola base. Staying up here saves you the daily Tangmarg climb, which matters in January.",
+    cardSummary: "Walking distance from the Gondola, with proper central heating.",
+    priceFrom: 5500,
+    highlights: ["Central heating", "Near Gondola", "Ski storage"],
+    sleeps: 4,
+    gallery: [
+      {
+        id: "g1",
         image: img("1551882547-ff40c63fe5fa"),
         alt: "Snow-covered pine-wood resort in Gulmarg with the Affarwat range behind it",
       },
       {
-        id: "rs-2",
+        id: "g2",
         image: img("1587061949409-02df41d5e562"),
         alt: "Resort room in Gulmarg with a fireplace and windows facing the ski slopes",
       },
       {
-        id: "rs-3",
+        id: "g3",
         image: img("1584132967334-10e028bd69f7"),
         alt: "Gulmarg resort terrace looking out over deep snow and pine forest",
       },
-      {
-        id: "rs-4",
-        image: img("1502672260266-1c1ef2d93688"),
-        alt: "Gondola cable car seen from a Gulmarg resort on a clear winter morning",
-      },
     ],
     image: img("1551882547-ff40c63fe5fa"),
-    alt: "Snow-covered mountain resort in Gulmarg, Kashmir",
-    metaTitle: "Gulmarg Resorts 2026 | Ski-In Stays, Prices & Winter Booking Tips",
+    alt: "Pine-wood mountain resort in Gulmarg",
+    metaTitle: "Gulmarg Pine Resort | Ski-In Rates & Winter Booking",
     metaDescription:
-      "Gulmarg resort stays from ₹5,500/night — which properties are walking distance from the Gondola, what heating to insist on, and why staying up in Gulmarg beats Tangmarg.",
+      "Gulmarg resort from ₹5,500/night, walking distance from the Gondola base. What heating to insist on and why staying up in Gulmarg beats Tangmarg.",
     options: [
       {
-        id: "rs-standard",
-        propertyType: "Mountain resort",
+        id: "o1",
+        propertyType: "Mountain room",
         area: "Gulmarg — upper bowl",
         priceFrom: 5500,
         amenities: ["Central heating", "All meals", "Ski storage", "Parking"],
         bestFor: "Skiers who want to walk to the Gondola",
       },
       {
-        id: "rs-luxury",
-        propertyType: "Luxury ski resort",
+        id: "o2",
+        propertyType: "Slope-view suite",
         area: "Gulmarg — Gondola road",
-        priceFrom: 12000,
-        amenities: ["Heated rooms", "Spa", "Restaurant", "Equipment hire"],
-        bestFor: "Honeymooners and serious snow weeks",
+        priceFrom: 9500,
+        amenities: ["Heated rooms", "Fireplace", "Restaurant", "Equipment hire"],
+        bestFor: "Longer snow weeks",
       },
     ],
     howToChoose: [
-      "Staying in Gulmarg beats staying in Tangmarg — you avoid a 13 km climb that closes without warning after heavy snow.",
-      "Anything described as \"near Gulmarg\" is usually Tangmarg. Ask for the actual distance to the Gondola base.",
+      "Anything advertised as \"near Gulmarg\" is usually Tangmarg. Ask for the distance to the Gondola base.",
       "Off-season (Apr–Oct) the same rooms drop by half and Gulmarg becomes a green meadow walk.",
     ],
     sartajTips: [
-      "From December to February a Srinagar sedan cannot make the Tangmarg–Gulmarg climb — you need a snow-jeep with chains beyond Tangmarg.",
-      "Book Gondola Phase 1 tickets before you arrive; the on-site queue in January can cost you the whole morning.",
+      "December to February a Srinagar sedan cannot make the Tangmarg–Gulmarg climb — you need a snow-jeep with chains.",
+      "Book Gondola Phase 1 tickets before you arrive; the January queue can cost you the whole morning.",
     ],
     faqs: [
       {
-        id: "faq-1",
-        question: "Should I stay in Gulmarg or do a day trip from Srinagar?",
+        id: "f1",
+        question: "How far is the Gondola base station?",
         answer:
-          "Stay in Gulmarg if you plan to ski or want first light on Affarwat. A day trip from Srinagar works in summer, but in deep winter the road can shut and you lose the day.",
+          "About a 5–8 minute walk in summer. In deep snow allow 15 minutes, or use the resort shuttle where one is running.",
       },
       {
-        id: "faq-2",
-        question: "How much do Gulmarg resorts cost?",
+        id: "f2",
+        question: "Should I stay in Gulmarg or day-trip from Srinagar?",
         answer:
-          "In-season resorts start around ₹5,500 per night, with luxury ski properties from ₹12,000. Rates roughly halve between April and October.",
+          "Stay if you plan to ski or want first light on Affarwat. A day trip works in summer, but in deep winter the road can shut and you lose the day.",
       },
     ],
     links: {
@@ -506,294 +666,216 @@ export const STAYS: Stay[] = [
     },
   },
   {
-    slug: "pahalgam-hotels",
-    title: "Pahalgam Hotels",
-    town: "Pahalgam",
-    area: "Pahalgam, Anantnag",
-    category: "Hotel",
+    slug: "cheshma-shahi-hillside-resort",
+    title: "Cheshma Shahi Hillside Resort",
+    town: "Srinagar",
+    area: "Cheshma Shahi, Srinagar",
+    category: "Resort",
+    placeTags: ["cheshma-shahi", "srinagar"],
     answerBlock:
-      "Pahalgam hotels start near ₹2,200 a night. The ones along the Lidder river are worth the premium — you get the water noise instead of the main-road noise. Stay two nights if you want Aru, Betaab and Chandanwari without rushing any of them.",
-    cardSummary: "Riverside rooms on the Lidder, a short drive from Aru and Betaab.",
-    priceFrom: 2200,
-    highlights: ["River-facing", "Breakfast included", "Parking"],
+      "A hillside luxury resort above Dal Lake near Cheshma Shahi, from ₹14,000 a night. You are paying for grounds, quiet and a view down over the whole lake basin — and you will drive to everything.",
+    cardSummary: "Hillside grounds above Dal Lake with the valley's best views.",
+    priceFrom: 14000,
+    highlights: ["Spa", "Fine dining", "Panoramic views"],
+    sleeps: 3,
+    gallery: [
+      {
+        id: "g1",
+        image: img("1631049307264-da0ec9d70304"),
+        alt: "Luxury resort terrace above Dal Lake near Cheshma Shahi, Srinagar",
+      },
+      {
+        id: "g2",
+        image: img("1596394516093-501ba68a0ba6"),
+        alt: "Suite interior at a Srinagar hillside resort with valley-facing windows",
+      },
+      {
+        id: "g3",
+        image: img("1618773928121-c32242e63f39"),
+        alt: "Resort garden and lawn overlooking the Dal Lake basin in Srinagar",
+      },
+    ],
+    image: img("1631049307264-da0ec9d70304"),
+    alt: "Hillside luxury resort above Dal Lake, Srinagar",
+    metaTitle: "Cheshma Shahi Hillside Resort, Srinagar | Rates & Booking",
+    metaDescription:
+      "Hillside luxury resort above Dal Lake from ₹14,000/night — what the premium actually buys, and when a Boulevard Road hotel is the smarter booking.",
+    options: [
+      {
+        id: "o1",
+        propertyType: "Valley-view room",
+        area: "Cheshma Shahi",
+        priceFrom: 14000,
+        amenities: ["Breakfast", "Spa", "Restaurant", "Airport transfer"],
+        bestFor: "Honeymooners wanting privacy and grounds",
+      },
+      {
+        id: "o2",
+        propertyType: "Private villa",
+        area: "Cheshma Shahi",
+        priceFrom: 26000,
+        amenities: ["All meals", "Private garden", "Butler service", "Heating"],
+        bestFor: "Special occasions and small family groups",
+      },
+    ],
+    howToChoose: [
+      "The view is the product. If your room does not face the lake, the premium is largely wasted.",
+      "Shoulder season (Oct–Nov, Feb) can cut these rates by a third with no drop in service.",
+    ],
+    sartajTips: [
+      "Ask for the upper terrace level — the lower blocks look into the hillside, not the lake.",
+      "Nishat and Shalimar gardens are a ten-minute drive, so do all three in one morning.",
+    ],
+    faqs: [
+      {
+        id: "f1",
+        question: "How far is it from Boulevard Road?",
+        answer:
+          "Around 7 km uphill, about 20 minutes. Factor a cab into every outing — there is nothing walkable from here.",
+      },
+      {
+        id: "f2",
+        question: "Is a luxury resort worth it in Srinagar?",
+        answer:
+          "If you want grounds, quiet and a panoramic view, yes. If your days are packed with sightseeing, a lake-facing Boulevard Road hotel costs a third as much.",
+      },
+    ],
+    links: {
+      destination: "/destinations/srinagar/",
+      package: "/kashmir-tour-packages/honeymoon/",
+      cabRoute: "/cab-service/",
+    },
+  },
+  {
+    slug: "yusmarg-meadow-cottages",
+    title: "Yusmarg Meadow Cottages",
+    town: "Yusmarg",
+    area: "Yusmarg, Budgam",
+    category: "Resort",
+    placeTags: ["yusmarg"],
+    answerBlock:
+      "Wooden cottages on the Yusmarg meadow from ₹2,600 a night, 47 km south-west of Srinagar. This is the quietest hill station in the valley because almost no tour buses come here — which also means no market and no ATM.",
+    cardSummary: "Quiet meadow cottages in the valley's least-visited hill station.",
+    priceFrom: 2600,
+    highlights: ["Very quiet", "All meals", "Meadow walks"],
     sleeps: 4,
     gallery: [
       {
-        id: "ph-1",
-        image: img("1522708323590-d24dbb6b0267"),
-        alt: "Hotel beside the Lidder river in Pahalgam surrounded by pine forest",
+        id: "g1",
+        image: img("1505693416388-ac5ce068fe85"),
+        alt: "Wooden cottage in the Yusmarg meadow surrounded by pine forest",
       },
       {
-        id: "ph-2",
-        image: img("1560448204-e02f11c3d0e2"),
-        alt: "Warm hotel room in Pahalgam with wooden panelling and a river view",
+        id: "g2",
+        image: img("1522771739844-6a9f6d5f14af"),
+        alt: "Cottage bedroom in Yusmarg with a wood stove and meadow-facing window",
       },
       {
-        id: "ph-3",
-        image: img("1595576508898-0ad5c879a061"),
-        alt: "Pahalgam hotel garden looking towards the surrounding pine ridges",
+        id: "g3",
+        image: img("1520250497591-112f2f40a3f4"),
+        alt: "Open meadow and pine ridges at Yusmarg on a clear morning",
       },
     ],
-    image: img("1522708323590-d24dbb6b0267"),
-    alt: "Riverside hotel in Pahalgam, Kashmir",
-    metaTitle: "Hotels in Pahalgam 2026 | River-Facing Stays, Prices & Areas",
+    image: img("1505693416388-ac5ce068fe85"),
+    alt: "Meadow cottages at Yusmarg, Kashmir",
+    metaTitle: "Yusmarg Meadow Cottages | Rates, Access & Booking",
     metaDescription:
-      "Pahalgam hotels from ₹2,200/night — which properties actually face the Lidder, how many nights you need for Aru and Betaab, and what to avoid on the main road.",
+      "Yusmarg cottages from ₹2,600/night in the valley's quietest hill station, 47 km from Srinagar — what facilities exist and why you should carry cash.",
     options: [
       {
-        id: "ph-standard",
-        propertyType: "3-star hotel",
-        area: "Pahalgam main market",
-        priceFrom: 2200,
-        amenities: ["Breakfast", "Room heater", "Parking", "Wi-Fi"],
-        bestFor: "Short one-night stops",
+        id: "o1",
+        propertyType: "Meadow cottage",
+        area: "Yusmarg",
+        priceFrom: 2600,
+        amenities: ["All meals", "Wood stove", "Parking", "Meadow view"],
+        bestFor: "Travellers who want genuine quiet",
       },
       {
-        id: "ph-river",
-        propertyType: "River-facing hotel",
-        area: "Lidder riverside",
-        priceFrom: 4800,
-        amenities: ["Breakfast", "River-view balcony", "Restaurant", "Heating"],
-        bestFor: "Families staying two nights or more",
+        id: "o2",
+        propertyType: "Forest hut",
+        area: "Yusmarg — forest edge",
+        priceFrom: 1800,
+        amenities: ["Basic meals", "Heating", "Forest walks"],
+        bestFor: "Budget overnight stops",
       },
     ],
     howToChoose: [
-      "River-facing rooms cost roughly double and are the single upgrade worth paying for in Pahalgam.",
-      "Main-market hotels are convenient for food but sit on the pony-stand road, which is loud from 7 AM.",
-      "Aru and Betaab valleys are 11 km and 15 km away — you need a local Pahalgam taxi, not your Srinagar cab.",
+      "There is no market to speak of — book a property that serves all meals, not just breakfast.",
+      "Yusmarg is 47 km from Srinagar, about 1.5 hours, and works well as a quiet break between city nights.",
     ],
     sartajTips: [
-      "Srinagar cabs cannot do local Pahalgam sightseeing — the Aru/Betaab/Chandanwari run is a separate local union taxi. Budget for it.",
-      "Ask which bank of the Lidder the hotel is on; the far bank is quieter but adds a bridge crossing to every trip into town.",
+      "Yusmarg gets a fraction of Gulmarg's visitors for a meadow that is arguably prettier in summer. Go before that changes.",
+      "There is no ATM and card acceptance is unreliable. Draw cash in Srinagar before you leave.",
     ],
     faqs: [
       {
-        id: "faq-1",
-        question: "How many nights should I stay in Pahalgam?",
+        id: "f1",
+        question: "How far is Yusmarg from Srinagar?",
         answer:
-          "Two. One night only gives you the drive plus the market. Two lets you do Aru and Betaab properly, and Chandanwari if the road is open.",
+          "About 47 km, roughly 1.5 hours by road via Chadoora. An easy day trip, but a much better overnight.",
       },
       {
-        id: "faq-2",
-        question: "How much are hotels in Pahalgam?",
+        id: "f2",
+        question: "Are meals included?",
         answer:
-          "Standard 3-star rooms start around ₹2,200 per night with breakfast. River-facing rooms start near ₹4,800 and are worth it if you are staying more than one night.",
+          "All meals are included in the cottage tariff, which matters here because there is effectively no market to eat at.",
       },
     ],
     links: {
-      destination: "/destinations/pahalgam/",
+      destination: "/destinations/yusmarg/",
       package: "/kashmir-tour-packages/family/",
-      cabRoute: "/cab-service/srinagar-to-pahalgam/",
+      cabRoute: "/cab-service/",
     },
   },
+
+  /* ----------------------------- Homestays ---------------------------- */
   {
-    slug: "sonamarg-stays",
-    title: "Sonamarg Stays",
-    town: "Sonamarg",
-    area: "Sonamarg, Ganderbal",
-    category: "Hotel",
-    answerBlock:
-      "Sonamarg stays start near ₹2,800 a night and are strictly seasonal — most properties close from November to April when the road over Zoji La shuts. Staying overnight is the only way to reach Thajiwas glacier before the day-trip crowds arrive at 11 AM.",
-    cardSummary: "Seasonal riverside lodges at the foot of the Thajiwas glacier.",
-    priceFrom: 2800,
-    highlights: ["Glacier access", "Riverside", "Seasonal only"],
-    sleeps: 4,
-    gallery: [
-      {
-        id: "sm-1",
-        image: img("1600585154340-be6161a56a0c"),
-        alt: "Lodge in Sonamarg beside the Sindh river with snow peaks behind",
-      },
-      {
-        id: "sm-2",
-        image: img("1600607687939-ce8a6c25118c"),
-        alt: "Simple twin room in a Sonamarg lodge with mountain-facing windows",
-      },
-      {
-        id: "sm-3",
-        image: img("1618221195710-dd6b41faaea6"),
-        alt: "Meadow and river at Sonamarg seen from a guest lodge verandah",
-      },
-    ],
-    image: img("1600585154340-be6161a56a0c"),
-    alt: "Riverside lodge in Sonamarg, Kashmir",
-    metaTitle: "Sonamarg Hotels 2026 | Seasonal Stays, Prices & Glacier Access",
-    metaDescription:
-      "Sonamarg stays from ₹2,800/night — when properties are actually open, why an overnight beats a day trip, and how to reach Thajiwas glacier before the crowds.",
-    options: [
-      {
-        id: "sm-lodge",
-        propertyType: "Mountain lodge",
-        area: "Sonamarg town",
-        priceFrom: 2800,
-        amenities: ["Breakfast", "Room heater", "Parking"],
-        bestFor: "Amarnath-route travellers and glacier walks",
-      },
-      {
-        id: "sm-camp",
-        propertyType: "Deluxe camp",
-        area: "Sindh riverside",
-        priceFrom: 4500,
-        amenities: ["All meals", "Attached bath", "Bonfire", "River view"],
-        bestFor: "Summer travellers wanting to sleep by the river",
-      },
-    ],
-    howToChoose: [
-      "Check the opening window before anything else — most Sonamarg properties operate May to October only.",
-      "Riverside camps are the better experience in June–August; solid lodges are safer in shoulder season.",
-      "Sonamarg is 80 km from Srinagar, roughly 2.5 hours. It is a long day trip and a comfortable overnight.",
-    ],
-    sartajTips: [
-      "Day-trippers from Srinagar reach Thajiwas around 11 AM. Stay the night, start at 8, and you will have the glacier path to yourself.",
-      "Pony rates to Thajiwas are negotiated, not fixed — agree the price and the turnaround point before you mount.",
-    ],
-    faqs: [
-      {
-        id: "faq-1",
-        question: "Is it worth staying overnight in Sonamarg?",
-        answer:
-          "Yes, if the glacier matters to you. The 2.5-hour drive each way makes for a rushed day trip, and an overnight puts you at Thajiwas hours before the Srinagar buses arrive.",
-      },
-      {
-        id: "faq-2",
-        question: "Are Sonamarg hotels open in winter?",
-        answer:
-          "Mostly no. The Zoji La road closes with snow and most properties shut from November to April. Confirm the opening window before booking anything outside May–October.",
-      },
-    ],
-    links: {
-      destination: "/destinations/sonamarg/",
-      package: "/kashmir-tour-packages/family/",
-      cabRoute: "/cab-service/srinagar-to-sonamarg/",
-    },
-  },
-  {
-    slug: "kashmir-homestays",
-    title: "Kashmir Homestays",
-    town: "Pahalgam",
-    area: "Pahalgam, Aru & Yusmarg",
-    category: "Homestay",
-    answerBlock:
-      "Kashmiri homestays start from about ₹1,200 a night and usually include home-cooked meals with the family. They are the best value in the valley and the only way to eat proper Wazwan outside a wedding — but expect shared bathrooms at the lower end.",
-    cardSummary: "Family-run walnut-wood homes with home-cooked Wazwan and vetted hosts.",
-    priceFrom: 1200,
-    highlights: ["Home-cooked meals", "Local hosts", "Best value"],
-    sleeps: 5,
-    gallery: [
-      {
-        id: "hs-1",
-        image: img("1493809842364-78817add7ffb"),
-        alt: "Kashmiri family homestay courtyard in Pahalgam with a walnut-wood verandah",
-      },
-      {
-        id: "hs-2",
-        image: img("1517320964276-a002fa203177"),
-        alt: "Home-cooked Kashmiri meal served on a copper trami at a homestay",
-      },
-      {
-        id: "hs-3",
-        image: img("1613490493576-7fde63acd811"),
-        alt: "Simple homestay bedroom in Aru valley with hand-woven blankets",
-      },
-    ],
-    image: img("1493809842364-78817add7ffb"),
-    alt: "Family-run Kashmiri homestay in Pahalgam",
-    metaTitle: "Kashmir Homestays 2026 | Prices, Where to Book & What to Expect",
-    metaDescription:
-      "Kashmiri homestays from ₹1,200/night in Pahalgam, Aru and Yusmarg — home-cooked meals, what the rooms are actually like, and how to pick a genuine family host.",
-    options: [
-      {
-        id: "hs-basic",
-        propertyType: "Village homestay",
-        area: "Aru & Yusmarg",
-        priceFrom: 1200,
-        amenities: ["Home-cooked meals", "Bukhari heating", "Local guide help"],
-        bestFor: "Budget travellers and slow trips",
-      },
-      {
-        id: "hs-premium",
-        propertyType: "Premium homestay",
-        area: "Pahalgam town",
-        priceFrom: 2800,
-        amenities: ["Private bathroom", "All meals", "Wi-Fi", "Garden"],
-        bestFor: "Families wanting local food with comfort",
-      },
-    ],
-    howToChoose: [
-      "Below roughly ₹1,500 a night, assume a shared bathroom unless the listing says otherwise.",
-      "Homestays in Aru and Yusmarg have patchy mobile signal — download your maps before you leave Pahalgam.",
-      "The meal is the point. Pick a host who cooks, not one who sends you into town to eat.",
-    ],
-    sartajTips: [
-      "A genuine homestay will happily put you on a call with the host before you pay. If the agent refuses, it is a guesthouse being resold.",
-      "Carry cash — most village homestays in Aru have no card machine and UPI drops with the signal.",
-    ],
-    faqs: [
-      {
-        id: "faq-1",
-        question: "Are homestays in Kashmir safe for families?",
-        answer:
-          "Yes — family homestays are common across Pahalgam, Aru and Yusmarg, and hosts typically live on the property. Book one we have visited, and confirm whether the bathroom is private before paying.",
-      },
-      {
-        id: "faq-2",
-        question: "How much does a Kashmiri homestay cost?",
-        answer:
-          "Village homestays start around ₹1,200 per night including home-cooked meals. Premium homestays in Pahalgam town with private bathrooms start near ₹2,800.",
-      },
-    ],
-    links: {
-      destination: "/destinations/pahalgam/",
-      package: "/kashmir-tour-packages/family/",
-      cabRoute: "/cab-service/srinagar-to-pahalgam/",
-    },
-  },
-  {
-    slug: "aru-valley-homestays",
-    title: "Aru Valley Homestays",
+    slug: "aru-valley-homestay",
+    title: "Aru Valley Homestay",
     town: "Aru",
     area: "Aru Valley, Pahalgam",
     category: "Homestay",
+    placeTags: ["aru", "pahalgam"],
     answerBlock:
-      "Aru valley homestays start near ₹1,400 a night, 11 km above Pahalgam at the trailhead for Lidderwat and Kolahoi. Signal is patchy and hot water is bucket-fed at the cheaper houses — which is exactly why the valley still feels like the valley.",
-    cardSummary: "Trailhead village homes for Lidderwat and Kolahoi trekkers.",
-    priceFrom: 1400,
-    highlights: ["Trek trailhead", "All meals", "Bukhari heating"],
-    sleeps: 4,
+      "A family homestay in Aru village from ₹1,200 a night including home-cooked meals, 11 km above Pahalgam at the trailhead for Lidderwat and Kolahoi. Signal is patchy and hot water is bucket-fed at this rate.",
+    cardSummary: "Trailhead village home for Lidderwat and Kolahoi trekkers.",
+    priceFrom: 1200,
+    highlights: ["Home-cooked meals", "Trek trailhead", "Bukhari heating"],
+    sleeps: 5,
     gallery: [
       {
-        id: "ar-1",
+        id: "g1",
         image: img("1568605114967-8130f3a36994"),
         alt: "Wooden homestay in Aru village surrounded by meadow and pine",
       },
       {
-        id: "ar-2",
+        id: "g2",
         image: img("1586375300773-8384e3e4916f"),
         alt: "Simple guest bedroom in an Aru valley homestay with mountain views",
       },
       {
-        id: "ar-3",
+        id: "g3",
         image: img("1499793983690-e29da59ef1c2"),
         alt: "Meadow and shepherd huts above Aru valley in summer",
       },
     ],
     image: img("1568605114967-8130f3a36994"),
-    alt: "Village homestay in Aru valley, Kashmir",
-    metaTitle: "Aru Valley Homestays 2026 | Trek Base, Prices & What to Expect",
+    alt: "Family homestay in Aru valley, Kashmir",
+    metaTitle: "Aru Valley Homestay, Pahalgam | Rates & What to Expect",
     metaDescription:
-      "Aru valley homestays from ₹1,400/night — the base for Lidderwat and Kolahoi treks, what facilities to actually expect, and when the road up from Pahalgam is open.",
+      "Aru valley homestay from ₹1,200/night with home-cooked meals — the base for Lidderwat and Kolahoi treks, and what facilities to actually expect.",
     options: [
       {
-        id: "ar-basic",
-        propertyType: "Village homestay",
+        id: "o1",
+        propertyType: "Village room",
         area: "Aru village",
-        priceFrom: 1400,
+        priceFrom: 1200,
         amenities: ["All meals", "Bukhari heating", "Trek guide contacts"],
         bestFor: "Trekkers heading to Lidderwat",
       },
       {
-        id: "ar-cottage",
-        propertyType: "Guest cottage",
+        id: "o2",
+        propertyType: "Ensuite room",
         area: "Aru — upper meadow",
         priceFrom: 3200,
         amenities: ["Private bathroom", "All meals", "Hot water", "Meadow view"],
@@ -801,26 +883,25 @@ export const STAYS: Stay[] = [
       },
     ],
     howToChoose: [
-      "Aru is 11 km of narrow road above Pahalgam — check road status in shoulder season before committing.",
-      "If you are trekking, stay in the village itself; the upper-meadow cottages add a 20-minute walk with a pack.",
-      "Ask specifically about hot water. Bucket-fed is normal below ₹2,000 and is not a complaint worth making on arrival.",
+      "Below roughly ₹1,500 a night, assume a shared bathroom unless the listing says otherwise.",
+      "If you are trekking, stay in the village itself; upper-meadow rooms add a 20-minute walk with a pack.",
     ],
     sartajTips: [
-      "Aru is where the Lidderwat and Kolahoi treks actually start. Sleeping in Pahalgam instead costs you the best two hours of morning light.",
-      "Mobile signal is unreliable above Pahalgam — tell someone your plan before you drive up, and download offline maps.",
+      "Aru is where the Lidderwat and Kolahoi treks actually start. Sleeping in Pahalgam costs you the best two hours of morning light.",
+      "Carry cash — there is no card machine here and UPI drops with the signal.",
     ],
     faqs: [
       {
-        id: "faq-1",
-        question: "Is Aru worth staying in over Pahalgam?",
-        answer:
-          "For trekkers and photographers, yes — you start at the trailhead and get the meadow before the day visitors. For general sightseeing, Pahalgam has far more choice and easier access.",
-      },
-      {
-        id: "faq-2",
+        id: "f1",
         question: "How do I get to Aru valley?",
         answer:
-          "It is 11 km from Pahalgam on a narrow mountain road, about 40 minutes by local taxi. Srinagar cabs cannot run this route — you take a Pahalgam local union taxi.",
+          "It is 11 km from Pahalgam on a narrow mountain road, about 40 minutes by local taxi. Srinagar cabs cannot run this route.",
+      },
+      {
+        id: "f2",
+        question: "Is there hot water?",
+        answer:
+          "Bucket-fed hot water in the village rooms, which is normal at this rate. The ensuite rooms in the upper meadow have running hot water.",
       },
     ],
     links: {
@@ -830,84 +911,84 @@ export const STAYS: Stay[] = [
     },
   },
   {
-    slug: "yusmarg-cottages",
-    title: "Yusmarg Cottages",
-    town: "Yusmarg",
-    area: "Yusmarg, Budgam",
-    category: "Resort",
+    slug: "pahalgam-family-homestay",
+    title: "Pahalgam Family Homestay",
+    town: "Pahalgam",
+    area: "Pahalgam town",
+    category: "Homestay",
+    placeTags: ["pahalgam"],
     answerBlock:
-      "Yusmarg cottages start near ₹2,600 a night, 47 km south-west of Srinagar. It is the quietest meadow in the valley because almost no tour buses come here — which also means limited food options and no ATM. Bring cash and treat it as a slow two-night stop.",
-    cardSummary: "Quiet meadow cottages in the valley's least-visited hill station.",
-    priceFrom: 2600,
-    highlights: ["Very quiet", "Meadow walks", "All meals"],
-    sleeps: 4,
+      "A premium family homestay in Pahalgam town from ₹2,800 a night with private bathrooms and all meals cooked by the hosts. The comfort of a hotel with the food of a Kashmiri home — which is the whole point of a homestay.",
+    cardSummary: "Host-cooked Wazwan with private bathrooms and a garden.",
+    priceFrom: 2800,
+    highlights: ["Private bathroom", "All meals", "Garden"],
+    sleeps: 5,
     gallery: [
       {
-        id: "ym-1",
-        image: img("1505693416388-ac5ce068fe85"),
-        alt: "Wooden cottage in the Yusmarg meadow surrounded by pine forest",
+        id: "g1",
+        image: img("1493809842364-78817add7ffb"),
+        alt: "Kashmiri family homestay courtyard in Pahalgam with a walnut-wood verandah",
       },
       {
-        id: "ym-2",
-        image: img("1522771739844-6a9f6d5f14af"),
-        alt: "Cottage bedroom in Yusmarg with a wood stove and meadow-facing window",
+        id: "g2",
+        image: img("1517320964276-a002fa203177"),
+        alt: "Home-cooked Kashmiri meal served on a copper trami at a homestay",
       },
       {
-        id: "ym-3",
-        image: img("1520250497591-112f2f40a3f4"),
-        alt: "Open meadow and pine ridges at Yusmarg on a clear morning",
+        id: "g3",
+        image: img("1613490493576-7fde63acd811"),
+        alt: "Guest bedroom in a Pahalgam homestay with hand-woven blankets",
       },
     ],
-    image: img("1505693416388-ac5ce068fe85"),
-    alt: "Meadow cottage at Yusmarg, Kashmir",
-    metaTitle: "Yusmarg Cottages 2026 | Quiet Meadow Stays, Prices & Access",
+    image: img("1493809842364-78817add7ffb"),
+    alt: "Family-run homestay in Pahalgam, Kashmir",
+    metaTitle: "Pahalgam Family Homestay | Rates, Meals & Booking",
     metaDescription:
-      "Yusmarg cottages from ₹2,600/night — the valley's quietest hill station 47 km from Srinagar, what facilities exist, and why you should carry cash.",
+      "Premium Pahalgam homestay from ₹2,800/night with private bathrooms and host-cooked Kashmiri meals — how to tell a genuine family host from a resold guesthouse.",
     options: [
       {
-        id: "ym-cottage",
-        propertyType: "Meadow cottage",
-        area: "Yusmarg",
-        priceFrom: 2600,
-        amenities: ["All meals", "Wood stove", "Parking", "Meadow view"],
-        bestFor: "Travellers who want genuine quiet",
+        id: "o1",
+        propertyType: "Ensuite room",
+        area: "Pahalgam town",
+        priceFrom: 2800,
+        amenities: ["Private bathroom", "All meals", "Wi-Fi", "Garden"],
+        bestFor: "Families wanting local food with comfort",
       },
       {
-        id: "ym-huts",
-        propertyType: "Tourist huts",
-        area: "Yusmarg — forest edge",
-        priceFrom: 1800,
-        amenities: ["Basic meals", "Heating", "Forest walks"],
-        bestFor: "Budget stays and short overnight stops",
+        id: "o2",
+        propertyType: "Whole floor",
+        area: "Pahalgam town",
+        priceFrom: 5200,
+        amenities: ["Two bedrooms", "All meals", "Private lounge", "Heating"],
+        bestFor: "Two families travelling together",
       },
     ],
     howToChoose: [
-      "There is no market to speak of — book a property that serves all meals, not just breakfast.",
-      "Yusmarg has no ATM and unreliable card acceptance. Draw cash in Srinagar before you leave.",
-      "It is 47 km from Srinagar, about 1.5 hours, and works well as a quiet break between city nights.",
+      "The meal is the point. Pick a host who cooks, not one who sends you into town to eat.",
+      "Confirm whether the bathroom is private before paying — it is the main difference at this price.",
     ],
     sartajTips: [
-      "Yusmarg gets a fraction of Gulmarg's visitors for a meadow that is arguably prettier in summer. Go before that changes.",
-      "The Nilnag lake walk is 4 km from the cottages and needs a local guide — the trail forks twice and is not marked.",
+      "A genuine homestay will happily put you on a call with the host before you pay. If the agent refuses, it is a guesthouse being resold.",
+      "Ask for Wazwan a day ahead. It is not a dish you cook to order in an hour.",
     ],
     faqs: [
       {
-        id: "faq-1",
-        question: "Is Yusmarg worth visiting?",
+        id: "f1",
+        question: "Are homestays suitable for families?",
         answer:
-          "If you want quiet meadows and pine forest without crowds, yes. If you want activities, shops and restaurants, Gulmarg or Pahalgam will suit you far better.",
+          "Yes — the hosts live on the property, rooms here have private bathrooms, and meals are cooked in-house, which suits children and older travellers.",
       },
       {
-        id: "faq-2",
-        question: "How far is Yusmarg from Srinagar?",
+        id: "f2",
+        question: "Are meals included?",
         answer:
-          "About 47 km, roughly 1.5 hours by road via Chadoora. It is an easy day trip but a much better overnight.",
+          "All meals are included, cooked by the host family. Tell them a day ahead if you want a full Wazwan spread.",
       },
     ],
     links: {
-      destination: "/destinations/yusmarg/",
+      destination: "/destinations/pahalgam/",
       package: "/kashmir-tour-packages/family/",
-      cabRoute: "/cab-service/",
+      cabRoute: "/cab-service/srinagar-to-pahalgam/",
     },
   },
 ];
@@ -918,4 +999,12 @@ export function getAllStays(): Stay[] {
 
 export function getStayBySlug(slug: string): Stay | null {
   return STAYS.find((stay) => stay.slug === slug) ?? null;
+}
+
+export function getStaysByCategory(category: StayCategory): Stay[] {
+  return STAYS.filter((stay) => stay.category === category);
+}
+
+export function getStaysByPlace(placeSlug: string): Stay[] {
+  return STAYS.filter((stay) => stay.placeTags.includes(placeSlug));
 }

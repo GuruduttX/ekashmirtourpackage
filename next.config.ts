@@ -1,7 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  allowedDevOrigins: ["192.168.1.15","192.168.1.5"],
+  allowedDevOrigins: ["192.168.1.15", "192.168.1.5", "192.168.1.6"],
+  // isomorphic-dompurify pulls in jsdom, which must stay a real Node require
+  // rather than being bundled into the server build.
+  serverExternalPackages: ["isomorphic-dompurify"],
   async redirects() {
     return [
       {

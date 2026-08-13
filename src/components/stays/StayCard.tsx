@@ -6,7 +6,27 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ChevronLeft, ChevronRight, MapPin, Users } from "lucide-react";
-import type { Stay } from "@/data/stays";
+import type { StayCategory, StayGalleryImage } from "@/data/stays";
+
+/**
+ * Exactly the fields this card paints — nothing more.
+ *
+ * `Stay` satisfies it structurally, so the hub passes its records unchanged,
+ * but a CMS record can also be mapped to this without having to fabricate the
+ * detail-page fields (options, FAQs, policies) that a card never reads.
+ */
+export type StayCardData = {
+  slug: string;
+  title: string;
+  area: string;
+  category: StayCategory;
+  sleeps: number;
+  priceFrom: number;
+  highlights: string[];
+  gallery: StayGalleryImage[];
+  image: string;
+  alt: string;
+};
 
 /**
  * Archive card for the /stays hub.
@@ -24,7 +44,7 @@ import type { Stay } from "@/data/stays";
  * The card is one link (whole surface); the arrows, dots and a completed
  * swipe all suppress the click so paging never navigates.
  */
-export default function StayCard({ stay }: { stay: Stay }) {
+export default function StayCard({ stay }: { stay: StayCardData }) {
   const slides = stay.gallery.length
     ? stay.gallery
     : [{ id: "fallback", image: stay.image, alt: stay.alt }];

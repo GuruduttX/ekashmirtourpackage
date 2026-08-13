@@ -1,0 +1,276 @@
+================================================================================
+PACKAGE DATA GENERATION GUIDE
+Experience My India / EKashmirTourPackage
+================================================================================
+
+PURPOSE
+-------
+This is a permanent, reusable guide for generating tour package data. Packages are
+the products of this website. Every package you generate here is written straight
+into a MongoDB collection, so the output must be valid, complete, correctly typed
+JSON that matches the Mongoose schema in the attached file `src/models/Package.ts`.
+
+You generate ONE package per request. I will tell you which package to create
+(for example: "6-day Kashmir honeymoon package from Srinagar"). If I give only a
+vague brief, make sensible, realistic choices yourself — do not ask for details
+that a travel copywriter could reasonably decide.
+
+Treat this document as the standing rulebook. Every future package must follow it
+without me repeating the rules.
+
+--------------------------------------------------------------------------------
+OUTPUT FORMAT
+--------------------------------------------------------------------------------
+Return a single JSON object: { ... }
+
+- Pure JSON only. No markdown code fences, no comments, no trailing commas,
+  no explanation before or after.
+- UTF-8, double-quoted keys and string values.
+- Escape any internal quotes and use "\n\n" for paragraph breaks inside strings.
+
+--------------------------------------------------------------------------------
+HARD RULES
+--------------------------------------------------------------------------------
+R1. Every field listed in the FIELD SPEC must be present. Never omit a field, even
+    when the schema defines a default. If a value genuinely does not apply, use the
+    empty form of its type ("" / 0 / [] / false) — this should be rare and never
+    for content fields.
+R2. Never invent extra fields. Never include `_id`, `__v`, `createdAt`, or
+    `updatedAt` — MongoDB generates those.
+R3. Match the exact JS type. Numbers are bare numbers (5, not "5"). Booleans are
+    true/false, not "true". Watch the one trap: `testimonials[].rating` is a STRING
+    ("5"), while top-level `rating` is a NUMBER (4.7).
+R4. All `id` values inside array items are strings, unique within their own array,
+    short and readable: "hl-1", "day-1", "inc-1", "exc-1", "faq-1", "img-1",
+    "tst-1", "kbg-1", "seg-1", "dur-1".
+R5. Content must be real and specific to Kashmir — actual places (Srinagar, Dal
+    Lake, Gulmarg, Affarwat, Pahalgam, Betaab Valley, Aru, Chandanwari, Baisaran,
+    Sonmarg, Thajiwas Glacier, Zero Point, Doodhpathri, Yusmarg, Nishat and
+    Shalimar Bagh, Pari Mahal, Hazratbal, Nigeen Lake, Awantipora, Tulip Garden,
+    Sinthan Top, Gurez), realistic drive times and distances, real seasons.
+    No placeholders, no "Lorem ipsum", no "TBD", no "Destination A".
+R6. Internal consistency is checked:
+    - nights = days - 1
+    - `duration` reads exactly "<days> Days / <nights> Nights"
+    - `itinerary_days` has exactly `days` entries, `day` numbered 1..days, no gaps
+    - sum of `durationbreakdown[].days` equals `nights`
+    - every place named in `durationbreakdown` and `routes.segments` actually
+      appears in the itinerary
+    - `routes.source` is the first pickup city, `routes.destination` the final drop
+    - each of the four boolean flags is backed by a real line in `inclusions`
+    - `slug` is the kebab-case form of `title`
+R7. Tone: warm, confident, factual, sales-ready Indian travel copy for domestic and
+    international readers. Prices in INR. No emojis. No exclamation-mark spam. No
+    unverifiable promises ("guaranteed snowfall", "cheapest in India").
+R8. Length and count budgets in the FIELD SPEC are requirements, not suggestions.
+R9. Every sentence must be something that could only describe THIS package. If a
+    line would fit any Kashmir trip, rewrite it.
+
+--------------------------------------------------------------------------------
+IMAGES
+--------------------------------------------------------------------------------
+Real images are uploaded later through the CMS. You never invent file paths.
+
+Use this exact placeholder string for EVERY image field:
+
+    https://placehold.co/1200x800/png
+
+That single value goes into `heroImage.image`, every `childImages[].image`, every
+`testimonials[].avatar`, and every `testimonials[].photo`.
+
+Alt text is NOT a placeholder — write it properly. Every alt field gets real,
+descriptive text (8-16 words) naming the subject and the place, written for
+accessibility and SEO, unique across the document. Never "image", never "".
+
+--------------------------------------------------------------------------------
+FIELD SPEC   (purpose | type | required shape, length, count)
+--------------------------------------------------------------------------------
+
+title            | String | Marketing name shown as H1 and in listings.
+                   45-70 characters, includes duration and a hook.
+                   e.g. "6 Days Kashmir Honeymoon Package with Gulmarg Gondola"
+
+slug             | String | Unique URL key. Kebab-case of title, lowercase, only
+                   a-z, 0-9 and hyphens. 30-60 characters.
+                   e.g. "6-days-kashmir-honeymoon-package-gulmarg-gondola"
+
+category         | String | Exactly ONE of: "Honeymoon", "Family", "Group",
+                   "Adventure", "Pilgrimage", "Luxury", "Budget", "Solo",
+                   "Corporate".
+
+themes           | [String] | 2-5 filter tags, Title Case, 1-3 words each.
+                   e.g. ["Snow", "Houseboat", "Gondola Ride", "Romantic"]
+
+price            | Number | Per-person starting price in INR. Integer, no symbol,
+                   no commas. Realistic range 11000-65000, scaled to days,
+                   category and inclusions.
+
+rating           | Number | Average score, one decimal, 4.3-5.0. e.g. 4.7
+
+reviews          | Number | Integer 18-480. Make it look organic (127, not 100).
+
+duration         | String | Exactly "<days> Days / <nights> Nights".
+                   e.g. "6 Days / 5 Nights"
+
+status           | String | "published" (use "draft" only if I ask).
+
+days             | Number | Integer, 3-12.
+
+nights           | Number | Integer, days - 1.
+
+durationbreakdown| Array | Nights split by base town. 2-4 items.
+                   { "id": "dur-1", "days": <Number>, "place": "<1-3 words>" }
+                   Despite the key name, `days` here means NIGHTS at that place.
+                   The values must sum to `nights`.
+
+availableSrc     | [String] | Cities the trip can start from. 3-8 plain city names,
+                   Title Case, always including "Srinagar".
+                   e.g. ["Srinagar", "Delhi", "Mumbai", "Jammu"]
+
+destination      | String | Primary destination shown in listings, 1-4 words.
+                   e.g. "Kashmir" or "Srinagar & Gulmarg"
+
+overview         | String | Main descriptive block on the package page.
+                   120-200 words, 2-3 paragraphs joined with "\n\n". Plain text,
+                   no HTML. Covers the trip arc, who it suits, what makes it
+                   special, and the seasonal experience.
+
+highlights       | Array | Scannable selling points. 6-8 items.
+                   { "id": "hl-1", "description": "<8-16 words, sentence case,
+                   no trailing period, opens with a concrete noun or verb>" }
+                   e.g. "Gulmarg Gondola Phase 1 ride with panoramic Affarwat views"
+
+itinerary_days   | Array | Exactly `days` items, in order.
+                   {
+                     "id": "day-1",
+                     "day": <Number 1..days, sequential>,
+                     "title": "<30-60 chars, e.g. 'Arrival in Srinagar & Shikara
+                                Ride on Dal Lake'>",
+                     "description": "<60-110 words, plain text, describes the day's
+                                flow, drive times, meals and overnight stay; ends by
+                                naming where the night is spent, except the final
+                                day which ends with the departure>",
+                     "stops": [<3-6 real place names, Title Case, 1-4 words each>]
+                   }
+
+inclusions       | Array | What the price covers. 7-12 items.
+                   { "id": "inc-1", "description": "<6-18 words, specific about
+                   nights, meal plan, vehicle type, permits>" }
+                   e.g. "05 nights accommodation on double-sharing in 3-star hotels"
+
+exclusions       | Array | What is not covered. 5-9 items.
+                   { "id": "exc-1", "description": "<5-15 words>" }
+                   e.g. "Gondola tickets, pony rides and local union taxi charges"
+
+faqs             | Array | 6-10 genuine traveller questions.
+                   { "id": "faq-1",
+                     "question": "<8-16 words, ends with '?'>",
+                     "answer": "<40-80 words; answer directly in the first sentence,
+                                then add detail. Plain text, no HTML.>" }
+                   Cover at minimum: best time to visit, snow availability,
+                   houseboat stay, Gondola booking, safety, ATMs and connectivity,
+                   customisation, and what to pack.
+
+metaTitle        | String | SEO title tag. 50-60 characters including the brand
+                   suffix, keyword front-loaded.
+                   e.g. "6 Days Kashmir Honeymoon Package | Experience My India"
+
+metaDescription  | String | 140-158 characters. Primary keyword, a clear benefit and
+                   a soft CTA. No quote characters inside.
+
+schemaTitle      | String | Name for JSON-LD (Product / TouristTrip). 40-70
+                   characters, literal and plain, no brand suffix, no pipes.
+
+schemaDescription| String | 150-250 characters for JSON-LD. Factual: duration,
+                   destinations covered, headline inclusions. No marketing fluff,
+                   no quote characters inside.
+
+refund           | String | 40-70 words. Processing window in business days and
+                   deduction slabs.
+
+cancel           | String | 50-90 words. Clear day-based slabs (30+ days,
+                   15-29 days, 7-14 days, under 7 days) with percentage charges.
+
+confirmation     | String | 40-70 words. What confirms a booking, advance
+                   percentage, voucher timeline, subject-to-availability note.
+
+payment          | String | 40-70 words. Advance percentage, balance due days before
+                   travel, accepted modes (UPI, NEFT, cards), GST note.
+
+heroImage        | Object | {
+                     "alt": "<8-16 words describing the hero scene and place>",
+                     "image": "https://placehold.co/1200x800/png"
+                   }
+
+childImages      | Array | Gallery, 4-8 items.
+                   { "id": "img-1",
+                     "image": "https://placehold.co/1200x800/png",
+                     "alt": "<8-16 words, unique per image, names the place>" }
+
+testimonials     | Array | 3-5 past-traveller reviews.
+                   {
+                     "id": "tst-1",
+                     "name": "<Real-sounding Indian full name, 2 words>",
+                     "description": "<35-70 words, first person, references a
+                        specific place or moment from THIS itinerary plus the driver
+                        or hotel. Natural and slightly imperfect, not ad copy.>",
+                     "rating": "<STRING: \"5\" or \"4.5\">",
+                     "location": "<City, State — e.g. \"Pune, Maharashtra\">",
+                     "avatar": "https://placehold.co/1200x800/png",
+                     "avatarAlt": "<6-12 words, e.g. 'Portrait of traveller Rhea
+                        Kapoor'>",
+                     "photo": "https://placehold.co/1200x800/png",
+                     "photoAlt": "<8-16 words describing their trip photo>"
+                   }
+                   Names, cities and ratings must vary within the array.
+
+knowBeforeYouGo  | Array | Practical pre-travel notes. 5-8 items.
+                   { "id": "kbg-1", "description": "<12-28 words, one concrete
+                   actionable fact: altitude, layered clothing, carrying cash at
+                   Gulmarg, mobile network limits for some circles, union taxi
+                   rules, possible road closures, ID proof requirement>" }
+
+routes           | Object | {
+                     "source": "<city where the trip starts, usually 'Srinagar'>",
+                     "destination": "<city where it ends>",
+                     "segments": [ 3-6 items in travel order,
+                        { "id": "seg-1", "from": "<City>", "to": "<City>" } ]
+                   }
+                   Segments must chain: seg-1.to == seg-2.from, and so on. The first
+                   segment's `from` equals routes.source; the last segment's `to`
+                   equals routes.destination.
+
+mapEmbedUrl      | String | Google Maps embed URL pointing at the primary
+                   destination, in the simple always-valid form:
+                   "https://www.google.com/maps?q=Srinagar,+Jammu+and+Kashmir&output=embed"
+
+isTransferIncluded    | Boolean | true if airport pickup/drop and inter-city
+                        transfers appear in `inclusions`.
+isStayIncluded        | Boolean | true if hotel or houseboat nights appear in
+                        `inclusions`.
+isBreakfastIncluded   | Boolean | true if breakfast (CP/MAP) appears in `inclusions`.
+isSightseeingIncluded | Boolean | true if sightseeing or day excursions appear in
+                        `inclusions`.
+
+--------------------------------------------------------------------------------
+SELF-CHECK BEFORE OUTPUT
+--------------------------------------------------------------------------------
+Verify silently and fix anything that fails:
+
+[ ] All 38 top-level fields present, correctly typed, none extra, no _id/__v/
+    createdAt/updatedAt.
+[ ] The JSON parses. No trailing commas, no comments, no code fences.
+[ ] nights == days - 1; `duration` string matches; `itinerary_days` length == days
+    with `day` running 1..days.
+[ ] sum(durationbreakdown[].days) == nights.
+[ ] routes.segments chain correctly and match source and destination.
+[ ] slug == kebab-case(title).
+[ ] testimonials[].rating is a STRING; top-level rating is a NUMBER with one decimal.
+[ ] Every image field is exactly "https://placehold.co/1200x800/png".
+[ ] Every alt field is real, descriptive and unique.
+[ ] All array-item ids are unique within their array.
+[ ] Every boolean flag is backed by a matching inclusion line.
+[ ] All length, word and count budgets respected.
+[ ] Nothing generic — every line is specific to this package.
+
+Then output the JSON object and nothing else.

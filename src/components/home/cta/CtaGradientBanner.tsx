@@ -9,8 +9,24 @@ import { whatsappLink } from "./whatsapp";
 /**
  * CTA style 1 — a bold full-width gradient banner.
  * Primary action opens the enquiry form; secondary opens WhatsApp.
+ *
+ * Copy is overridable so pages that close on a specific subject (a
+ * destination, a cab route) can name it instead of repeating the generic
+ * home-page pitch. Defaults are the home-page wording, so `<CtaGradientBanner />`
+ * keeps working unchanged.
  */
-export default function CtaGradientBanner() {
+export default function CtaGradientBanner({
+  eyebrow = "Plan with a local expert",
+  heading = "Ready to plan your dream Kashmir trip?",
+  blurb = "Tell us your dates and we'll craft a transparent, paced itinerary — packages, cabs, stays and sightseeing, all in one place.",
+  whatsappMessage,
+}: {
+  eyebrow?: string;
+  heading?: string;
+  blurb?: string;
+  /** Prefilled WhatsApp text. Falls back to the shared default message. */
+  whatsappMessage?: string;
+} = {}) {
   const [isOpen, setOpen] = useState(false);
 
   return (
@@ -31,14 +47,13 @@ export default function CtaGradientBanner() {
         <div className="relative flex flex-col items-center gap-8 text-center lg:flex-row lg:justify-between lg:text-left">
           <div className="max-w-2xl">
             <p className="mb-3 text-xs font-semibold uppercase tracking-[0.3em] text-white/80">
-              Plan with a local expert
+              {eyebrow}
             </p>
             <h2 className="font-heading text-3xl font-bold leading-tight text-white sm:text-4xl">
-              Ready to plan your dream Kashmir trip?
+              {heading}
             </h2>
             <p className="mt-4 text-sm leading-relaxed text-white/90 sm:text-base">
-              Tell us your dates and we&apos;ll craft a transparent, paced
-              itinerary — packages, cabs, stays and sightseeing, all in one place.
+              {blurb}
             </p>
           </div>
 
@@ -51,7 +66,7 @@ export default function CtaGradientBanner() {
               <ArrowRight className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-1" />
             </button>
             <a
-              href={whatsappLink()}
+              href={whatsappLink(whatsappMessage)}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-2 whitespace-nowrap rounded-full border-2 border-white/70 bg-white/10 px-6 py-2.5 text-sm font-semibold text-white backdrop-blur-md transition-colors hover:bg-white/20"
