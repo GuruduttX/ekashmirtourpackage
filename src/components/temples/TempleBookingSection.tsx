@@ -14,6 +14,8 @@ import {
   Calendar,
   Users,
   Send,
+  CheckCircle2,
+  AlertCircle,
 } from "lucide-react";
 
 const MAIN_IMAGE = "https://picsum.photos/seed/kashmir-yatra-temple/1000/560";
@@ -45,10 +47,82 @@ export default function TempleBookingSection() {
   const [date, setDate] = useState("");
   const [travellers, setTravellers] = useState("1");
 
-  const handleSubmit = (e: FormEvent) => {
+  const [errors, setErrors] = useState({ name: "", phone: "" });
+  const [isLoading, setIsLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const validateForm = () => {
+    const newErrors = { name: "", phone: "" };
+
+    if (!name.trim()) {
+      newErrors.name = "Name is required.";
+    }
+
+    if (!phone.trim()) {
+      newErrors.phone = "Phone number is required.";
+    } else if (!/^\+?[\d\s-]{10,}$/.test(phone.trim())) {
+      newErrors.phone = "Please enter a valid phone number.";
+    }
+
+    setErrors(newErrors);
+    return !newErrors.name && !newErrors.phone;
+  };
+
+  // Sembark's /trip-plan-requests only accepts name, phone, email and a single
+  // comments string, so the yatra-specific fields ride along in `serviceType`
+  // the way the other enquiry forms flatten theirs.
+  const buildComments = () =>
+    [
+      "Inquiry Source:- Temple Yatra Booking Form",
+      `Destination Temple:- ${destination.trim() || "Not provided"}`,
+      `Preferred Date:- ${date || "Not provided"}`,
+      `Travellers:- ${travellers}`,
+    ].join(" | ");
+
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    // UI only for now — wire up submission later.
-    console.log("Yatra enquiry:", { name, phone, destination, date, travellers });
+    setSuccessMessage("");
+    setErrorMessage("");
+
+    if (!validateForm()) return;
+
+    setIsLoading(true);
+
+    try {
+      const response = await fetch("/api/simbark", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: name.trim(),
+          phone: phone.trim(),
+          serviceType: buildComments(),
+        }),
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok || data?.success === false) {
+        throw new Error(
+          data.message || "Failed to submit enquiry. Please try again.",
+        );
+      }
+
+      setSuccessMessage("Your enquiry has been submitted successfully.");
+      setName("");
+      setPhone("");
+      setDestination("");
+      setDate("");
+      setTravellers("1");
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : "Something went wrong. Please try again later.",
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -121,30 +195,50 @@ export default function TempleBookingSection() {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-5 px-6 py-7 sm:px-8">
+              {successMessage && (
+                <div className="flex items-center gap-2 rounded-xl border border-green-200 bg-green-50 p-4 text-sm text-green-700">
+                  <CheckCircle2 className="h-5 w-5 shrink-0 text-green-500" />
+                  <p>{successMessage}</p>
+                </div>
+              )}
+
+              {errorMessage && (
+                <div className="flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+                  <AlertCircle className="h-5 w-5 shrink-0 text-red-500" />
+                  <p>{errorMessage}</p>
+                </div>
+              )}
+
               <div className="grid gap-5 sm:grid-cols-2">
                 <div>
                   <label htmlFor="yatra-name" className={labelEl}>
                     Full Name
                   </label>
-                  <div className={inputWrap}>
+                  <div className={`${inputWrap} ${errors.name ? "border-red-400" : ""}`}>
                     <User className="h-4 w-4 shrink-0 text-sky-500" />
                     <input
                       id="yatra-name"
                       type="text"
                       required
                       value={name}
-                      onChange={(e) => setName(e.target.value)}
+                      onChange={(e) => {
+                        setName(e.target.value);
+                        if (errors.name) setErrors((p) => ({ ...p, name: "" }));
+                      }}
                       placeholder="Enter your full name"
                       className={inputEl}
                     />
                   </div>
+                  {errors.name && (
+                    <p className="mt-1.5 text-xs font-medium text-red-500">{errors.name}</p>
+                  )}
                 </div>
 
                 <div>
                   <label htmlFor="yatra-phone" className={labelEl}>
                     Phone no
                   </label>
-                  <div className={inputWrap}>
+                  <div className={`${inputWrap} ${errors.phone ? "border-red-400" : ""}`}>
                     <Phone className="h-4 w-4 shrink-0 text-sky-500" />
                     <input
                       id="yatra-phone"
@@ -152,11 +246,17 @@ export default function TempleBookingSection() {
                       required
                       inputMode="tel"
                       value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
+                      onChange={(e) => {
+                        setPhone(e.target.value);
+                        if (errors.phone) setErrors((p) => ({ ...p, phone: "" }));
+                      }}
                       placeholder="Enter your phone no"
                       className={inputEl}
                     />
                   </div>
+                  {errors.phone && (
+                    <p className="mt-1.5 text-xs font-medium text-red-500">{errors.phone}</p>
+                  )}
                 </div>
               </div>
 
@@ -220,10 +320,11 @@ export default function TempleBookingSection() {
 
               <button
                 type="submit"
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-linear-to-r from-sky-500 to-cyan-400 px-6 py-3.5 font-semibold text-white shadow-lg shadow-sky-200 transition-transform hover:-translate-y-0.5"
+                disabled={isLoading}
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-linear-to-r from-sky-500 to-cyan-400 px-6 py-3.5 font-semibold text-white shadow-lg shadow-sky-200 transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-75 disabled:hover:translate-y-0"
               >
-                <Send className="h-4 w-4" />
-                Send Enquiry
+                {!isLoading && <Send className="h-4 w-4" />}
+                {isLoading ? "Sending..." : "Send Enquiry"}
               </button>
             </form>
           </motion.div>
