@@ -4,18 +4,41 @@ import ReviewHero from '@/components/review/ReviewHero';
 import Footer from '@/components/layout/Footer';
 import ReviewArchive from '@/components/review/ReviewArchive';
 import BenefitsSection from '@/components/review/BenefitsSection';
-import FAQSection from '@/components/review/FAQSection';
+import FaqAccordion from '@/components/ui/FaqAccordion';
+import { REVIEW_FAQS } from '@/data/reviewFaqs';
 import CTASection from '@/components/review/CTASection';
 import ReviewList from '@/components/review/ReviewList';
+
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.ekashmirtourpackage.com';
 
 export const metadata: Metadata = {
   title: 'Review Archive | eKashmir',
   description: 'Browse our complete history of verified traveler reviews.',
+  alternates: { canonical: `${SITE_URL}/review` },
 };
 
 export default async function ReviewPage() {
+  // FAQPage built from the same array the accordion renders, so the markup and
+  // the visible answers can never drift. Emitted here and nowhere else on this
+  // URL — one FAQPage per page.
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: REVIEW_FAQS.map((faq) => ({
+      '@type': 'Question',
+      name: faq.question,
+      acceptedAnswer: { '@type': 'Answer', text: faq.answer },
+    })),
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+
       <Navbar />
       
       <main className="min-h-screen bg-white text-slate-900 overflow-hidden pb-24">
@@ -40,7 +63,11 @@ export default async function ReviewPage() {
           <ReviewArchive />
           <BenefitsSection />
           <CTASection />
-          <FAQSection />
+          <FaqAccordion
+            faqs={REVIEW_FAQS}
+            eyebrow="About these reviews"
+            headingLead="Frequently asked"
+          />
           {/*<ReviewList />*/}
           
         </div>

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Users, CalendarCheck, Star, MapPin, Phone, MessageCircleMore } from "lucide-react";
 import CountUp from "@/utils/CountUp";
 import EnquiryPopupForm from "@/utils/EnquiryPopupForm";
+import { WHATSAPP_TEL } from "@/lib/whatsapp";
 
 const stats = [
   {
@@ -103,7 +104,7 @@ export default function KashmirTrustStats() {
               Enquire Now
             </button>
             <a
-              href="tel:+916272828"
+              href={`tel:${WHATSAPP_TEL}`}
               className="flex w-full sm:w-auto items-center justify-center gap-2 rounded-full border border-sky-200 bg-white px-6 py-3 text-sm font-semibold text-sky-600 transition-all hover:-translate-y-0.5 hover:border-sky-300 hover:bg-sky-50"
             >
               <Phone className="h-4 w-4" />

@@ -1,13 +1,17 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
+import EnquiryPopupForm from "@/utils/EnquiryPopupForm";
 
 export default function Hero() {
   const [isMounted, setIsMounted] = useState(false);
+  const [isEnquiryOpen, setEnquiryOpen] = useState(false);
   useEffect(() => setIsMounted(true), []);
 
   return (
+    <>
     <div className="relative w-full h-[80vh] md:h-[97vh] overflow-hidden bg-slate-900 mt-10">
       {/* 1. SKY */}
       <img
@@ -19,7 +23,7 @@ export default function Hero() {
 
       {/* 2. MOUNTAIN */}
       <motion.img
-        src="/Home/Hero/white-mountain.png"
+        src="/Home/Hero/white-mountain.webp"
         alt="Mountain"
         // PLACEMENT & SIZE:
         className="absolute bottom-[-10%] md:bottom-[-15%] right-[-35%] md:right-[-5%] w-full scale-125 md:scale-100 md:w-[63%] h-auto object-contain origin-bottom" // Changed to origin-bottom
@@ -122,11 +126,18 @@ export default function Hero() {
           {/* 3. CALL TO ACTION BUTTONS */}
           {/* Added flex-wrap just in case the buttons need to stack on very small mobile screens */}
           <div className="flex flex-wrap items-center gap-4 mt-10">
-            <button className="flex items-center justify-center gap-2 px-8 py-4 bg-linear-to-r from-blue-500 to-cyan-400 hover:from-cyan-500 hover:to-blue-600 text-white font-semibold rounded-full shadow-lg transition-colors w-full md:w-fit">
+            <Link
+              href="/kashmir-tour-packages/"
+              className="flex items-center justify-center gap-2 px-8 py-4 bg-linear-to-r from-blue-500 to-cyan-400 hover:from-cyan-500 hover:to-blue-600 text-white font-semibold rounded-full shadow-lg transition-colors w-full md:w-fit"
+            >
               Explore Packages
               <span aria-hidden="true">→</span>
-            </button>
-            <button className="flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md border-2 border-cyan-300 shadow-[0_0_12px_rgba(34,211,238,0.5)] text-white font-semibold transition-colors w-full md:w-fit text-center">
+            </Link>
+            <button
+              type="button"
+              onClick={() => setEnquiryOpen(true)}
+              className="flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md border-2 border-cyan-300 shadow-[0_0_12px_rgba(34,211,238,0.5)] text-white font-semibold transition-colors w-full md:w-fit text-center"
+            >
               Book Now
               <span aria-hidden="true">→</span>
             </button>
@@ -142,5 +153,12 @@ export default function Hero() {
         className="absolute bottom-[-10] md:bottom-0 left-0 w-full h-[15vh] object-cover pointer-events-none z-30"
       />
     </div>
+
+    {/* Rendered outside the overflow-hidden hero so the fixed overlay is never clipped. */}
+    <EnquiryPopupForm
+      isOpen={isEnquiryOpen}
+      onClose={() => setEnquiryOpen(false)}
+    />
+    </>
   );
 }

@@ -7,50 +7,21 @@ import { ChevronRight, ArrowRight } from "lucide-react";
 
 type ShakeControls = ReturnType<typeof useAnimationControls>;
 
-interface Activity {
-  id: number;
+/**
+ * One carousel entry. Built on the server from the same source /experiences and
+ * /experiences/[slug] use, so a card can never link at an activity that has no
+ * page — see buildHomeActivities() in src/lib/homeActivities.ts.
+ */
+export interface Activity {
+  slug: string;
   title: string;
   description: string;
   image: string;
+  imageAlt: string;
 }
 
-const ACTIVITIES: Activity[] = [
-  {
-    id: 1,
-    title: "Dal Lake",
-    description: "Asia's highest cable car with sweeping",
-    image:
-      "https://images.unsplash.com/photo-1677123419103-785c917c4a58?w=900&auto=format&fit=crop&q=80",
-  },
-  {
-    id: 2,
-    title: "Shikara Ride",
-    description: "Asia's highest cable car with sweeping",
-    image:
-      "https://images.unsplash.com/photo-1598091383021-15ddea10925d?w=900&auto=format&fit=crop&q=80",
-  },
-  {
-    id: 3,
-    title: "Boat House",
-    description: "Asia's highest cable car with sweeping",
-    image:
-      "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=900&auto=format&fit=crop&q=80",
-  },
-  {
-    id: 4,
-    title: "Gulmarg",
-    description: "Asia's highest cable car with sweeping",
-    image:
-      "https://images.unsplash.com/photo-1593693411515-c20261bcad6e?w=900&auto=format&fit=crop&q=80",
-  },
-  {
-    id: 5,
-    title: "Sonamarg",
-    description: "Asia's highest cable car with sweeping",
-    image:
-      "https://images.unsplash.com/photo-1609947017136-9daf32a5eb16?w=900&auto=format&fit=crop&q=80",
-  },
-];
+/** Animated <Link>, so the card CTA keeps client-side navigation. */
+const MotionLink = motion.create(Link);
 
 const BASE_TILT = 8; // matches the slight clockwise tilt in the design
 
@@ -63,7 +34,7 @@ function ActivityCard({ activity, controls }: { activity: Activity; controls: Sh
     >
       <AnimatePresence mode="popLayout">
         <motion.div
-          key={activity.id}
+          key={activity.slug}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -72,7 +43,7 @@ function ActivityCard({ activity, controls }: { activity: Activity; controls: Sh
         >
           <img
             src={activity.image}
-            alt={activity.title}
+            alt={activity.imageAlt}
             className="absolute inset-0 h-full w-full object-cover"
           />
           <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/10 to-transparent" />
@@ -82,13 +53,16 @@ function ActivityCard({ activity, controls }: { activity: Activity; controls: Sh
             <h3 className="font-heading text-lg font-bold leading-none text-white">
               {activity.title}
             </h3>
-            <p className="mt-2 text-sm text-white/80">{activity.description}</p>
+            <p className="mt-2 line-clamp-2 text-sm text-white/80">
+              {activity.description}
+            </p>
 
-            <motion.button
+            <MotionLink
+              href={`/experiences/${activity.slug}/`}
               initial="rest"
               whileHover="hover"
               animate="rest"
-              className="mt-3 flex items-center gap-1.5 rounded-full bg-linear-to-r from-sky-500 to-cyan-400 px-4 py-2 text-xs font-semibold text-white shadow-md"
+              className="mt-3 flex w-fit items-center gap-1.5 rounded-full bg-linear-to-r from-sky-500 to-cyan-400 px-4 py-2 text-xs font-semibold text-white shadow-md"
             >
               <motion.span
                 variants={{ rest: { x: 0 }, hover: { x: -2 } }}
@@ -103,7 +77,7 @@ function ActivityCard({ activity, controls }: { activity: Activity; controls: Sh
               >
                 <ArrowRight className="h-3.5 w-3.5" />
               </motion.span>
-            </motion.button>
+            </MotionLink>
           </div>
         </motion.div>
       </AnimatePresence>
@@ -113,7 +87,11 @@ function ActivityCard({ activity, controls }: { activity: Activity; controls: Sh
 
 const SHAKE_DURATION = 1.2; // seconds
 
-export default function ActivityCarousel() {
+export default function ActivityCarousel({
+  activities,
+}: {
+  activities: Activity[];
+}) {
   const [active, setActive] = useState(0); // drives the list highlight (instant)
   const [cardIndex, setCardIndex] = useState(0); // drives the card (synced to shake)
   const controls = useAnimationControls();
@@ -149,10 +127,10 @@ export default function ActivityCarousel() {
           {/* LEFT — Activity list */}
           <div className="w-full lg:flex-1">
             <ul className="divide-y divide-sky-100">
-              {ACTIVITIES.map((activity, i) => {
+              {activities.map((activity, i) => {
                 const isActive = i === active;
                 return (
-                  <li key={activity.id}>
+                  <li key={activity.slug}>
                     <button
                       onMouseEnter={() => select(i)}
                       onClick={() => select(i)}
@@ -181,16 +159,16 @@ export default function ActivityCarousel() {
 
           {/* RIGHT — Rotating card */}
           <div className="flex w-full justify-center lg:flex-1">
-            <ActivityCard activity={ACTIVITIES[cardIndex]} controls={controls} />
+            <ActivityCard activity={activities[cardIndex]} controls={controls} />
           </div>
         </div>
 
         <div className="mt-10 flex justify-center lg:mt-12">
           <Link
-            href="/kashmir-tour-packages/"
+            href="/experiences/"
             className="inline-flex items-center gap-2 rounded-full bg-linear-to-r from-sky-500 to-cyan-400 px-8 py-4 font-semibold text-white shadow-lg shadow-sky-200 transition-transform hover:-translate-y-0.5"
           >
-            Explore Packages
+            Activities
             <span aria-hidden="true">→</span>
           </Link>
         </div>

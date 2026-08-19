@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import { X, ChevronRight, ChevronLeft, Send, Check } from "lucide-react";
 
@@ -27,6 +27,9 @@ export default function EnquiryPopupForm({
 
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // Tracks the partial lead already pushed to the CRM at step 1 so we don't
+  // create duplicates when the user moves back and forth between steps.
+  const leadSentRef = useRef(false);
   const [status, setStatus] = useState<{
     type: "success" | "error" | null;
     message: string;
@@ -39,6 +42,8 @@ export default function EnquiryPopupForm({
         setStep(1);
         setStatus({ type: null, message: "" });
         setTouched({});
+        setIsSubmitting(false);
+        leadSentRef.current = false;
         setFormData({
           name: "",
           email: "",
@@ -56,14 +61,17 @@ export default function EnquiryPopupForm({
     };
   }, [isOpen]);
 
+  // Always points at the latest handleClose so the ESC listener stays stable.
+  const closeRef = useRef<() => void>(onClose);
+
   // Handle ESC key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isOpen && !isSubmitting) onClose();
+      if (e.key === "Escape" && isOpen && !isSubmitting) closeRef.current();
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, onClose, isSubmitting]);
+  }, [isOpen, isSubmitting]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -91,15 +99,15 @@ export default function EnquiryPopupForm({
   const isValidPhone = (phone: string) =>
     /^\+?[\d\s-]{10,}$/.test(phone.trim());
 
+  // Only name + phone are mandatory — those are what the CRM needs. Email and
+  // message are optional so a lead can be captured from step 1 alone.
+  const isStepOneValid = () =>
+    formData.name.trim() !== "" &&
+    isValidPhone(formData.phone) &&
+    (formData.email.trim() === "" || isValidEmail(formData.email));
+
   const canGoNext = () => {
-    if (step === 1) {
-      return (
-        formData.name.trim() !== "" &&
-        isValidEmail(formData.email) &&
-        isValidPhone(formData.phone) &&
-        formData.message.trim() !== ""
-      );
-    }
+    if (step === 1) return isStepOneValid();
     if (step === 2) return !!formData.service;
     if (step === 3) return !!formData.bookingTimeline;
     return true;
@@ -108,11 +116,76 @@ export default function EnquiryPopupForm({
   const isFieldError = (field: string) => {
     if (!touched[field]) return false;
     if (field === "name") return formData.name.trim() === "";
-    if (field === "email") return !isValidEmail(formData.email);
     if (field === "phone") return !isValidPhone(formData.phone);
-    if (field === "message") return formData.message.trim() === "";
+    if (field === "email")
+      return formData.email.trim() !== "" && !isValidEmail(formData.email);
     return false;
   };
+
+  // Builds the single comments string the CRM stores against the lead.
+  const buildComments = (stage: "Partial (Step 1)" | "Complete") => {
+    const parts = [
+      "Inquiry Source:- Enquiry Popup Form",
+      `Stage:- ${stage}`,
+      `Email Address:- ${formData.email.trim() || "Not provided"}`,
+      `Selected Service:- ${formData.service || "Not provided"}`,
+      `Booking Timeline:- ${formData.bookingTimeline || "Not provided"}`,
+      `User Message:- ${formData.message.trim() || "Not provided"}`,
+    ];
+    return parts.join(" | ");
+  };
+
+  const sendToCRM = async (stage: "Partial (Step 1)" | "Complete") => {
+    const payload = {
+      name: formData.name.trim(),
+      phone: formData.phone.trim(),
+      email: formData.email.trim(),
+      serviceType: buildComments(stage),
+    };
+
+    const response = await fetch("/api/simbark", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok || data?.success === false) {
+      throw new Error(
+        data.message || "Failed to submit enquiry. Please try again.",
+      );
+    }
+
+    return data;
+  };
+
+  // Step 1 → Step 2: capture the lead immediately so it reaches the CRM even if
+  // the user abandons the remaining steps. Failure here doesn't block the user;
+  // the final submit will push the details again.
+  const handleNext = () => {
+    if (!canGoNext()) return;
+
+    if (step === 1 && !leadSentRef.current) {
+      leadSentRef.current = true;
+      sendToCRM("Partial (Step 1)").catch(() => {
+        leadSentRef.current = false; // allow the final submit to retry
+      });
+    }
+
+    setStep(step + 1);
+  };
+
+  // Closing the popup with valid step-1 details still hands the lead to the CRM.
+  const handleClose = () => {
+    if (!isSubmitting && !leadSentRef.current && isStepOneValid()) {
+      leadSentRef.current = true;
+      sendToCRM("Partial (Step 1)").catch(() => {});
+    }
+    onClose();
+  };
+
+  closeRef.current = handleClose;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -122,31 +195,7 @@ export default function EnquiryPopupForm({
     setStatus({ type: null, message: "" });
 
     try {
-      const payload = {
-        name: formData.name.trim(),
-        phone: formData.phone.trim(),
-        serviceType: `Inquiry Source:- Enquiry Popup Form Selected Service:- ${
-          formData.service
-        } Booking Timeline:- ${
-          formData.bookingTimeline
-        } User Message:- ${formData.message.trim()} Email Address:- ${formData.email.trim()}`,
-      };
-
-      const response = await fetch("/api/simbark", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await response.json().catch(() => ({}));
-
-      if (!response.ok) {
-        throw new Error(
-          data.message || "Failed to submit enquiry. Please try again.",
-        );
-      }
+      await sendToCRM("Complete");
 
       setStatus({
         type: "success",
@@ -204,7 +253,7 @@ export default function EnquiryPopupForm({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5, ease: "easeInOut" }}
-            onClick={!isSubmitting ? onClose : undefined}
+            onClick={!isSubmitting ? handleClose : undefined}
             className="absolute inset-0 bg-black/50 backdrop-blur-md"
             aria-hidden="true"
           />
@@ -224,7 +273,7 @@ export default function EnquiryPopupForm({
             {/* Header */}
             <div className="relative px-6 pb-2 pt-8 sm:px-8 sm:pt-10">
               <button
-                onClick={onClose}
+                onClick={handleClose}
                 disabled={isSubmitting}
                 className="group absolute right-6 top-6 flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white/50 text-slate-400 backdrop-blur-md transition-all hover:scale-105 hover:border-slate-300 hover:text-slate-700 disabled:opacity-50 disabled:hover:scale-100"
                 aria-label="Close"
@@ -327,7 +376,8 @@ export default function EnquiryPopupForm({
                               htmlFor="email"
                               className="ml-1 text-[11px] font-bold uppercase tracking-widest text-slate-500"
                             >
-                              Email Address
+                              Email Address{" "}
+                              <span className="text-slate-400">(Optional)</span>
                             </label>
                             <input
                               type="email"
@@ -336,17 +386,16 @@ export default function EnquiryPopupForm({
                               value={formData.email}
                               onChange={handleChange}
                               onBlur={handleBlur}
-                              placeholder="you@example.com"
+                              placeholder="you@example.com (optional)"
                               className={`w-full rounded-[1rem] border-2 bg-white px-4 py-3.5 text-[15px] text-slate-800 shadow-sm outline-none transition-all duration-300 placeholder:text-slate-400/70 ${
                                 isFieldError("email")
                                   ? "border-red-300 bg-red-50/30 focus:border-red-500 focus:ring-[4px] focus:ring-red-500/20"
                                   : "border-slate-200 hover:border-slate-300 focus:border-sky-500 focus:ring-[4px] focus:ring-sky-500/20"
                               }`}
-                              required
                             />
                             {isFieldError("email") && (
                               <p className="ml-1 mt-1 text-[11px] font-medium text-red-500">
-                                Valid email required.
+                                Enter a valid email or leave it blank.
                               </p>
                             )}
                           </div>
@@ -388,7 +437,8 @@ export default function EnquiryPopupForm({
                             htmlFor="message"
                             className="ml-1 text-[11px] font-bold uppercase tracking-widest text-slate-500"
                           >
-                            Your Message
+                            Your Message{" "}
+                            <span className="text-slate-400">(Optional)</span>
                           </label>
                           <textarea
                             id="message"
@@ -398,18 +448,8 @@ export default function EnquiryPopupForm({
                             onBlur={handleBlur}
                             placeholder="Tell us about your Kashmir travel plans..."
                             rows={3}
-                            className={`w-full resize-none rounded-[1rem] border-2 bg-white px-4 py-3.5 text-[15px] text-slate-800 shadow-sm outline-none transition-all duration-300 placeholder:text-slate-400/70 ${
-                              isFieldError("message")
-                                ? "border-red-300 bg-red-50/30 focus:border-red-500 focus:ring-[4px] focus:ring-red-500/20"
-                                : "border-slate-200 hover:border-slate-300 focus:border-sky-500 focus:ring-[4px] focus:ring-sky-500/20"
-                            }`}
-                            required
+                            className="w-full resize-none rounded-[1rem] border-2 border-slate-200 bg-white px-4 py-3.5 text-[15px] text-slate-800 shadow-sm outline-none transition-all duration-300 placeholder:text-slate-400/70 hover:border-slate-300 focus:border-sky-500 focus:ring-[4px] focus:ring-sky-500/20"
                           />
-                          {isFieldError("message") && (
-                            <p className="ml-1 mt-1 text-[11px] font-medium text-red-500">
-                              Message is required.
-                            </p>
-                          )}
                         </div>
                       </div>
                     </motion.div>
@@ -517,7 +557,7 @@ export default function EnquiryPopupForm({
                 {step < TOTAL_STEPS ? (
                   <button
                     type="button"
-                    onClick={() => setStep(step + 1)}
+                    onClick={handleNext}
                     disabled={!canGoNext()}
                     className="group flex items-center rounded-full bg-slate-900 px-6 py-2.5 text-sm font-medium text-white transition-all hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
                   >

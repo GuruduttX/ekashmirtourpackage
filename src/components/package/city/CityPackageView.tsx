@@ -135,14 +135,9 @@ export default async function CityPackageView({ cityHub }: { cityHub: CityHubDat
       url: SITE_URL,
     },
   };
-  if ((cityHub.rating ?? 0) > 0 && (cityHub.reviewsCount ?? 0) > 0) {
-    tripSchema.aggregateRating = {
-      "@type": "AggregateRating",
-      ratingValue: cityHub.rating,
-      reviewCount: cityHub.reviewsCount,
-      bestRating: 5,
-    };
-  }
+  // NO aggregateRating — see the note in ThemePackageView. The CMS rating /
+  // reviewsCount fields are not backed by real on-page reviews, and the SOP
+  // forbids rating markup without them.
 
   const faqSchema =
     faqItems.length > 0

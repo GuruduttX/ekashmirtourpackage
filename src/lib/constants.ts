@@ -1,12 +1,68 @@
-export const NAV_LINKS = [
-  { label: "Home",        href: "/",                       dropdown: null },
-  { label: "Packages",    href: "/kashmir-tour-packages/", dropdown: "packages" },
-  { label: "Temples",     href: "/temples",                dropdown: null },
-  { label: "Cab Service", href: "/cab-service",            dropdown: null },
-  { label: "About",       href: "/about",                  dropdown: null },
-  { label: "Why Kashmir", href: "/whyKashmir",             dropdown: null },
-  { label: "Contact",     href: "/contact",                dropdown: null },
-] as const;
+/**
+ * The primary navigation.
+ *
+ * Ten items: four mega-dropdowns fed live from their own collection, then the
+ * five standalone pages, then whatever is left under "More".
+ *
+ * THE BAR IS FULL. Ten labels plus the logo and the CTA need roughly 1,150px,
+ * which is why the desktop nav only appears from the `xl` breakpoint and
+ * everything below 1280px gets the drawer instead. An eleventh item does not
+ * fit — it would have to displace one of these or go into "More".
+ *
+ * `href: null` means the item is a dropdown trigger only and navigates
+ * nowhere — "More" is a menu, not a page. The navbar renders those as a
+ * <button> rather than a <Link>, so it never ships an anchor to nothing.
+ *
+ * The blog is deliberately absent. It is reachable from article and guide
+ * links in the page body, and putting it here would spend a slot on the
+ * section least likely to start a booking.
+ */
+export interface NavLink {
+  label: string;
+  /** null for a dropdown-only trigger. */
+  href: string | null;
+  /** Key of the panel this opens, or null for a plain link. */
+  dropdown: string | null;
+}
+
+export const NAV_LINKS: NavLink[] = [
+  { label: "Home",         href: "/",                       dropdown: null },
+  { label: "Packages",     href: "/kashmir-tour-packages/", dropdown: "packages" },
+  { label: "Destinations", href: "/destinations",           dropdown: "destinations" },
+  { label: "Experiences",  href: "/experiences",            dropdown: "experiences" },
+  { label: "Temples",      href: "/temples",                dropdown: "temples" },
+  { label: "Stays",        href: "/stays",                  dropdown: null },
+  { label: "Cabs",         href: "/cab-service",            dropdown: null },
+  { label: "About",        href: "/about",                  dropdown: null },
+  { label: "Reviews",      href: "/review",                 dropdown: null },
+  { label: "Contact",      href: "/contact",                dropdown: null },
+  { label: "More",         href: null,                      dropdown: "more" },
+];
+
+/**
+ * What is left under "More" — the two pages that belong in the navigation but
+ * not in the bar itself.
+ *
+ * Stays, Cabs, About, Reviews and Contact were promoted out of here to
+ * top-level links, which is why this list is short. The panel sizes itself
+ * from the count, so it does not open a 620px sheet for two rows.
+ *
+ * Static by design: unlike the other four panels there is no collection behind
+ * this one, so it needs no fetch and renders instantly.
+ */
+export interface NavMoreLink {
+  label: string;
+  href: string;
+  /** One line on what is actually there — the panel is a menu, not a sitemap. */
+  desc: string;
+  icon: string;
+}
+
+export const NAV_MORE_LINKS: NavMoreLink[] = [
+  { label: "Festivals",   href: "/festivals",     desc: "Tulips, Amarnath, saffron — and when each falls", icon: "🌷" },
+  { label: "Why Kashmir", href: "/whyKashmir",    desc: "What makes the valley worth the trip", icon: "❄" },
+  { label: "Meet Sartaj", href: "/author/sartaj", desc: "The guide behind the on-ground tips",  icon: "☕" },
+];
 
 
 import {

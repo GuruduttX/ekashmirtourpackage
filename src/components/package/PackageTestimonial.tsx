@@ -4,13 +4,14 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Star, Quote, MapPin } from "lucide-react";
 
-interface Testimonial {
+export interface Testimonial {
   id?: string | number;
   name?: string;
   location?: string;
   rating?: number | string;
   description?: string;
   avatar?: string;
+  /** Optional. Without it the card renders as a taller text-only variant. */
   photo?: string;
 }
 
@@ -87,7 +88,7 @@ const PHOTO_COLLAPSED_HEIGHT = 96;
 const PHOTO_EXPANDED_HEIGHT = 300;
 const READ_MORE_THRESHOLD = 140;
 
-function TestimonialCard({ t }: { t: Testimonial }) {
+export function TestimonialCard({ t }: { t: Testimonial }) {
   const [hovered, setHovered] = useState(false);
   const [isDesktop, setIsDesktop] = useState(true);
   const [expanded, setExpanded] = useState(false);
@@ -102,7 +103,7 @@ function TestimonialCard({ t }: { t: Testimonial }) {
 
   const rating = Number(t.rating || 0);
   const avatar = t.avatar || `https://i.pravatar.cc/150?u=${encodeURIComponent(t.name || "guest")}`;
-  const photo = t.photo || FALLBACK_PHOTO;
+  const photo = t.photo;
   const description = t.description || "Amazing experience.";
   const isLong = description.length > READ_MORE_THRESHOLD;
 
@@ -135,7 +136,7 @@ function TestimonialCard({ t }: { t: Testimonial }) {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
             className="relative z-10 mt-4 flex min-h-0 flex-1 flex-col"
-            style={{ paddingBottom: PHOTO_COLLAPSED_HEIGHT + 16 }}
+            style={{ paddingBottom: photo ? PHOTO_COLLAPSED_HEIGHT + 16 : 0 }}
           >
             <div
               className={`min-h-0 flex-1 ${
@@ -144,7 +145,9 @@ function TestimonialCard({ t }: { t: Testimonial }) {
             >
               <p className="flex gap-1.5 text-[15px] leading-relaxed text-slate-700">
                 <Quote className="h-4 w-4 shrink-0 -scale-x-100 text-sky-400" />
-                <span className={expanded ? "" : "line-clamp-3"}>{description}</span>
+                <span className={expanded ? "" : photo ? "line-clamp-3" : "line-clamp-8"}>
+                  {description}
+                </span>
               </p>
             </div>
 
@@ -172,6 +175,7 @@ function TestimonialCard({ t }: { t: Testimonial }) {
       {/* Photo — pinned to the bottom with fixed left/right/bottom padding; only
           its height animates, so it grows straight up in place with no zoom/bleed.
           Hover/tap is scoped to the photo itself so it doesn't block Read More. */}
+      {photo && (
       <motion.div
         onMouseEnter={() => isDesktop && setHovered(true)}
         onMouseLeave={() => isDesktop && setHovered(false)}
@@ -203,6 +207,7 @@ function TestimonialCard({ t }: { t: Testimonial }) {
           )}
         </motion.div>
       </motion.div>
+      )}
     </div>
   );
 }
@@ -223,26 +228,12 @@ export default function PackageTestimonials({
 
       <div className="no-scrollbar flex snap-x snap-mandatory gap-6 overflow-x-auto pb-2">
         {testimonials.map((t, index) => (
-          <TestimonialCard key={t.id ?? index} t={t} />
+          <TestimonialCard
+            key={t.id ?? index}
+            t={{ ...t, photo: t.photo || FALLBACK_PHOTO }}
+          />
         ))}
       </div>
-
-      <style jsx global>{`
-        .testimonial-scroll {
-          scrollbar-width: thin;
-          scrollbar-color: #38bdf8 transparent;
-        }
-        .testimonial-scroll::-webkit-scrollbar {
-          width: 5px;
-        }
-        .testimonial-scroll::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        .testimonial-scroll::-webkit-scrollbar-thumb {
-          background: linear-gradient(180deg, #38bdf8, #0ea5e9);
-          border-radius: 10px;
-        }
-      `}</style>
     </section>
   );
 }

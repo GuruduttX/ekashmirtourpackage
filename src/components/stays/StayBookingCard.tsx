@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { MessageCircle, ShieldCheck } from "lucide-react";
 import type { StayDetailPage } from "@/lib/stayDetailPage";
+import { whatsappLink } from "@/lib/whatsapp";
 
 /**
  * Sticky enquiry card — the conversion point of the whole page.
@@ -53,13 +54,15 @@ export default function StayBookingCard({ stay }: { stay: StayDetailPage }) {
         >
           Check Availability
         </Link>
-        <Link
-          href="/contact/"
+        <a
+          href={whatsappLink()}
+          target="_blank"
+          rel="noopener noreferrer"
           aria-label="Ask on WhatsApp"
           className="inline-flex shrink-0 items-center justify-center rounded-full border border-sky-200 px-4 py-3 text-sky-600 transition-colors hover:bg-sky-50"
         >
           <MessageCircle className="h-4 w-4" />
-        </Link>
+        </a>
       </div>
 
       <p className="mt-4 flex items-start gap-2 text-xs leading-relaxed text-slate-500">

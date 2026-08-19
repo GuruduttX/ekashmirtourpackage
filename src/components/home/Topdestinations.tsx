@@ -4,44 +4,32 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
-interface Destination {
-  id: number;
-  name: string;
-  image: string;
-}
+import { getDestinationBySlug } from "@/data/destinations";
 
-const DESTINATIONS: Destination[] = [
-  {
-    id: 1,
-    name: "Dal Lake",
-    image:
-      "https://images.unsplash.com/photo-1677123419103-785c917c4a58?w=900&auto=format&fit=crop&q=80",
-  },
-  {
-    id: 2,
-    name: "Shikara Ride",
-    image:
-      "https://images.unsplash.com/photo-1598091383021-15ddea10925d?w=900&auto=format&fit=crop&q=80",
-  },
-  {
-    id: 3,
-    name: "Nigeen Lake",
-    image:
-      "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=900&auto=format&fit=crop&q=80",
-  },
-  {
-    id: 4,
-    name: "Sonamarg",
-    image:
-      "https://images.unsplash.com/photo-1609947017136-9daf32a5eb16?w=900&auto=format&fit=crop&q=80",
-  },
-  {
-    id: 5,
-    name: "Gulmarg",
-    image:
-      "https://images.unsplash.com/photo-1593693411515-c20261bcad6e?w=900&auto=format&fit=crop&q=80",
-  },
-];
+/** Animated <Link>, so the cards keep client-side navigation. */
+const MotionLink = motion.create(Link);
+
+/**
+ * The four destinations this section promotes, in display order. Name, photo
+ * and alt text all come from src/data/destinations.ts so the card can never
+ * drift from the /destinations/[slug] page it links to.
+ */
+const FEATURED_SLUGS = ["srinagar", "gulmarg", "pahalgam", "sonamarg"] as const;
+
+const DESTINATIONS = FEATURED_SLUGS.map((slug) => {
+  const destination = getDestinationBySlug(slug);
+  if (!destination) {
+    throw new Error(
+      `TopDestinations: no destination found for "${slug}" in src/data/destinations.ts`,
+    );
+  }
+  return {
+    slug,
+    name: destination.name,
+    image: destination.image,
+    imageAlt: destination.imageAlt,
+  };
+});
 
 const BASE_WIDTH = 230;
 const HOVER_WIDTH = 460;
@@ -49,7 +37,7 @@ const MOBILE_BASE_HEIGHT = 110;
 const MOBILE_ACTIVE_HEIGHT = 260;
 
 export default function TopDestinations() {
-  const [activeId, setActiveId] = useState<number | null>(null);
+  const [activeId, setActiveId] = useState<string | null>(null);
   const [isDesktop, setIsDesktop] = useState(true);
 
   useEffect(() => {
@@ -75,34 +63,45 @@ export default function TopDestinations() {
         />
 
         <div className="bg-sky-100 py-24 sm:py-32">
-          <div className="mx-auto flex max-w-7xl flex-col items-center gap-4 overflow-hidden px-4 sm:flex-row sm:gap-6 sm:px-8">
-            {DESTINATIONS.map((dest, index) => {
-              const isActive = activeId === dest.id;
-              const isLast = index === DESTINATIONS.length - 1;
+          {/*
+            justify-between pins the first card's left edge and the last card's
+            right edge to the row. When a card grows the slack between cards is
+            what shrinks, so siblings slide over to make room while the outer
+            two never leave their spot. The gap is the minimum spacing, sized so
+            the widest state (3 x BASE_WIDTH + HOVER_WIDTH) still fits the row.
+          */}
+          <div className="mx-auto flex max-w-7xl flex-col items-center gap-4 overflow-hidden px-4 sm:flex-row sm:justify-between sm:gap-4 sm:px-8">
+            {DESTINATIONS.map((dest) => {
+              const isActive = activeId === dest.slug;
 
               return (
-                <motion.div
-                  key={dest.id}
-                  onMouseEnter={() => isDesktop && setActiveId(dest.id)}
+                <MotionLink
+                  key={dest.slug}
+                  href={`/destinations/${dest.slug}/`}
+                  aria-label={`Visit ${dest.name}`}
+                  onMouseEnter={() => isDesktop && setActiveId(dest.slug)}
                   onMouseLeave={() => isDesktop && setActiveId(null)}
-                  onClick={() =>
-                    !isDesktop &&
-                    setActiveId((current) => (current === dest.id ? null : dest.id))
-                  }
+                  onClick={(event) => {
+                    // On touch the first tap only opens the card — the label it
+                    // reveals is the destination name, so navigating before the
+                    // user has seen it would be a blind jump. Second tap follows.
+                    if (!isDesktop && !isActive) {
+                      event.preventDefault();
+                      setActiveId(dest.slug);
+                    }
+                  }}
                   animate={
                     isDesktop
-                      ? {
-                          width: isActive ? HOVER_WIDTH : BASE_WIDTH,
-                          x: isActive && isLast ? -(HOVER_WIDTH - BASE_WIDTH) : 0,
-                        }
+                      ? { width: isActive ? HOVER_WIDTH : BASE_WIDTH }
                       : {
                           width: "100%",
-                          height: isActive ? MOBILE_ACTIVE_HEIGHT : MOBILE_BASE_HEIGHT,
-                          x: 0,
+                          height: isActive
+                            ? MOBILE_ACTIVE_HEIGHT
+                            : MOBILE_BASE_HEIGHT,
                         }
                   }
                   transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                  className="relative w-full shrink-0 cursor-pointer overflow-hidden rounded-[2.5rem] shadow-lg sm:h-85 sm:w-auto sm:rounded-[2.5rem] lg:h-105"
+                  className="relative block w-full shrink-0 cursor-pointer overflow-hidden rounded-[2.5rem] shadow-lg sm:h-85 sm:w-auto lg:h-105"
                   style={{
                     width: isDesktop ? BASE_WIDTH : "100%",
                     height: isDesktop ? undefined : MOBILE_BASE_HEIGHT,
@@ -110,7 +109,7 @@ export default function TopDestinations() {
                 >
                   <motion.img
                     src={dest.image}
-                    alt={dest.name}
+                    alt={dest.imageAlt}
                     animate={{ scale: isActive ? 1.15 : 1 }}
                     transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                     className="absolute inset-0 h-full w-full object-cover"
@@ -127,7 +126,7 @@ export default function TopDestinations() {
                   >
                     {dest.name}
                   </motion.div>
-                </motion.div>
+                </MotionLink>
               );
             })}
           </div>
@@ -143,10 +142,10 @@ export default function TopDestinations() {
 
       <div className="mt-10 flex justify-center lg:mt-0">
         <Link
-          href="/kashmir-tour-packages/"
+          href="/destinations/"
           className="inline-flex items-center gap-2 rounded-full bg-linear-to-r from-sky-500 to-cyan-400 px-8 py-4 font-semibold text-white shadow-lg shadow-sky-200 transition-transform hover:-translate-y-0.5"
         >
-          Explore Packages
+          Visit Destinations
           <span aria-hidden="true">→</span>
         </Link>
       </div>

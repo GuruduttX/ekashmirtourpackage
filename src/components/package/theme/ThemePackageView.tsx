@@ -133,14 +133,12 @@ export default async function ThemePackageView({ themeHub }: { themeHub: ThemeHu
       url: SITE_URL,
     },
   };
-  if ((themeHub.rating ?? 0) > 0 && (themeHub.reviewsCount ?? 0) > 0) {
-    tripSchema.aggregateRating = {
-      "@type": "AggregateRating",
-      ratingValue: themeHub.rating,
-      reviewCount: themeHub.reviewsCount,
-      bestRating: 5,
-    };
-  }
+  // NO aggregateRating. It used to be emitted from themeHub.rating /
+  // themeHub.reviewsCount — two numbers typed into the CMS with nothing tying
+  // them to a real review. The SOP is explicit that rating markup is allowed
+  // only where genuine on-page reviews exist, and calls fake rating markup a
+  // domain-wide manual-action risk. Re-add this only once this page renders
+  // real, verifiable reviews (and then emit Review items alongside it).
 
   const faqSchema =
     faqItems.length > 0

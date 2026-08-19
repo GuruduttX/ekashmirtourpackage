@@ -140,7 +140,7 @@ export default function TopTemplesSection() {
   return (
     <section className="relative w-full overflow-hidden bg-white px-4 py-10 sm:px-6 lg:px-8">
       <Image
-        src="/small-temple-left.png"
+        src="/small-temple-left.webp"
         alt=""
         width={160}
         height={160}
@@ -149,7 +149,7 @@ export default function TopTemplesSection() {
         className="pointer-events-none absolute -top-1 left-1 w-12 sm:left-4 sm:w-24 lg:left-8 lg:w-40 hidden md:block"
       />
       <Image
-        src="/small-temple-right.png"
+        src="/small-temple-right.webp"
         alt=""
         width={160}
         height={160}

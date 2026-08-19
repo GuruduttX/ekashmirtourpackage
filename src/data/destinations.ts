@@ -535,7 +535,7 @@ export const DESTINATIONS: Destination[] = [
         alt: "Yellow gondola cabins crossing the snowfields above Gulmarg under a deep blue sky",
       },
       {
-        src: "/destinations/hero/bg-mountains.png",
+        src: "/destinations/hero/bg-mountains.webp",
         alt: "Snow-covered peaks above the treeline at golden hour",
       },
     ],
@@ -551,7 +551,7 @@ export const DESTINATIONS: Destination[] = [
     staySlugs: ["gulmarg-pine-resort"],
     galleryImages: [
       img("1651509094074-e8acaeb84d8f"),
-      "/destinations/hero/bg-mountains.png",
+      "/destinations/hero/bg-mountains.webp",
     ],
     faqs: [
       {

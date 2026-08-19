@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { motion, Variants, TargetAndTransition } from "framer-motion";
 import {
   Sparkles,
@@ -12,8 +12,16 @@ import {
   MapPin,
   ArrowRight,
 } from "lucide-react";
+import EnquiryPopupForm from "@/utils/EnquiryPopupForm";
+import { whatsappLink, WHATSAPP_TEL } from "@/lib/whatsapp";
+import { mailtoLink } from "@/lib/contact";
+
+/** Shared styling for the three "Connect:" chips. */
+const chipClass =
+  "flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 backdrop-blur-sm border border-slate-200 text-slate-700 text-sm font-semibold hover:border-sky-300 hover:text-sky-500 transition-all duration-300";
 
 export default function ContactHero() {
+  const [isEnquiryOpen, setEnquiryOpen] = useState(false);
   const staggerContainer = {
     hidden: { opacity: 0 },
     visible: {
@@ -45,6 +53,7 @@ export default function ContactHero() {
   });
 
   return (
+    <>
     <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden bg-white">
       
       {/* BACKGROUND MOUNTAINS SVG */}
@@ -110,13 +119,13 @@ export default function ContactHero() {
               variants={fadeUpVariant}
               className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto mb-10"
             >
-              <button className="group relative w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-sky-500 text-white font-bold shadow-md hover:bg-sky-600 hover:-translate-y-1 transition-all duration-300">
+              <button
+                type="button"
+                onClick={() => setEnquiryOpen(true)}
+                className="group relative w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-sky-500 text-white font-bold shadow-md hover:bg-sky-600 hover:-translate-y-1 transition-all duration-300"
+              >
                 Start Planning Your Journey
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </button>
-
-              <button className="group w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-white border border-slate-200 text-slate-800 font-bold hover:border-sky-500 hover:text-sky-500 hover:-translate-y-1 transition-all duration-300">
-                Talk to a Travel Expert
               </button>
             </motion.div>
 
@@ -128,13 +137,21 @@ export default function ContactHero() {
                 Connect:
               </span>
 
-              <a href="#" className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 backdrop-blur-sm border border-slate-200 text-slate-700 text-sm font-semibold hover:border-sky-300 hover:text-sky-500 transition-all duration-300">
+              <a
+                href={whatsappLink()}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={chipClass}
+              >
                 <MessageCircle className="w-4 h-4 text-sky-500" /> WhatsApp
               </a>
-              <a href="#" className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 backdrop-blur-sm border border-slate-200 text-slate-700 text-sm font-semibold hover:border-sky-300 hover:text-sky-500 transition-all duration-300">
+              <a href={`tel:${WHATSAPP_TEL}`} className={chipClass}>
                 <Phone className="w-4 h-4 text-sky-500" /> Call
               </a>
-              <a href="#" className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 backdrop-blur-sm border border-slate-200 text-slate-700 text-sm font-semibold hover:border-sky-300 hover:text-sky-500 transition-all duration-300">
+              <a
+                href={mailtoLink("Kashmir trip enquiry")}
+                className={chipClass}
+              >
                 <Mail className="w-4 h-4 text-sky-500" /> Email
               </a>
             </motion.div>
@@ -200,5 +217,12 @@ export default function ContactHero() {
         </div>
       </div>
     </section>
+
+    {/* Outside the overflow-hidden section so the fixed overlay is never clipped. */}
+    <EnquiryPopupForm
+      isOpen={isEnquiryOpen}
+      onClose={() => setEnquiryOpen(false)}
+    />
+    </>
   );
 }

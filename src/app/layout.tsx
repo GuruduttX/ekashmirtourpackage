@@ -59,9 +59,11 @@ export const metadata: Metadata = {
       "Book premium Kashmir tour packages. Gulmarg, Dal Lake, Pahalgam & Sonamarg. Expert-crafted Kashmir holidays.",
     images: ["/og-image.jpg"],
   },
-  alternates: {
-    canonical: SITE_URL,
-  },
+  // NO `alternates.canonical` here on purpose. Next inherits metadata fields
+  // into child segments, so a canonical set at the root becomes the canonical
+  // of every page that does not override it — which told Google that /about,
+  // /author/sartaj and /review were all duplicates of the homepage. Each page
+  // declares its own self-referencing canonical instead.
 };
 
 export default function RootLayout({

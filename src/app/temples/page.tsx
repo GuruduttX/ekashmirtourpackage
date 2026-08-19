@@ -4,6 +4,7 @@ import { ArrowRight } from "lucide-react";
 import { connectDB } from "@/lib/db";
 import Temple from "@/models/Temple";
 import Navbar from "@/components/layout/Navbar";
+import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import Footer from "@/components/layout/Footer";
 import TempleHubHero from "@/components/temples/TempleHubHero";
 import TempleBookingSection from "@/components/temples/TempleBookingSection";
@@ -13,6 +14,8 @@ import WhyChooseUsSection from "@/components/temples/WhyChooseUsSection";
 import TempleGallerySection from "@/components/temples/TempleGallerySection";
 import TempleTestimonials from "@/components/temples/TempleTestimonials";
 import PopularPackagesCarousel from "@/components/home/PopularPackagesCarousel";
+import FaqAccordion from "@/components/ui/FaqAccordion";
+import { TEMPLE_FAQS } from "@/data/templeFaqs";
 
 export const dynamic = "force-dynamic";
 
@@ -42,9 +45,36 @@ async function getTemples() {
 export default async function TemplesHubPage() {
   const temples = await getTemples();
 
+  // FAQPage built from the same array the accordion renders, so the markup and
+  // the visible answers can never drift. Emitted here and nowhere else on this
+  // URL — one FAQPage per page.
+  const faqSchema = TEMPLE_FAQS.length
+    ? {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: TEMPLE_FAQS.map((faq) => ({
+          "@type": "Question",
+          name: faq.question,
+          acceptedAnswer: { "@type": "Answer", text: faq.answer },
+        })),
+      }
+    : null;
+
   return (
     <main className="min-h-screen overflow-x-hidden">
+      {faqSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(faqSchema).replace(/</g, "\\u003c"),
+          }}
+        />
+      )}
+
       <Navbar />
+      <div className="mx-auto max-w-7xl px-4 pt-24 sm:px-6 lg:px-8">
+        <Breadcrumbs items={[{ label: "Temples & Shrines" }]} />
+      </div>
       <TempleHubHero />
       <TopTemplesSection />
       <TempleHubView temples={temples} />
@@ -64,6 +94,17 @@ export default async function TemplesHubPage() {
         </div>
       </div>
       <TempleTestimonials />
+
+      {/* Closing section — the SOP blueprint ends FAQ → CTA. Fed from the same
+          TEMPLE_FAQS array as the FAQPage JSON-LD emitted above, so the markup
+          and the visible answers cannot drift apart. */}
+      <FaqAccordion
+        faqs={TEMPLE_FAQS}
+        eyebrow="Before you go"
+        headingLead="Kashmir temple & shrine"
+        headingAccent="questions"
+      />
+
       <Footer />
     </main>
   );

@@ -127,7 +127,7 @@ export default function TrustShowcase() {
     </h3>
     <p className="text-slate-600 text-base sm:text-lg font-light">
       Average rating based on hundreds of verified reviews. Excellence
-      isn't just a goal; it's our standard.
+      isn&apos;t just a goal; it&apos;s our standard.
     </p>
   </motion.div>
 

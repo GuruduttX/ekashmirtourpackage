@@ -133,14 +133,9 @@ export default async function DurationPackageView({ durationHub }: { durationHub
       url: SITE_URL,
     },
   };
-  if ((durationHub.rating ?? 0) > 0 && (durationHub.reviewsCount ?? 0) > 0) {
-    tripSchema.aggregateRating = {
-      "@type": "AggregateRating",
-      ratingValue: durationHub.rating,
-      reviewCount: durationHub.reviewsCount,
-      bestRating: 5,
-    };
-  }
+  // NO aggregateRating — see the note in ThemePackageView. The CMS rating /
+  // reviewsCount fields are not backed by real on-page reviews, and the SOP
+  // forbids rating markup without them.
 
   const faqSchema =
     faqItems.length > 0

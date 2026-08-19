@@ -121,10 +121,10 @@ export default function AboutUs() {
           </div>
 
           <Link
-            href="/kashmir-tour-packages/"
+            href="/about/"
             className="mt-10 inline-flex items-center gap-2 rounded-full bg-linear-to-r from-sky-500 to-cyan-400 px-8 py-4 font-semibold text-white shadow-lg shadow-sky-200 transition-transform hover:-translate-y-0.5"
           >
-            Explore Packages
+            About Us
             <span aria-hidden="true">→</span>
           </Link>
         </motion.div>

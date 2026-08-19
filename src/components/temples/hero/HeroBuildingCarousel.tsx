@@ -13,7 +13,7 @@ const BUILDINGS: Record<BuildingKey, { src: string; alt: string }> = {
     alt: "Shankaracharya-style stone temple overlooking Srinagar",
   },
   mosque: {
-    src: "/temple-hub/temple-hub-building-2.png",
+    src: "/temple-hub/temple-hub-building-2.webp",
     alt: "Hazratbal shrine dome and minaret in Srinagar",
   },
 };

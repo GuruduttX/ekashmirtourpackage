@@ -47,7 +47,7 @@ export const DESTINATION_GALLERY: GalleryItem[] = [
     id: "gulmarg-peaks",
     place: "gulmarg",
     caption: "Peaks above the treeline at golden hour",
-    src: "/destinations/hero/bg-mountains.png",
+    src: "/destinations/hero/bg-mountains.webp",
   },
   {
     id: "pahalgam-lidder",

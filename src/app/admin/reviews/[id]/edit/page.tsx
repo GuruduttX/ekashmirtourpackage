@@ -16,6 +16,7 @@ interface ReviewItem {
 	content: string;
 	status: 'pending' | 'approved' | 'rejected';
 	isVerifiedPurchase: boolean;
+	images?: Array<{ url: string; alt: string }>;
 	createdAt?: string;
 }
 

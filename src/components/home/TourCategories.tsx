@@ -1,34 +1,21 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useInView } from "@/hooks/useInView";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import {
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  MapPin,
+  Star,
+  Users,
+} from "lucide-react";
 import { THEMES } from "@/lib/themes";
-
-/* ── Icons ───────────────────────────────────────────────── */
-export const PinIcon = () => (
-  <svg viewBox="0 0 12 14" fill="currentColor" className="w-2.5 h-3 shrink-0">
-    <path d="M6 0a5 5 0 0 0-5 5c0 3.8 5 9 5 9s5-5.2 5-9A5 5 0 0 0 6 0zm0 6.8A1.8 1.8 0 1 1 6 3.2a1.8 1.8 0 0 1 0 3.6z" />
-  </svg>
-);
-export const ClockIcon = () => (
-  <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.6" className="w-3 h-3 shrink-0">
-    <circle cx="7" cy="7" r="6" />
-    <path d="M7 4v3l2 1.5" strokeLinecap="round" />
-  </svg>
-);
-export const PeopleIcon = () => (
-  <svg viewBox="0 0 18 14" fill="currentColor" className="w-3.5 h-3 shrink-0">
-    <path d="M7 7a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zm0 1c-3.9 0-7 2-7 4.5V14h14v-1.5C14 10 10.9 8 7 8zM14.5 5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zm0 1c-1.3 0-2.4.5-2.4.5 1.4.9 2.4 2.3 2.4 4v1H18v-1C18 7.8 16.4 6 14.5 6z" />
-  </svg>
-);
-export const CheckIcon = () => (
-  <svg viewBox="0 0 16 16" className="w-3.5 h-3.5 shrink-0">
-    <circle cx="8" cy="8" r="8" fill="#22C55E" />
-    <path d="M5 8l2 2 4-4" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-  </svg>
-);
 
 /* ── Types ───────────────────────────────────────────────── */
 export interface PackageCard {
@@ -68,8 +55,6 @@ const TABS = [
 ];
 
 const THEME_TABS = ["All", ...THEMES];
-
-const CARD_HEIGHT = "430px";
 
 /* ════════════════════════════════════════════════════════════
    SECTION
@@ -233,7 +218,10 @@ export default function TourCategories({
             </div>
           ) : (
             <div>
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3" style={{ gridAutoRows: CARD_HEIGHT }}>
+              {/* Card height now comes from the card's own aspect ratio rather
+                  than a fixed row height — the photo fills the whole card, so a
+                  hard 430px would letterbox it at some column widths. */}
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
                 {visiblePackages.map((pkg, i) => (
                   <TourCard key={pkg.id} pkg={pkg} index={i} />
                 ))}
@@ -261,69 +249,283 @@ export default function TourCategories({
 /* ════════════════════════════════════════════════════════════
    CARD
    ════════════════════════════════════════════════════════════ */
+
+/**
+ * Package card for the duration/theme grid.
+ *
+ * REDESIGNED AFTER StayCard (src/components/stays/StayCard.tsx), and it works
+ * the same way on purpose — the two are the site's archive cards and a reader
+ * moving between /stays and /kashmir-tour-packages should not have to learn a
+ * second set of gestures. What it borrows: the photo fills the whole card, a
+ * black gradient across the bottom carries the text (so it stays readable over
+ * any photo without a glass panel), swipe to page photos below lg, glass arrows
+ * on hover from lg, dots that are tappable at every size.
+ *
+ * What replaced the old design: a fixed 5-up image mosaic. That mosaic assumed
+ * exactly five photos — it sliced `images[1..]` into a 2×2 and hard-coded a
+ * "More +" badge onto the fourth — so a package with two photos rendered a grid
+ * of holes and one with six silently dropped the sixth. This pages through
+ * however many there are, and hides the paging entirely for a single photo.
+ *
+ * EVERY FIELD IS DYNAMIC and every optional one is gated: the rating badge only
+ * appears above zero, the strike-through only when there is a real original
+ * price, the inclusion pills only when the package has inclusions, and the
+ * photo controls only with more than one photo. A package with a thin record
+ * renders a clean card rather than empty furniture.
+ *
+ * The card is one link (whole surface); the arrows, dots and a completed swipe
+ * all suppress the click so paging never navigates.
+ */
 function TourCard({ pkg, index }: { pkg: PackageCard; index: number }) {
   const { ref, inView } = useInView();
+  const router = useRouter();
+  const reduceMotion = useReducedMotion();
+
+  const href = `/kashmir-tour-packages/${pkg.slug}/`;
+
+  // A record can arrive with no photos at all; one empty slide keeps the
+  // carousel's arithmetic honest and lets the fallback tile render.
+  const slides = pkg.images.length ? pkg.images : [""];
+  const [slide, setSlide] = useState(0);
+  const [direction, setDirection] = useState(1);
+  const [failed, setFailed] = useState<Record<number, boolean>>({});
+
+  const paginate = (step: number) => {
+    setDirection(step);
+    setSlide((prev) => (prev + step + slides.length) % slides.length);
+  };
+
+  // --- Touch swipe over the photo (mobile) -------------------------------
+  // The swipe surface carries `touch-pan-y`, which tells the browser only
+  // vertical panning may scroll an ancestor — so a horizontal drag pages the
+  // photo instead of fighting the page scroll.
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
+  const didSwipe = useRef(false);
+
+  const SWIPE_MIN_PX = 40;
+
+  const handleTouchStart = (event: React.TouchEvent) => {
+    const touch = event.changedTouches[0];
+    touchStart.current = { x: touch.clientX, y: touch.clientY };
+  };
+
+  const handleTouchEnd = (event: React.TouchEvent) => {
+    if (!touchStart.current) return;
+    const touch = event.changedTouches[0];
+    const dx = touch.clientX - touchStart.current.x;
+    const dy = touch.clientY - touchStart.current.y;
+    touchStart.current = null;
+
+    if (slides.length < 2) return;
+    // Horizontal intent only, so a vertical page scroll never pages photos.
+    if (Math.abs(dx) < SWIPE_MIN_PX || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+
+    didSwipe.current = true;
+    paginate(dx < 0 ? 1 : -1);
+  };
+
+  // The surface sits above the card-wide <Link>, so it owns its own taps. The
+  // real <Link> stays in the DOM underneath for crawlers and keyboard users.
+  const handleSurfaceClick = () => {
+    if (didSwipe.current) {
+      didSwipe.current = false;
+      return;
+    }
+    router.push(href);
+  };
+
+  const offset = reduceMotion ? 0 : 40;
+  const dayLabel = pkg.days === 1 ? "Day" : "Days";
+  const hasRating = typeof pkg.rating === "number" && pkg.rating > 0;
 
   return (
     <article
       ref={ref}
-      className={`group flex h-full flex-col overflow-hidden rounded-2xl bg-white cursor-pointer transition-all duration-600 hover:-translate-y-1.5 ${inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
-      style={{ transitionDelay: `${(index % 3) * 90}ms`, border: "1px solid #e8f0f8", boxShadow: "0 4px 20px rgba(14,165,233,0.07), 0 1px 4px rgba(0,0,0,0.05)" }}
+      className={`group relative aspect-4/5 w-full overflow-hidden rounded-2xl bg-sky-100 shadow-md shadow-sky-100/70 transition-all duration-500 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-sky-200/70 sm:rounded-3xl ${
+        inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+      }`}
+      style={{ transitionDelay: `${(index % 3) * 90}ms` }}
     >
-      {/* ── 5-image block ── */}
-      <Link href={`/kashmir-tour-packages/${pkg.slug}/`}>
-        <div className="flex overflow-hidden" style={{ height: "195px" }}>
-          <div className="relative overflow-hidden" style={{ flex: "0 0 57%" }}>
-            <Image src={pkg.images[0]} alt={pkg.title} fill unoptimized className="object-cover transition-transform duration-700 group-hover:scale-[1.07]" />
-            <div className="absolute top-3 left-3 rounded-full px-2.5 py-1 text-[0.6rem] font-bold text-white leading-none" style={{ background: "linear-gradient(120deg,#0284C7,#38BDF8)", boxShadow: "0 2px 10px rgba(14,165,233,0.55)" }}>
-              {pkg.days} {pkg.days === 1 ? "Day" : "Days"}
-            </div>
-          </div>
-          <div className="grid grid-cols-2 grid-rows-2 gap-0.5 pl-0.5 overflow-hidden" style={{ flex: "0 0 43%" }}>
-            {pkg.images.slice(1).map((src, i) => (
-              <div key={i} className="relative overflow-hidden">
-                <Image src={src} alt="" fill unoptimized className="object-cover transition-transform duration-700 group-hover:scale-[1.07]" />
-                {i === 3 && (
-                  <div className="absolute inset-0 bg-black/38 flex items-center justify-center">
-                    <span className="text-white text-[0.62rem] font-semibold tracking-wide">More +</span>
-                  </div>
-                )}
+      {/* ---------- Image layer ---------- */}
+      <div className="absolute inset-0">
+        <AnimatePresence initial={false} custom={direction} mode="popLayout">
+          <motion.div
+            key={slide}
+            custom={direction}
+            initial={{ opacity: 0, x: direction * offset }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: direction * -offset }}
+            transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+            className="absolute inset-0"
+          >
+            {!slides[slide] || failed[slide] ? (
+              // Missing or broken photo — the title on a wash beats a grey box.
+              <div className="flex h-full w-full items-center justify-center bg-linear-to-br from-sky-200 via-sky-100 to-cyan-100">
+                <span className="px-6 text-center font-heading text-xl font-bold text-sky-700/70">
+                  {pkg.title}
+                </span>
               </div>
-            ))}
-          </div>
-        </div>
+            ) : (
+              <Image
+                src={slides[slide]}
+                alt={`${pkg.title} — photo ${slide + 1}`}
+                fill
+                unoptimized
+                sizes="(max-width: 640px) 92vw, (max-width: 1280px) 46vw, 31vw"
+                className="object-cover transition-transform duration-700 group-hover:scale-105"
+                onError={() => setFailed((prev) => ({ ...prev, [slide]: true }))}
+              />
+            )}
+          </motion.div>
+        </AnimatePresence>
+
+        {/* Light top scrim so the duration chip and dots stay legible */}
+        <div className="absolute inset-x-0 top-0 h-1/4 bg-linear-to-b from-slate-950/45 to-transparent" />
+
+        {/* Solid black backdrop across the bottom — carries the info text on
+            any photo, so the panel itself needs no glass. */}
+        <div className="absolute inset-x-0 bottom-0 h-3/5 bg-linear-to-t from-slate-950 via-slate-950/80 to-transparent" />
+      </div>
+
+      {/* Whole-card link sits under the controls so the card is one tap target */}
+      <Link
+        href={href}
+        className="absolute inset-0 z-10 rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 sm:rounded-3xl"
+      >
+        <span className="sr-only">View {pkg.title}</span>
       </Link>
 
-      {/* ── Card body ── */}
-      <div className="flex flex-col flex-1 p-4">
-        <h3 className="font-bold text-slate-900 text-[0.92rem] leading-snug mb-3 line-clamp-2 group-hover:text-sky-700 transition-colors duration-200">
+      {/* Swipe surface — photo area only, mobile only. */}
+      <div
+        aria-hidden="true"
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+        onClick={handleSurfaceClick}
+        className="absolute inset-x-0 top-0 z-15 h-2/5 touch-pan-y lg:hidden"
+      />
+
+      {/* ---------- Duration chip + rating ---------- */}
+      <div className="pointer-events-none absolute left-4 top-4 z-20 flex items-center gap-2">
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/15 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-md">
+          <Clock className="h-3.5 w-3.5" />
+          {pkg.days} {dayLabel}
+        </span>
+
+        {/* Only above zero — a "0.0" badge advertises a package nobody rated. */}
+        {hasRating && (
+          <span className="inline-flex items-center gap-1 rounded-full border border-white/25 bg-white/15 px-2.5 py-1.5 text-xs font-semibold text-white backdrop-blur-md">
+            <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+            {pkg.rating!.toFixed(1)}
+          </span>
+        )}
+      </div>
+
+      {/* ---------- Carousel arrows (glass) + dots ---------- */}
+      {slides.length > 1 && (
+        <>
+          <button
+            type="button"
+            aria-label="Previous photo"
+            onClick={(event) => {
+              event.preventDefault();
+              paginate(-1);
+            }}
+            className="absolute left-3 top-2/5 z-20 hidden -translate-y-1/2 rounded-full border border-white/30 bg-white/15 p-2 text-white shadow-sm backdrop-blur-md transition hover:bg-white/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white lg:block lg:opacity-0 lg:group-hover:opacity-100"
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </button>
+          <button
+            type="button"
+            aria-label="Next photo"
+            onClick={(event) => {
+              event.preventDefault();
+              paginate(1);
+            }}
+            className="absolute right-3 top-2/5 z-20 hidden -translate-y-1/2 rounded-full border border-white/30 bg-white/15 p-2 text-white shadow-sm backdrop-blur-md transition hover:bg-white/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white lg:block lg:opacity-0 lg:group-hover:opacity-100"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </button>
+
+          <div className="absolute right-4 top-4 z-20 flex items-center gap-1.5">
+            {slides.map((_, dotIndex) => (
+              <button
+                key={dotIndex}
+                type="button"
+                aria-label={`Photo ${dotIndex + 1} of ${slides.length}`}
+                aria-current={dotIndex === slide}
+                onClick={(event) => {
+                  event.preventDefault();
+                  setDirection(dotIndex > slide ? 1 : -1);
+                  setSlide(dotIndex);
+                }}
+                className={`h-1.5 rounded-full transition-all ${
+                  dotIndex === slide
+                    ? "w-5 bg-white"
+                    : "w-1.5 bg-white/50 hover:bg-white/80"
+                }`}
+              />
+            ))}
+          </div>
+        </>
+      )}
+
+      {/* ---------- Bottom info panel ---------- */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 p-4">
+        <h3 className="line-clamp-2 font-heading text-lg font-bold leading-snug text-white">
           {pkg.title}
         </h3>
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 mb-3.5">
-          <span className="flex items-center gap-1 text-[0.7rem] text-orange-500 font-medium"><PinIcon />{pkg.location}</span>
-          <span className="flex items-center gap-1 text-[0.7rem] text-orange-500 font-medium"><ClockIcon />{pkg.days}-{pkg.days === 1 ? "day" : "days"}</span>
-          <span className="flex items-center gap-1 text-[0.7rem] text-orange-500 font-medium"><PeopleIcon />{pkg.idealFor}</span>
+
+        <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-slate-200">
+          <span className="flex min-w-0 items-center gap-1.5">
+            <MapPin className="h-4 w-4 shrink-0" />
+            <span className="truncate">{pkg.location}</span>
+          </span>
+          {pkg.idealFor && (
+            <span className="flex min-w-0 items-center gap-1.5">
+              <Users className="h-4 w-4 shrink-0" />
+              <span className="truncate">{pkg.idealFor}</span>
+            </span>
+          )}
         </div>
-        <div className="h-px bg-slate-100 mb-3.5" />
-        <div className="grid grid-cols-2 gap-x-3 gap-y-2 mb-4">
-          {pkg.inclusions.map((item) => (
-            <div key={item} className="flex items-center gap-1.5 text-[0.71rem] text-slate-600 font-medium">
-              <CheckIcon /><span className="truncate">{item}</span>
-            </div>
-          ))}
-        </div>
-        <div className="mt-auto pt-3.5 flex items-center justify-between gap-2" style={{ borderTop: "1px solid #f1f5f9" }}>
-          <div>
-            <div className="text-[0.58rem] text-slate-400 uppercase tracking-widest leading-none mb-0.5">Starting from</div>
-            <div className="font-bold text-[1.12rem] leading-none" style={{ color: "#0284C7" }}>{pkg.price}</div>
-            {pkg.originalPrice && (
-              <div className="text-slate-300 text-[0.65rem] line-through mt-0.5">{pkg.originalPrice}</div>
-            )}
+
+        {/* Inclusions — scroll sideways, never wrap to a second line, so a
+            package with six of them cannot push the price off the card. */}
+        {pkg.inclusions.length > 0 && (
+          <div className="no-scrollbar pointer-events-auto mt-3 flex snap-x flex-nowrap items-center gap-1.5 overflow-x-auto">
+            {pkg.inclusions.map((item) => (
+              <span
+                key={item}
+                className="inline-flex shrink-0 snap-start items-center gap-1 whitespace-nowrap rounded-full bg-white/15 px-2.5 py-1 text-xs font-medium text-white"
+              >
+                <Check className="h-3.5 w-3.5 text-emerald-400" />
+                {item}
+              </span>
+            ))}
           </div>
-          <Link href={`/kashmir-tour-packages/${pkg.slug}/`}>
-            <button className="shrink-0 rounded-full px-5 py-2.5 text-[0.75rem] font-semibold text-white transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5" style={{ background: "linear-gradient(120deg,#0284C7,#38BDF8)", boxShadow: "0 3px 12px rgba(14,165,233,0.32)" }}>
-              Book Now
-            </button>
+        )}
+
+        {/* Price + CTA */}
+        <div className="mt-3 flex items-end justify-between gap-2 border-t border-white/20 pt-3">
+          <div className="min-w-0">
+            <p className="text-[10px] uppercase tracking-wide text-slate-300">
+              Starting from
+            </p>
+            <p className="font-heading text-xl font-bold leading-none text-white">
+              {pkg.price}
+              {/* Only with a real "was" price behind it. */}
+              {pkg.originalPrice && (
+                <span className="ml-2 text-xs font-medium text-slate-400 line-through">
+                  {pkg.originalPrice}
+                </span>
+              )}
+            </p>
+          </div>
+
+          <Link
+            href={href}
+            className="pointer-events-auto relative z-30 inline-flex shrink-0 items-center justify-center whitespace-nowrap rounded-full bg-linear-to-r from-sky-500 to-cyan-400 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-sky-900/30 transition-transform hover:-translate-y-0.5"
+          >
+            Book Now
           </Link>
         </div>
       </div>

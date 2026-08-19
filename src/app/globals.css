@@ -11,6 +11,38 @@
 
 html { scroll-behavior: smooth; }
 
+/* ─── Site-wide: no visible scrollbars ─────────────────────
+   Hides the scrollbar chrome everywhere — the page and every inner scroll
+   container — while leaving scrolling itself completely intact. Wheel, trackpad,
+   touch, keyboard, scrollIntoView and drag-to-scroll all behave exactly as
+   before; only the indicator is gone.
+
+   Applied to `*` rather than just html/body because the site is full of inner
+   scrollers (the month tabs, card rails, the marquees, tables), and each one
+   draws its own bar.
+
+   TRADE-OFF, on purpose: a scrollbar is also the only ambient cue that a region
+   scrolls at all and how far along it you are. The horizontal rails in this
+   codebase mostly carry their own affordance already — snap points, position
+   dots, arrows — so the cue is not lost, just relocated. Anywhere a new
+   scrolling region has no such cue, give it one; do not rely on the bar coming
+   back.
+
+   `.no-scrollbar` below is now redundant but is left in place: it is used
+   throughout the components and still documents intent at each call site. */
+*,
+*::before,
+*::after {
+  scrollbar-width: none;      /* Firefox, and Chromium 121+ */
+  -ms-overflow-style: none;   /* legacy Edge / IE */
+}
+
+*::-webkit-scrollbar {
+  display: none;              /* Chrome, Safari, older Edge */
+  width: 0;
+  height: 0;
+}
+
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
@@ -20,7 +52,13 @@ html { scroll-behavior: smooth; }
   scrollbar-width: none;
 }
 
-/* Cyan/Sky Gradient Scrollbar */
+/* Cyan/Sky Gradient Scrollbar
+   SUPERSEDED by the site-wide hide above, which sets `display: none` on every
+   ::-webkit-scrollbar. These rules only ever set width/height and colours, never
+   `display`, so the hide wins and this bar no longer paints anywhere.
+   Kept rather than deleted so it can be restored in one edit — to bring it back,
+   exempt the class from the global rule with
+   `.cyan-scrollbar::-webkit-scrollbar { display: block; }`. */
 .cyan-scrollbar::-webkit-scrollbar {
   height: 8px;
 }
@@ -246,10 +284,49 @@ body {
 .animate-marquee-paused {
   animation-play-state: paused;
 }
+/* Switches the marquee off from `lg` up, for strips that become a static grid
+   on desktop.
+   This has to live here rather than being expressed as `lg:animate-none` on the
+   element: `.animate-marquee` is unlayered CSS, and unlayered always beats
+   Tailwind's layered utilities regardless of source order or breakpoint. The
+   utility would silently lose and the "static" grid would keep scrolling. */
+@media (min-width: 1024px) {
+  .animate-marquee-lg-none {
+    animation: none;
+  }
+}
 /* An infinite marquee has no end state to settle into, so readers who asked
    for less motion get a static strip rather than a slower one. */
 @media (prefers-reduced-motion: reduce) {
   .animate-marquee { animation: none; }
+}
+
+/* ─── 3D photo plane (/experiences/ hub hero) ───────────────────────────────
+   The plane the photo marquee is laid on, tilted so it recedes toward the top
+   left. The marquee's own translateX then travels ALONG that plane instead of
+   across flat glass, which is what sells the depth — the columns shrink and
+   converge as they head for the vanishing point.
+
+   The tilt lives here rather than in a Tailwind arbitrary utility because the
+   drift animation has to own the whole `transform` shorthand: a utility setting
+   `transform` and a keyframe setting `transform` cannot coexist on one element,
+   the animation simply wins. Keeping both in one rule keeps the resting pose and
+   the animated pose from drifting apart.
+
+   `perspective` belongs to the PARENT (set inline on the wrapper) — on this
+   element it would apply to its children's children, not to itself. */
+@keyframes heroPlaneDrift {
+  0%, 100% { transform: rotateX(12deg) rotateY(-13deg) rotateZ(-3deg) scale(1.06); }
+  50%      { transform: rotateX(9deg)  rotateY(-17deg) rotateZ(-1.5deg) scale(1.06); }
+}
+.hero-plane-3d {
+  transform: rotateX(12deg) rotateY(-13deg) rotateZ(-3deg) scale(1.06);
+  transform-style: preserve-3d;
+  animation: heroPlaneDrift 26s ease-in-out infinite;
+}
+/* The static tilt stays — it is composition, not motion. Only the sway goes. */
+@media (prefers-reduced-motion: reduce) {
+  .hero-plane-3d { animation: none; }
 }
 
 /* Hero heading — each line slides up with blur wipe */
@@ -814,3 +891,16 @@ body {
 
 .scroll-hide::-webkit-scrollbar { display: none; }
 .scroll-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ─── Testimonial / review card expanded-quote scrollbar ─── */
+
+.testimonial-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #38bdf8 transparent;
+}
+.testimonial-scroll::-webkit-scrollbar { width: 5px; }
+.testimonial-scroll::-webkit-scrollbar-track { background: transparent; }
+.testimonial-scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #38bdf8, #0ea5e9);
+  border-radius: 10px;
+}

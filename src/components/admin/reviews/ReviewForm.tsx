@@ -18,6 +18,8 @@ export interface ReviewFormData {
   content: string;
   status: "pending" | "approved" | "rejected";
   isVerifiedPurchase: boolean;
+  /** Optional review photo. Empty array means a text-only review. */
+  images: Array<{ url: string; alt: string }>;
 }
 
 interface ReviewFormProps {
@@ -38,6 +40,7 @@ const defaultFormState: ReviewFormData = {
   content: "",
   status: "pending",
   isVerifiedPurchase: false,
+  images: [],
 };
 
 export default function ReviewForm({
@@ -50,17 +53,27 @@ export default function ReviewForm({
   const [form, setForm] = useState<ReviewFormData>({
     ...defaultFormState,
     ...(initialData ?? {}),
+    images: initialData?.images ?? [],
   });
   const [error, setError] = useState<string>("");
 
   useEffect(() => {
     if (initialData) {
-      setForm({ ...defaultFormState, ...initialData });
+      setForm({ ...defaultFormState, ...initialData, images: initialData.images ?? [] });
     }
   }, [initialData]);
 
   const handleChange = (field: keyof ReviewFormData, value: string | number | boolean) => {
     setForm((current) => ({ ...current, [field]: value }));
+  };
+
+  const photo = form.images[0] ?? { url: "", alt: "" };
+
+  const handlePhotoChange = (field: "url" | "alt", value: string) => {
+    setForm((current) => {
+      const next = { ...(current.images[0] ?? { url: "", alt: "" }), [field]: value };
+      return { ...current, images: [next] };
+    });
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -75,7 +88,10 @@ export default function ReviewForm({
     }
 
     setError("");
-    await onSubmit(form);
+    await onSubmit({
+      ...form,
+      images: form.images.filter((image) => image.url.trim()),
+    });
   };
 
   return (
@@ -178,6 +194,34 @@ export default function ReviewForm({
           className="w-full rounded-3xl border border-[#19315d] bg-[#07111f] px-4 py-4 text-sm text-slate-100 outline-none transition focus:border-blue-500"
           placeholder="Tell us about the experience"
         />
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        <div className="space-y-3">
+          <label className="text-sm font-medium text-slate-200">
+            Review photo URL <span className="text-slate-500">(optional)</span>
+          </label>
+          <input
+            type="url"
+            value={photo.url}
+            onChange={(event) => handlePhotoChange("url", event.target.value)}
+            className="w-full rounded-2xl border border-[#19315d] bg-[#07111f] px-4 py-3 text-sm text-slate-100 outline-none transition focus:border-blue-500"
+            placeholder="Photo shared by the traveller"
+          />
+          <p className="text-xs text-slate-500">
+            Leave empty for a text-only review card.
+          </p>
+        </div>
+        <div className="space-y-3">
+          <label className="text-sm font-medium text-slate-200">Photo alt text</label>
+          <input
+            type="text"
+            value={photo.alt}
+            onChange={(event) => handlePhotoChange("alt", event.target.value)}
+            className="w-full rounded-2xl border border-[#19315d] bg-[#07111f] px-4 py-3 text-sm text-slate-100 outline-none transition focus:border-blue-500"
+            placeholder="Describe the photo"
+          />
+        </div>
       </div>
 
       <div className="flex items-center gap-3">

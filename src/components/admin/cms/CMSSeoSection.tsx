@@ -14,12 +14,19 @@ interface CMSSeoSectionProps {
   metaDescription: string;
   onChange: (field: string, value: string) => void;
   editorType?: string;
+  /**
+   * Both fields are required by default. Pass false where the page generates
+   * its own title and description and these are only overrides — the activity
+   * editor does, and a required override would block every save.
+   */
+  required?: boolean;
 }
 
 export default function CMSSeoSection({
   metaTitle,
   metaDescription,
   onChange,
+  required = true,
 }: CMSSeoSectionProps) {
   return (
     <div className="space-y-4">
@@ -30,7 +37,7 @@ export default function CMSSeoSection({
           </label>
           <input
             value={metaTitle}
-            required
+            required={required}
             placeholder="SEO-optimised page title"
             className={inp}
             onChange={(e) => onChange('metaTitle', e.target.value)}
@@ -43,7 +50,7 @@ export default function CMSSeoSection({
           </label>
           <input
             value={metaDescription}
-            required
+            required={required}
             placeholder="Brief SEO description for search results"
             className={inp}
             onChange={(e) => onChange('metaDescription', e.target.value)}

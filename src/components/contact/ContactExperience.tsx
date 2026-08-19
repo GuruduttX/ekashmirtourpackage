@@ -17,6 +17,8 @@ import {
   Calendar,
   Wallet,
 } from "lucide-react";
+import { whatsappLink, WHATSAPP_TEL, WHATSAPP_DISPLAY } from "@/lib/whatsapp";
+import { CONTACT_EMAIL, mailtoLink, ADDRESS_LINES } from "@/lib/contact";
 
 export default function ContactExperience() {
   const [selectedTrip, setSelectedTrip] = useState<string | null>("honeymoon");
@@ -213,13 +215,23 @@ export default function ContactExperience() {
               <div className="group p-4 sm:p-6 rounded-[1.5rem] bg-white border border-slate-200 shadow-sm hover:border-sky-300 transition-colors duration-200 cursor-pointer">
                 <Phone className="w-5 h-5 sm:w-6 sm:h-6 text-sky-500 mb-2 sm:mb-3 group-hover:scale-110 transition-transform" />
                 <h4 className="text-slate-900 text-xs sm:text-sm font-bold mb-0.5 sm:mb-1">Call Us</h4>
-                <p className="text-sky-600 text-xs sm:text-sm font-medium break-all">+91 98765 43210</p>
+                <a
+                  href={`tel:${WHATSAPP_TEL}`}
+                  className="text-sky-600 text-xs sm:text-sm font-medium break-all hover:underline"
+                >
+                  {WHATSAPP_DISPLAY}
+                </a>
               </div>
 
               <div className="group p-4 sm:p-6 rounded-[1.5rem] bg-white border border-slate-200 shadow-sm hover:border-sky-300 transition-colors duration-200 cursor-pointer overflow-hidden">
                 <Mail className="w-5 h-5 sm:w-6 sm:h-6 text-sky-500 mb-2 sm:mb-3 group-hover:scale-110 transition-transform" />
                 <h4 className="text-slate-900 text-xs sm:text-sm font-bold mb-0.5 sm:mb-1">Email</h4>
-                <p className="text-sky-600 text-xs sm:text-sm font-medium truncate">hello@kashmirjourney.com</p>
+                <a
+                  href={mailtoLink("Kashmir trip enquiry")}
+                  className="block text-sky-600 text-xs sm:text-sm font-medium truncate hover:underline"
+                >
+                  {CONTACT_EMAIL}
+                </a>
               </div>
             </motion.div>
 
@@ -228,8 +240,11 @@ export default function ContactExperience() {
               <div>
                 <h4 className="text-slate-900 text-sm font-bold mb-1">Srinagar Office</h4>
                 <p className="text-slate-500 text-xs leading-relaxed">
-                  Boulevard Road, Dal Lake,<br />
-                  Srinagar, J&K 190001
+                  {ADDRESS_LINES.map((line) => (
+                    <span key={line} className="block">
+                      {line}
+                    </span>
+                  ))}
                 </p>
               </div>
             </motion.div>
@@ -246,9 +261,14 @@ export default function ContactExperience() {
                   </p>
                 </div>
                 {/* OPTIMIZATION: Make the button full width on mobile for easy tapping */}
-                <button className="w-full sm:w-auto shrink-0 px-6 py-3 sm:py-2.5 rounded-xl sm:rounded-full bg-white text-sky-600 border border-sky-200 text-xs font-bold shadow-sm group-hover:bg-sky-500 group-hover:text-white group-hover:border-sky-500 transition-colors duration-200">
+                <a
+                  href={whatsappLink()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full sm:w-auto shrink-0 px-6 py-3 sm:py-2.5 rounded-xl sm:rounded-full bg-white text-sky-600 border border-sky-200 text-xs font-bold shadow-sm text-center group-hover:bg-sky-500 group-hover:text-white group-hover:border-sky-500 transition-colors duration-200"
+                >
                   Chat Now
-                </button>
+                </a>
               </div>
             </motion.div>
 

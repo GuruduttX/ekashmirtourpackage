@@ -15,6 +15,7 @@ import {
   Sparkles,
   Users,
 } from "lucide-react";
+import { whatsappLink } from "@/lib/whatsapp";
 import type { LucideIcon } from "lucide-react";
 import type { Stay, StayCategory } from "@/data/stays";
 
@@ -299,13 +300,15 @@ export default function StayHowToChoose({ stays }: { stays: Stay[] }) {
                 Get a stay plan
                 <ArrowRight className="h-4 w-4" />
               </Link>
-              <Link
-                href="/contact/"
+              <a
+                href={whatsappLink("Hi! I'd like help choosing a place to stay in Kashmir.")}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full border border-white/60 px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-white/15 sm:px-7"
               >
                 <MessageCircle className="h-4 w-4" />
                 WhatsApp
-              </Link>
+              </a>
             </div>
           </div>
         </div>

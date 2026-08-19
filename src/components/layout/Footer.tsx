@@ -4,6 +4,13 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Phone, Mail, MapPin, ChevronRight } from "lucide-react";
+import { WHATSAPP_TEL, WHATSAPP_DISPLAY } from "@/lib/whatsapp";
+import {
+  CONTACT_EMAIL,
+  mailtoLink,
+  ADDRESS_ONE_LINE,
+  SOCIAL_PROFILES,
+} from "@/lib/contact";
 
 interface FooterPackage {
   slug: string;
@@ -26,36 +33,103 @@ const YoutubeIcon = ({ className }: IconProps) => (
   </svg>
 );
 
-const FacebookIcon = ({ className }: IconProps) => (
-  <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
-    <path d="M24 12A12 12 0 1 0 10.13 23.85v-8.38H7.08V12h3.05V9.36c0-3 1.79-4.67 4.53-4.67 1.31 0 2.69.24 2.69.24v2.95h-1.52c-1.49 0-1.96.93-1.96 1.88V12h3.33l-.53 3.47h-2.8v8.38A12 12 0 0 0 24 12Z" />
-  </svg>
-);
-
 const TwitterIcon = ({ className }: IconProps) => (
   <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
     <path d="M18.9 1.5h3.68l-8.04 9.19L24 22.5h-7.4l-5.8-7.58-6.63 7.58H.49l8.6-9.83L0 1.5h7.59l5.24 6.93ZM17.6 20.3h2.04L6.49 3.6H4.3Z" />
   </svg>
 );
 
+/**
+ * FOOTER LINK LISTS — the site's internal-linking floor (SOP B1/B3).
+ *
+ * STATIC ARRAYS, NOT A CMS FETCH, and that is the whole point. A footer link
+ * only earns its keep if a crawler sees it, and anything loaded in the
+ * `useEffect` below arrives after the HTML does — invisible to a crawler and to
+ * an AI answer engine. These are module constants, so they ship inside the
+ * server-rendered HTML of every page on the site. (A "use client" component is
+ * still server-rendered on first paint; it is the effect, not the file, that is
+ * client-only.)
+ *
+ * They are also deliberately CURATED rather than a mirror of the database. The
+ * SOP asks for "top destinations / top routes", not every record — a footer
+ * that grows a link per CMS row stops being navigation and starts being a
+ * sitemap. When a new destination, activity or temple deserves a permanent
+ * link from every page on the site, add it here on purpose.
+ *
+ * Every href below resolves to a real route. Check before adding: a dead link
+ * in the footer is a dead link on every page at once.
+ */
+
 const QUICK_LINKS = [
   { label: "Home", href: "/" },
   { label: "About us", href: "/about" },
-  { label: "Packages", href: "/kashmir-tour-packages/" },
-  { label: "Activities", href: "/kashmir-tour-packages/" },
+  { label: "Meet Sartaj", href: "/author/sartaj" },
+  { label: "Reviews", href: "/review" },
+  { label: "Contact", href: "/contact" },
 ];
 
+/** Every hub — the top of each silo in the SOP A6 topical map. */
+const HUB_LINKS = [
+  { label: "Tour Packages", href: "/kashmir-tour-packages" },
+  { label: "Destinations", href: "/destinations" },
+  { label: "Experiences", href: "/experiences" },
+  { label: "Festivals & Events", href: "/festivals" },
+  { label: "Temples & Shrines", href: "/temples" },
+  { label: "Stays & Houseboats", href: "/stays" },
+  { label: "Cabs & Transport", href: "/cab-service" },
+  { label: "Travel Guides", href: "/blog" },
+];
+
+const DESTINATION_LINKS = [
+  { label: "Srinagar", href: "/destinations/srinagar" },
+  { label: "Gulmarg", href: "/destinations/gulmarg" },
+  { label: "Pahalgam", href: "/destinations/pahalgam" },
+  { label: "Sonamarg", href: "/destinations/sonamarg" },
+];
+
+const ACTIVITY_LINKS = [
+  { label: "Shikara Ride", href: "/experiences/dal-lake-shikara" },
+  { label: "Gondola Ride", href: "/experiences/gondola-ride" },
+  { label: "Skiing", href: "/experiences/skiing" },
+  { label: "Houseboat Stay", href: "/experiences/houseboat-stay" },
+  { label: "River Rafting", href: "/experiences/river-rafting" },
+  { label: "Trekking", href: "/experiences/trekking" },
+];
+
+const TEMPLE_LINKS = [
+  { label: "Shankaracharya Temple", href: "/temples/shankaracharya-temple" },
+  { label: "Kheer Bhawani Temple", href: "/temples/kheer-bhawani-temple" },
+];
+
+/**
+ * Every link column, in one array so the row is a single loop.
+ *
+ * ORDER IS DEPTH, left to right: site-wide pages, then the hubs, then the deep
+ * pages under them. Hubs and their children stay in SEPARATE columns rather
+ * than one merged list — putting /destinations and /destinations/gulmarg in the
+ * same column tells a reader, and a crawler, that they sit at the same level.
+ */
+const LINK_COLUMNS = [
+  { title: "Quick links", links: QUICK_LINKS },
+  { title: "Explore", links: HUB_LINKS },
+  { title: "Destinations", links: DESTINATION_LINKS },
+  { title: "Things to do", links: ACTIVITY_LINKS },
+  { title: "Temples", links: TEMPLE_LINKS },
+];
+
+// URLs come from src/lib/contact.ts so the footer and the organisation schema's
+// `sameAs` can never list different profiles. Facebook is absent because there
+// is no account URL yet — an href="#" here is a dead link on every page.
 const SOCIALS = [
-  { label: "Instagram", href: "#", Icon: InstagramIcon },
-  { label: "YouTube", href: "#", Icon: YoutubeIcon },
-  { label: "Facebook", href: "#", Icon: FacebookIcon },
-  { label: "Twitter", href: "#", Icon: TwitterIcon },
+  { label: "Instagram", href: SOCIAL_PROFILES.instagram, Icon: InstagramIcon },
+  { label: "YouTube", href: SOCIAL_PROFILES.youtube, Icon: YoutubeIcon },
+  { label: "X", href: SOCIAL_PROFILES.x, Icon: TwitterIcon },
 ];
 
 const CONTACT = [
-  { Icon: Phone, text: "(+91) 6272828", href: "tel:+916272828" },
-  { Icon: Mail, text: "exp@gmail.com", href: "mailto:exp@gmail.com" },
-  { Icon: MapPin, text: "Noida, Sector-62", href: undefined },
+  { Icon: Phone, text: WHATSAPP_DISPLAY, href: `tel:${WHATSAPP_TEL}` },
+  { Icon: Mail, text: CONTACT_EMAIL, href: mailtoLink() },
+  { Icon: MapPin, text: ADDRESS_ONE_LINE, href: undefined },
 ];
 
 export default function Footer() {
@@ -88,73 +162,91 @@ export default function Footer() {
       id="contact"
       className="relative overflow-hidden bg-linear-to-br from-sky-500 via-sky-400 to-sky-300 text-white"
     >
-      <div className="relative z-10 mx-auto max-w-7xl px-6 pt-14 lg:px-12">
-        <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-[1.1fr_0.8fr_1fr_1.1fr]">
+      {/* ── Bottom mountains ──
+          A BACKGROUND LAYER, not a block in the flow. As a normal <img> this
+          added its full rendered height to the footer — the artwork is
+          1440×222, so roughly 200px of pure furniture on a desktop viewport,
+          below the last line of text. Pinned to the bottom it costs nothing:
+          the footer's height is now its content plus the padding below, and the
+          ridge sits behind that padding.
+
+          The top of the artwork is transparent sky, so the bottom bar reads
+          against the footer's own gradient for most of its width, with the
+          peaks rising behind it. `pb` on the content is what keeps the text
+          clear of the solid rock lower down.
+
+          Lazy + async: it is a ~950KB decorative PNG (inlined in the SVG) at the
+          very bottom of every page on the site, so it must never compete with
+          the content above it for bandwidth. */}
+      <img
+        src="/footer-mountain.svg"
+        alt=""
+        aria-hidden="true"
+        loading="lazy"
+        decoding="async"
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-0 w-full select-none"
+      />
+
+      <div className="relative z-10 mx-auto max-w-7xl px-6 pt-10 pb-12 lg:px-12 lg:pb-16">
+        {/* ── ONE ROW OF LINK COLUMNS ──
+            Brand block plus all five lists across a single row, so the footer
+            costs one screen-height rather than two stacked bands.
+
+            Six columns only from lg. Below that they reflow 2-up (3-up from sm)
+            — five 200px columns on a phone would be five columns of wrapped
+            single words. The brand block spans the full width there so the logo
+            and socials are not crushed into a half-column. */}
+        <div className="grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-3 lg:grid-cols-6 lg:gap-8">
           {/* ── Brand + socials ── */}
-          <div>
-            <div className="inline-flex items-center rounded-full bg-white px-5 py-2.5 shadow-md">
+          <div className="col-span-2 sm:col-span-3 lg:col-span-1">
+            <div className="inline-flex items-center rounded-full bg-white px-4 py-2 shadow-md">
               <Image
                 src="/Experience_my_India.webp"
                 alt="Experience My India"
                 width={170}
                 height={44}
-                className="h-9 w-auto object-contain"
+                className="h-8 w-auto object-contain"
               />
             </div>
 
-            <div className="mt-7 flex gap-3">
+            <div className="mt-4 flex flex-wrap gap-2.5">
               {SOCIALS.map(({ label, href, Icon }) => (
                 <a
                   key={label}
                   href={href}
+                  target="_blank"
+                  rel="noopener noreferrer me"
                   aria-label={label}
-                  className="flex h-11 w-11 items-center justify-center rounded-full border border-white/50 text-white transition-colors hover:bg-white/15"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-white/50 text-white transition-colors hover:bg-white/15"
                 >
-                  <Icon className="h-5 w-5" />
+                  <Icon className="h-4 w-4" />
                 </a>
               ))}
             </div>
-          </div>
 
-          {/* ── Quick links ── */}
-          <div>
-            <h4 className="font-heading text-xl font-bold">Quick links</h4>
-            <ul className="mt-5 space-y-3">
-              {QUICK_LINKS.map((link) => (
-                <li key={link.label}>
-                  <Link
-                    href={link.href}
-                    className="group flex items-center gap-2 text-[15px] text-white/90 transition-colors hover:text-white"
-                  >
-                    <ChevronRight className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-0.5" />
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* ── Get in touch ── */}
-          <div>
-            <h4 className="font-heading text-xl font-bold">Get in touch</h4>
-            <ul className="mt-5 space-y-4">
+            {/* ── Get in touch ──
+                Under the brand rather than in its own column: it is three rows,
+                and a sixth column for it would have taken width from the lists
+                while leaving its own column mostly empty. */}
+            <ul className="mt-5 space-y-2.5">
               {CONTACT.map(({ Icon, text, href }) => {
                 const inner = (
                   <>
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/50">
-                      <Icon className="h-4 w-4" />
-                    </span>
-                    <span className="text-[15px] text-white/90">{text}</span>
+                    <Icon className="h-4 w-4 shrink-0 text-white/80" />
+                    <span className="text-sm text-white/90">{text}</span>
                   </>
                 );
                 return (
                   <li key={text}>
                     {href ? (
-                      <a href={href} className="flex items-center gap-3 transition-opacity hover:opacity-80">
+                      <a
+                        href={href}
+                        className="flex items-center gap-2.5 transition-opacity hover:opacity-80"
+                      >
                         {inner}
                       </a>
                     ) : (
-                      <div className="flex items-center gap-3">{inner}</div>
+                      <div className="flex items-center gap-2.5">{inner}</div>
                     )}
                   </li>
                 );
@@ -162,41 +254,79 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* ── Package thumbnails ── */}
-          {packages.length > 0 && (
-            <div className="grid grid-cols-3 gap-2.5">
-              {packages.map((pkg) => (
-                <Link
-                  key={pkg.slug}
-                  href={`/kashmir-tour-packages/${pkg.slug}`}
-                  aria-label={pkg.title}
-                  className="group relative aspect-square overflow-hidden rounded-xl border border-white/40"
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={pkg.image}
-                    alt={pkg.title}
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                </Link>
-              ))}
-            </div>
-          )}
+          {/* ── The five link columns ── */}
+          {LINK_COLUMNS.map((column) => (
+            <nav key={column.title} aria-label={column.title}>
+              <h4 className="font-heading text-base font-bold">{column.title}</h4>
+              <ul className="mt-3 space-y-2">
+                {column.links.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className="group flex items-start gap-1.5 text-sm text-white/85 transition-colors hover:text-white"
+                    >
+                      <ChevronRight className="mt-0.5 h-3.5 w-3.5 shrink-0 transition-transform group-hover:translate-x-0.5" />
+                      <span>{link.label}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          ))}
         </div>
 
-        {/* Copyright */}
-        <p className="mt-10 text-xs text-white/70">
-          © {new Date().getFullYear()} eKashmir Tour Packages. All rights reserved.
-        </p>
-      </div>
+        {/* ── Package thumbnails ──
+            The one CLIENT-LOADED block in the footer: it arrives after
+            hydration, so it is decorative reinforcement of links that already
+            exist in the HTML above, never the only route to a page. A single
+            row here rather than a 3×2 block in a column — same six links, half
+            the height. */}
+        {packages.length > 0 && (
+          <div className="mt-8 flex flex-wrap items-center gap-2.5 border-t border-white/25 pt-6">
+            <span className="mr-1 text-xs font-semibold tracking-wide text-white/70 uppercase">
+              Popular packages
+            </span>
+            {packages.map((pkg) => (
+              <Link
+                key={pkg.slug}
+                href={`/kashmir-tour-packages/${pkg.slug}`}
+                aria-label={pkg.title}
+                className="group relative h-14 w-14 overflow-hidden rounded-lg border border-white/40"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={pkg.image}
+                  alt={pkg.title}
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                />
+              </Link>
+            ))}
+          </div>
+        )}
 
-      {/* ── Bottom mountains ── */}
-      <img
-        src="/footer-mountain.svg"
-        alt=""
-        aria-hidden="true"
-        className="pointer-events-none mt-6 w-full select-none"
-      />
+        {/* ── Bottom bar ── */}
+        <div className="mt-6 flex flex-col items-center gap-2 border-t border-white/25 pt-5 text-center [text-shadow:0_1px_6px_rgba(15,23,42,0.45)] sm:flex-row sm:justify-between sm:text-left">
+          <p className="text-xs text-white/85">
+            © {new Date().getFullYear()} eKashmir Tour Packages. All rights
+            reserved.
+          </p>
+
+          <p className="text-xs text-white/85">
+            Created and maintained by{" "}
+            {/* External, so a plain <a> rather than next/link — and
+                rel="noopener" because target="_blank" otherwise hands the new
+                tab a reference back to this window. */}
+            <a
+              href="https://inventoapps.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-white underline decoration-white/40 underline-offset-2 transition-colors hover:decoration-white"
+            >
+              Invento Apps
+            </a>
+          </p>
+        </div>
+      </div>
     </footer>
   );
 }

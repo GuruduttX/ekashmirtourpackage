@@ -7,6 +7,7 @@ import BlogArchiveSection, {
 } from "@/components/blogArchive/BlogArchiveSection";
 import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/layout/Navbar";
+import Breadcrumbs from "@/components/layout/Breadcrumbs";
 
 export const dynamic = "force-dynamic";
 
@@ -71,11 +72,51 @@ async function getPublishedBlogs(): Promise<BlogCardType[]> {
   }
 }
 
+const PAGE_URL = `${SITE_URL}/blog`;
+
+// BreadcrumbList comes from <Breadcrumbs /> below — one per URL.
+
 export default async function BlogArchive() {
   const blogs = await getPublishedBlogs();
 
+  /**
+   * Blog + ItemList of the posts actually listed on this page. Each post's own
+   * BlogPosting schema lives on /blog/[slug] — this only says which posts the
+   * archive contains, so the two never duplicate the same claim.
+   */
+  const blogSchema = {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    name: "Kashmir Travel Blog",
+    url: PAGE_URL,
+    description:
+      "Kashmir travel guides, itineraries and planning advice from a Srinagar-based team.",
+    publisher: {
+      "@type": "TravelAgency",
+      name: "eKashmir Tour Packages",
+      url: SITE_URL,
+    },
+    ...(blogs.length
+      ? {
+          blogPost: blogs.map((blog) => ({
+            "@type": "BlogPosting",
+            headline: blog.title,
+            url: `${SITE_URL}/blog/${blog.slug}`,
+            ...(blog.image ? { image: blog.image } : {}),
+          })),
+        }
+      : {}),
+  };
+
   return (
     <main className="relative overflow-hidden bg-sky-50">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(blogSchema).replace(/</g, "\\u003c"),
+        }}
+      />
+
       {/* Cinematic Ambient Background */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute left-[-10%] top-0 h-[420px] w-[420px] rounded-full bg-sky-400/15 blur-[140px]" />
@@ -87,6 +128,10 @@ export default async function BlogArchive() {
       {/* Page Content */}
       <div className="relative z-10">
         <Navbar />
+
+        <div className="mx-auto max-w-6xl px-4 pt-24 sm:px-6 lg:px-8">
+          <Breadcrumbs items={[{ label: "Blog" }]} />
+        </div>
 
         <section>
           <BlogArchiveHero />

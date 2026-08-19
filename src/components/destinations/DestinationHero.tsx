@@ -49,7 +49,7 @@ const EASE_IN_OUT = [0.65, 0, 0.35, 1] as const;
  */
 const CLOUDS = [
   {
-    src: "/destinations/hero/cloud4.png",
+    src: "/destinations/hero/cloud4.webp",
     // Widest wisp — covers the top band, exits up and right.
     className: "left-[-20%] top-[-25%] w-[110%]",
     from: { x: "6%", y: "10%", scale: 2.5, opacity: 1 },
@@ -57,7 +57,7 @@ const CLOUDS = [
     duration: 1.9,
   },
   {
-    src: "/destinations/hero/cloud1.png",
+    src: "/destinations/hero/cloud1.webp",
     // Left bank — the one that survives into the final frame.
     className: "left-[-30%] top-[10%] w-[70%]",
     from: { x: "42%", y: "-6%", scale: 2.6, opacity: 1 },
@@ -65,7 +65,7 @@ const CLOUDS = [
     duration: 2.1,
   },
   {
-    src: "/destinations/hero/cloud2.png",
+    src: "/destinations/hero/cloud2.webp",
     // Bottom-left bank, drifts down and mostly out of frame.
     className: "left-[-18%] bottom-[-22%] w-[65%]",
     from: { x: "38%", y: "-46%", scale: 2.4, opacity: 1 },
@@ -73,7 +73,7 @@ const CLOUDS = [
     duration: 2.0,
   },
   {
-    src: "/destinations/hero/cloud3.png",
+    src: "/destinations/hero/cloud3.webp",
     // Right side — clears fully so the cave has a clean edge to land on.
     className: "right-[-24%] top-[18%] w-[75%]",
     from: { x: "-34%", y: "-4%", scale: 2.5, opacity: 1 },
@@ -172,7 +172,7 @@ export default function DestinationHero() {
 
       <div className="absolute inset-0">
         <Image
-          src="/destinations/hero/bg-sky.jpg"
+          src="/destinations/hero/bg-sky.webp"
           alt=""
           fill
           priority
@@ -186,7 +186,7 @@ export default function DestinationHero() {
           anchored high — object-bottom lands on the black. */}
       <div className="mountains absolute inset-0 origin-center scale-[1.12] transform-gpu will-change-transform">
         <Image
-          src="/destinations/hero/bg-mountains.png"
+          src="/destinations/hero/bg-mountains.webp"
           alt="Snow-covered Himalayan peaks in the Kashmir valley at golden hour"
           fill
           priority
@@ -220,7 +220,7 @@ export default function DestinationHero() {
       <div className="figure pointer-events-none absolute inset-x-0 bottom-0 translate-y-6 transform-gpu opacity-0 will-change-[opacity,transform]">
         <div className="relative h-[38dvh] w-full sm:h-[42dvh]">
           <Image
-            src="/destinations/hero/cave-man.png"
+            src="/destinations/hero/cave-man.webp"
             alt="A lone traveller standing at the mouth of a cave looking out over the peaks"
             fill
             priority
@@ -277,7 +277,7 @@ export default function DestinationHero() {
             fit. object-top keeps the overhang spanning the full width, which is
             the honest small-screen version of the same shot. */}
         <Image
-          src="/destinations/hero/cave.png"
+          src="/destinations/hero/cave.webp"
           alt=""
           fill
           priority

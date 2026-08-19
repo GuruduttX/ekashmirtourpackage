@@ -12,6 +12,7 @@ import {
   Users,
 } from "lucide-react";
 import EnquiryPopupForm from "@/utils/EnquiryPopupForm";
+import { whatsappLink, WHATSAPP_TEL } from "@/lib/whatsapp";
 
 export default function PremiumTravelAssistance() {
   const [isOpen, setOpen] = useState(false)
@@ -136,7 +137,7 @@ export default function PremiumTravelAssistance() {
                 </div>
                 <div className="mt-5">
                   <a
-                    href="https://wa.me/919999999999"
+                    href={whatsappLink()}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-sky-400 to-cyan-400 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-sky-400/20 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(56,189,248,0.35)]"
@@ -200,7 +201,7 @@ export default function PremiumTravelAssistance() {
                   Prefer speaking? Call us.
                 </p>
                 <a
-                  href="tel:+919999999999"
+                  href={`tel:${WHATSAPP_TEL}`}
                   className="mt-4 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-sky-400 to-cyan-400 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-sky-400/20 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(56,189,248,0.35)]"
                 >
                   <PhoneCall className="w-4 h-4" />

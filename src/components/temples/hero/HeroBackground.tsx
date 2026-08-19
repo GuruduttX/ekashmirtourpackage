@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-const BACKGROUND_IMAGE = "/temple-hub/temple-hub-background-image.png";
+const BACKGROUND_IMAGE = "/temple-hub/temple-hub-background-image.webp";
 
 /** Static, full-bleed background photo — no animation. */
 export default function HeroBackground() {

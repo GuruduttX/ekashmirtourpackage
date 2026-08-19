@@ -26,6 +26,7 @@ export default function DestinationImagesEditor({
   addLabel = 'Add Image',
   leadLabel,
   altHint,
+  editorType = 'destination',
 }: {
   images: IDestinationImage[];
   setImages: (images: IDestinationImage[]) => void;
@@ -33,6 +34,8 @@ export default function DestinationImagesEditor({
   /** Badge on the first row, e.g. "First slide". Omit for unordered lists. */
   leadLabel?: string;
   altHint?: string;
+  /** Upload folder suffix — the activity editor reuses this list. */
+  editorType?: string;
 }) {
   return (
     <div className="mt-1 space-y-4">
@@ -62,7 +65,7 @@ export default function DestinationImagesEditor({
           <CMSMediaSection
             image={img.image}
             alt={img.alt}
-            editorType="destination"
+            editorType={editorType}
             onChange={(field, value) =>
               setImages(
                 images.map((i) => (i.id === img.id ? { ...i, [field]: value } : i)),

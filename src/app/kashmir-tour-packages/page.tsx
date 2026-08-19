@@ -4,6 +4,7 @@ import Package from "@/models/Package";
 import TourCategories, { type PackageCard } from "@/components/home/TourCategories";
 import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/layout/Navbar";
+import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import PackageCTA from "@/components/package/packageCTA";
 import PackageFaqSection from "@/components/package/PackageFaqSection";
 import PackageTestimonials from "@/components/package/PackageTestimonial";
@@ -170,8 +171,92 @@ async function getHubs(): Promise<{
 /** How many hubs of each type get a full package-card row on this page. */
 const FEATURED_ROWS_PER_TYPE = 2;
 
+const PAGE_URL = `${SITE_URL}/kashmir-tour-packages`;
+
+/**
+ * Raw package rows for the schema, queried separately from the card list
+ * because the cards carry `price` already formatted as "₹8,999" and an Offer
+ * needs the number. Cheap: three fields, published only.
+ */
+async function getPackageOffers(): Promise<
+  { title: string; slug: string; price: number }[]
+> {
+  try {
+    await connectDB();
+    const packages = await Package.find({ status: "published" })
+      .select("title slug price")
+      .sort({ createdAt: -1 })
+      .lean<{ title: string; slug: string; price?: number }[]>();
+
+    // A package with no price yet gets listed without an Offer rather than
+    // with a zero one — "₹0" in a rich result is worse than no price at all.
+    return packages.map((pkg) => ({
+      title: pkg.title,
+      slug: pkg.slug,
+      price: pkg.price ?? 0,
+    }));
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * ItemList of TouristTrip + Offer, per SOP §2.2. Prices are the real published
+ * ones straight from the CMS — never a rounded "from" figure invented here.
+ *
+ * No AggregateRating anywhere on this page: the testimonials it renders are
+ * placeholder content, and rating markup is allowed only where genuine reviews
+ * are shown.
+ */
+function itemListSchema(offers: { title: string; slug: string; price: number }[]) {
+  if (!offers.length) return null;
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Kashmir Tour Packages",
+    url: PAGE_URL,
+    numberOfItems: offers.length,
+    itemListElement: offers.map((pkg, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      item: {
+        "@type": "TouristTrip",
+        name: pkg.title,
+        url: `${SITE_URL}/kashmir-tour-packages/${pkg.slug}`,
+        provider: {
+          "@type": "TravelAgency",
+          name: "eKashmir Tour Packages",
+          url: SITE_URL,
+        },
+        ...(pkg.price > 0
+          ? {
+              offers: {
+                "@type": "Offer",
+                price: pkg.price,
+                priceCurrency: "INR",
+                availability: "https://schema.org/InStock",
+                url: `${SITE_URL}/kashmir-tour-packages/${pkg.slug}`,
+              },
+            }
+          : {}),
+      },
+    })),
+  };
+}
+
+// BreadcrumbList is emitted by <Breadcrumbs /> below, not hand-written here —
+// one BreadcrumbList per URL, and the markup then always matches the trail the
+// reader can actually see.
+
 export default async function PackageArchivePage() {
-  const [packages, hubs] = await Promise.all([getPublishedPackages(), getHubs()]);
+  const [packages, hubs, offers] = await Promise.all([
+    getPublishedPackages(),
+    getHubs(),
+    getPackageOffers(),
+  ]);
+
+  const listSchema = itemListSchema(offers);
 
   // Fetch the package cards for the first few hubs of each type, in parallel.
   const [cityRows, durationRows, themeRows] = await Promise.all([
@@ -197,7 +282,19 @@ export default async function PackageArchivePage() {
 
   return (
     <div>
+      {listSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(listSchema).replace(/</g, "\\u003c"),
+          }}
+        />
+      )}
+
       <Navbar />
+      <div className="mx-auto max-w-7xl px-4 pt-24 sm:px-6 lg:px-8">
+        <Breadcrumbs items={[{ label: "Kashmir Tour Packages" }]} />
+      </div>
       <PackagesArchiveHero />
       <TourCategories packages={packages.length > 0 ? packages : undefined} />
       {/* Package-card rows for the featured hubs, each linking to its hub page */}

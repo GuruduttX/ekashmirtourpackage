@@ -13,6 +13,9 @@ import MidPageCTA from "@/components/home/Midpagecta";
 import TopDestinations from "@/components/home/Topdestinations";
 import PopularPackagesCarousel from "@/components/home/PopularPackagesCarousel";
 import { getPublishedPackages } from "./kashmir-tour-packages/page";
+import { buildHomeActivities } from "@/lib/homeActivities";
+import { ADDRESS_SCHEMA, CONTACT_EMAIL, SOCIAL_PROFILE_URLS } from "@/lib/contact";
+import { WHATSAPP_TEL } from "@/lib/whatsapp";
 import Hero from "@/components/home/AnimatedHeroHome";
 import AboutUs from "@/components/home/AboutUs";
 import CtaGradientBanner from "@/components/home/cta/CtaGradientBanner";
@@ -54,29 +57,62 @@ const organizationSchema = {
   logo: `${SITE_URL}/favicon.ico`,
   description:
     "Premium Kashmir tour packages — Gulmarg snow retreats, Dal Lake houseboats, Pahalgam valley treks. Luxury travel crafted for the discerning traveler.",
-  address: {
-    "@type": "PostalAddress",
-    addressLocality: "Srinagar",
-    addressRegion: "Jammu & Kashmir",
-    postalCode: "190001",
-    addressCountry: "IN",
-  },
+  address: ADDRESS_SCHEMA,
+  // Same NAP a reader sees in the footer — an inconsistent address or phone
+  // between the markup and the page is what suppresses a business in local results.
+  telephone: WHATSAPP_TEL,
+  email: CONTACT_EMAIL,
+  sameAs: SOCIAL_PROFILE_URLS,
   contactPoint: {
     "@type": "ContactPoint",
     contactType: "customer support",
+    telephone: WHATSAPP_TEL,
+    email: CONTACT_EMAIL,
     areaServed: "IN",
     availableLanguage: ["English", "Hindi", "Kashmiri"],
   },
 };
 
+/**
+ * WebSite (SOP §2.1). Belongs on the homepage and nowhere else — it describes
+ * the site as a whole, so emitting it per-hub just repeats the same claim on a
+ * dozen URLs.
+ *
+ * NO SearchAction, though the SOP lists one. Its `target` must be a URL that
+ * actually runs a search, and this site has no search endpoint yet — pointing
+ * it at a URL that ignores the query would be a claim the site cannot honour.
+ * Add it the day a real search ships, not before.
+ */
+const webSiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "eKashmir Tour Packages",
+  url: SITE_URL,
+  publisher: {
+    "@type": "TravelAgency",
+    name: "eKashmir Tour Packages",
+    url: SITE_URL,
+  },
+};
+
 export default async function HomePage() {
-  const packages = await getPublishedPackages();
-  console.log(packages)
+  const [packages, activities] = await Promise.all([
+    getPublishedPackages(),
+    buildHomeActivities(),
+  ]);
   return (
     <main className="overflow-x-hidden">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(organizationSchema).replace(/</g, "\\u003c"),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(webSiteSchema).replace(/</g, "\\u003c"),
+        }}
       />
       <Navbar />
       <Hero />
@@ -86,7 +122,7 @@ export default async function HomePage() {
       <CtaGradientBanner />
       <FeaturedPackages />
       <TourCategories packages={packages.length > 0 ? packages : undefined} />
-      <ActivityCarousel />
+      {activities.length > 0 && <ActivityCarousel activities={activities} />}
       <CtaSplitImage />
       <HowItWorks />
       <WhyKashmir />

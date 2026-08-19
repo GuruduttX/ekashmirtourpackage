@@ -10,6 +10,7 @@ import {
   HelpCircle,
   ArrowRight,
 } from "lucide-react";
+import { whatsappLink, WHATSAPP_TEL } from "@/lib/whatsapp";
 
 const faqs = [
   {
@@ -169,27 +170,35 @@ export default function PremiumFAQ() {
                 Still Have <span className="text-sky-500">Questions?</span>
               </h3>
               <p className="text-slate-600 text-sm leading-relaxed font-light mb-8">
-                Our luxury travel concierges are ready to assist you. Let's
+                Our luxury travel concierges are ready to assist you. Let&apos;s
                 discuss your preferences and start crafting your perfect
                 Kashmir escape.
               </p>
 
               <div className="flex flex-col gap-4 mb-8">
-                <button className="flex items-center justify-between w-full p-4 rounded-xl bg-sky-500 text-white hover:bg-sky-600 transition-all duration-300 group/btn shadow-md hover:-translate-y-1">
+                <a
+                  href={whatsappLink()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-between w-full p-4 rounded-xl bg-sky-500 text-white hover:bg-sky-600 transition-all duration-300 group/btn shadow-md hover:-translate-y-1"
+                >
                   <div className="flex items-center gap-3">
                     <MessageCircle className="w-5 h-5" />
                     <span className="font-bold text-sm">Chat on WhatsApp</span>
                   </div>
                   <ArrowRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover/btn:opacity-100 group-hover/btn:translate-x-0 transition-all duration-300" />
-                </button>
+                </a>
 
-                <button className="flex items-center justify-between w-full p-4 rounded-xl bg-white border border-slate-200 text-slate-900 hover:border-sky-500 hover:text-sky-500 transition-all duration-300 group/btn hover:-translate-y-1">
+                <a
+                  href={`tel:${WHATSAPP_TEL}`}
+                  className="flex items-center justify-between w-full p-4 rounded-xl bg-white border border-slate-200 text-slate-900 hover:border-sky-500 hover:text-sky-500 transition-all duration-300 group/btn hover:-translate-y-1"
+                >
                   <div className="flex items-center gap-3">
                     <PhoneCall className="w-5 h-5 text-sky-500" />
                     <span className="font-bold text-sm">Request a Call</span>
                   </div>
                   <ArrowRight className="w-4 h-4 text-sky-500 opacity-0 -translate-x-2 group-hover/btn:opacity-100 group-hover/btn:translate-x-0 transition-all duration-300" />
-                </button>
+                </a>
               </div>
 
               <div className="flex items-center gap-3 p-4 rounded-xl bg-white border border-slate-200 shadow-sm">

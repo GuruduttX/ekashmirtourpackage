@@ -8,6 +8,7 @@ import CinematicBlogHero from "@/components/blog/BlogHero";
 import BlogLayout from "@/components/blog/BlogLayout";
 import BlogShareRail from "@/components/blog/BlogShareRail";
 import BlogSidebar from "@/components/blog/BlogSidebar";
+import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import ReadingProgress from "@/components/blog/ReadingProgress";
 import RelatedBlogs from "@/components/blog/RelatedBlogs";
 import type { RelatedBlog } from "@/components/blog/RelatedBlogs";
@@ -183,6 +184,11 @@ export default async function BlogPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <Navbar />
+      <div className="mx-auto max-w-6xl px-4 pt-24 sm:px-6 lg:px-8">
+        <Breadcrumbs
+          items={[{ label: "Blog", href: "/blog" }, { label: blog.title }]}
+        />
+      </div>
       <main>
         <CinematicBlogHero
           title={blog.title}

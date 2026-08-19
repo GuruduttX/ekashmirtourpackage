@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Phone } from "lucide-react";
+import { whatsappLink, WHATSAPP_TEL } from "@/lib/whatsapp";
 
 export default function PackageCTA() {
   return (
@@ -41,7 +42,9 @@ export default function PackageCTA() {
           {/* CTA Buttons */}
           <div className="mt-7 flex flex-wrap gap-4 justify-center md:justify-start">
             <Link
-              href="https://wa.me/9999999999?text=Kashmir Jana h"
+              href={whatsappLink()}
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-bold text-green-600 transition-all duration-200 hover:bg-sky-50 hover:shadow-lg"
             >
               <Phone className="h-4 w-4" />
@@ -49,7 +52,7 @@ export default function PackageCTA() {
             </Link>
 
             <Link
-              href="tel:+919876543210"
+              href={`tel:${WHATSAPP_TEL}`}
               className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-bold text-sky-600 transition-all duration-200 hover:bg-sky-50 hover:shadow-lg"
             >
               <Phone className="h-4 w-4" />
