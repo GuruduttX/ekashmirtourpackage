@@ -39,7 +39,7 @@ export default function Hero() {
       ========================================================= */}
 
       <motion.img
-        src="/experiences/backClouds.png"
+        src="/experiences/backClouds.webp"
         alt=""
         aria-hidden="true"
         className="
@@ -76,7 +76,7 @@ export default function Hero() {
       ========================================================= */}
 
       <motion.img
-        src="/experiences/backMountain.png"
+        src="/experiences/backMountain.webp"
         alt=""
         aria-hidden="true"
         className="
@@ -122,7 +122,7 @@ export default function Hero() {
       ========================================================= */}
 
       <motion.img
-        src="/experiences/sideCloud1.png"
+        src="/experiences/sideCloud1.webp"
         alt=""
         aria-hidden="true"
         className="
@@ -164,7 +164,7 @@ export default function Hero() {
       ========================================================= */}
 
       <motion.img
-        src="/experiences/sideCloud2.png"
+        src="/experiences/sideCloud2.webp"
         alt=""
         aria-hidden="true"
         className="
@@ -210,7 +210,7 @@ export default function Hero() {
       ========================================================= */}
 
       <motion.img
-        src="/experiences/sideCloud3.png"
+        src="/experiences/sideCloud3.webp"
         alt=""
         aria-hidden="true"
         className="
@@ -256,7 +256,7 @@ export default function Hero() {
       ========================================================= */}
 
       <motion.img
-        src="/experiences/sideCloud2.png"
+        src="/experiences/sideCloud2.webp"
         alt=""
         aria-hidden="true"
         className="
@@ -305,7 +305,7 @@ export default function Hero() {
       ========================================================= */}
 
       <motion.img
-        src="/experiences/sideCloud1.png"
+        src="/experiences/sideCloud1.webp"
         alt=""
         aria-hidden="true"
         className="
@@ -405,7 +405,7 @@ export default function Hero() {
       ========================================================= */}
 
       <motion.img
-        src="/experiences/cave.png"
+        src="/experiences/cave.webp"
         alt=""
         aria-hidden="true"
         className="
@@ -444,7 +444,7 @@ export default function Hero() {
       ========================================================= */}
 
       <motion.img
-        src="/experiences/person.png"
+        src="/experiences/person.webp"
         alt=""
         aria-hidden="true"
         className="
