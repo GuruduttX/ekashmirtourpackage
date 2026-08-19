@@ -48,7 +48,7 @@ export default function Hero() {
         alt="Foreground"
         // PLACEMENT & SIZE:
         // Make width slightly larger than 100% so when it moves left, we don't see the edge
-        className="absolute bottom-[5%] md:bottom-[-10%] left-[-10%] w-[110%] h-auto object-contain"
+        className="absolute bottom-[5%] md:bottom-[-5%] left-[-10%] w-[110%] h-auto object-contain"
         // ANIMATION CONTROL:
         initial={{ x: "5%", scale: 1.3 }} // Starts at its normal position
         animate={{ x: "0%", scale: 1.3 }} // Moves slightly right to left and scales up a tiny bit
@@ -60,7 +60,7 @@ export default function Hero() {
         src="/Home/Hero/cloud.webp"
         alt="Cloud"
         // PLACEMENT & SIZE:
-        className="absolute top-[8%] md:top-[-5%] left-[-10%] w-[45%] h-auto object-contain"
+        className="absolute top-[8%] md:top-[-30%] left-[-10%] w-[45%] h-auto object-contain"
         // ANIMATION CONTROL:
         initial={{ x: "-100%", opacity: 0, scale: 2.6 }} // Starts off-screen left, invisible, slightly small
         animate={{ x: "70%", opacity: 1, scale: 2.6 }} // Moves in, becomes visible, scales to normal size

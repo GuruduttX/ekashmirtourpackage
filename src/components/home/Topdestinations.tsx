@@ -56,10 +56,10 @@ export default function TopDestinations() {
 
       <div className="relative">
         <img
-          src="/TopDestination/TopDestinationUpPattern.webp"
+          src="/TopDestination/TopDestinationBottomPattern.webp"
           alt=""
           aria-hidden="true"
-          className="absolute -top-px left-0 z-10 w-full select-none"
+          className="absolute -top-px left-0 z-10 w-full select-none rotate-180"
         />
 
         <div className="bg-sky-100 py-24 sm:py-32">

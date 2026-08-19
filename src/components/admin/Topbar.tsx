@@ -1,12 +1,21 @@
 'use client';
 
-import { Menu, Compass } from 'lucide-react';
+import { Menu, Compass, LogOut } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 interface TopbarProps {
   toggleSidebar: () => void;
 }
 
 export default function Topbar({ toggleSidebar }: TopbarProps) {
+  const router = useRouter();
+
+  async function handleLogout() {
+    await fetch('/api/auth/logout', { method: 'POST' });
+    router.replace('/login');
+    router.refresh();
+  }
+
   return (
     <header className="fixed top-0 left-0 w-full z-50 bg-[#060e1a]/90 backdrop-blur-2xl border-b border-[#19315d]/40 px-4 md:px-8 py-0 h-20 flex items-center justify-between">
       {/* Left: hamburger + brand */}
@@ -38,9 +47,17 @@ export default function Topbar({ toggleSidebar }: TopbarProps) {
         </div>
 
         {/* Avatar */}
-        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white text-sm font-bold shadow-lg shadow-blue-900/30 cursor-pointer hover:scale-105 transition-transform">
+        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white text-sm font-bold shadow-lg shadow-blue-900/30">
           A
         </div>
+
+        <button
+          onClick={handleLogout}
+          title="Log out"
+          className="flex items-center justify-center w-9 h-9 rounded-xl text-slate-400 hover:text-white hover:bg-[#0f1e3a] border border-transparent hover:border-[#19315d]/50 transition-all"
+        >
+          <LogOut className="w-4 h-4" />
+        </button>
       </div>
     </header>
   );
