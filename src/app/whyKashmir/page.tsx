@@ -21,14 +21,14 @@ export const metadata: Metadata = {
     description:
       'Snow-capped valleys, Dal Lake, Mughal gardens, Gulmarg skiing, Pahalgam treks, Kashmiri cuisine & warm hospitality — discover Heaven on Earth.',
     url: `${SITE_URL}/whyKashmir`,
-    images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: 'Why Visit Kashmir — Heaven on Earth' }],
+    images: [{ url: '/og-image.webp', width: 1734, height: 907, alt: 'Why Visit Kashmir — Heaven on Earth' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Why Visit Kashmir? | Heaven on Earth Awaits You',
     description:
       'Snow-capped valleys, Dal Lake, Mughal gardens, Gulmarg skiing, Pahalgam treks, Kashmiri cuisine & warm hospitality — discover Heaven on Earth.',
-    images: ['/og-image.jpg'],
+    images: ['/og-image.webp'],
   },
 }
 

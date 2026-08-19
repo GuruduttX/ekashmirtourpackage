@@ -38,14 +38,14 @@ export const metadata: Metadata = {
     description:
       "Book premium Kashmir tour packages. Gulmarg snow retreats, Dal Lake houseboats, Pahalgam valley treks & Sonamarg glaciers. From ₹8,999.",
     url: SITE_URL,
-    images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: "eKashmir Tour Packages — Premium Kashmir Holidays" }],
+    images: [{ url: "/og-image.webp", width: 1734, height: 907, alt: "eKashmir Tour Packages — Premium Kashmir Holidays" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "eKashmir Tour Packages | Premium Kashmir Holiday Packages",
     description:
       "Book premium Kashmir tour packages. Gulmarg, Dal Lake, Pahalgam & Sonamarg. From ₹8,999.",
-    images: ["/og-image.jpg"],
+    images: ["/og-image.webp"],
   },
 };
 

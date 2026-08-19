@@ -111,13 +111,13 @@ export async function generateMetadata({
       siteName: "eKashmir Tour Packages",
       images: image
         ? [{ url: image, alt: alt || title }]
-        : [{ url: "/og-image.jpg", width: 1200, height: 630, alt: title }],
+        : [{ url: "/og-image.webp", width: 1734, height: 907, alt: title }],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: [image ?? "/og-image.jpg"],
+      images: [image ?? "/og-image.webp"],
     },
   });
 

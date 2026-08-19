@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     description:
       "Sedans, SUVs, tempo travellers and luxury cabs for Kashmir transfers and sightseeing. Book with eKashmir.",
     url: `${SITE_URL}/cab-service`,
-    images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: "Kashmir Cab & Taxi Service" }],
+    images: [{ url: "/og-image.webp", width: 1734, height: 907, alt: "Kashmir Cab & Taxi Service" }],
   },
 };
 

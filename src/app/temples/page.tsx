@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     description:
       "Verified timings, entry, dress code and how to reach every temple and shrine in Kashmir.",
     url: `${SITE_URL}/temples`,
-    images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: "Kashmir Temples & Shrines" }],
+    images: [{ url: "/og-image.webp", width: 1734, height: 907, alt: "Kashmir Temples & Shrines" }],
   },
 };
 

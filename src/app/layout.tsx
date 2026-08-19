@@ -45,9 +45,9 @@ export const metadata: Metadata = {
       "Book premium Kashmir tour packages. Gulmarg snow retreats, Dal Lake houseboats, Pahalgam valley treks & Sonamarg glaciers. Expert-crafted Kashmir holidays.",
     images: [
       {
-        url: "/og-image.jpg",
-        width: 1200,
-        height: 630,
+        url: "/og-image.webp",
+        width: 1734,
+        height: 907,
         alt: "eKashmir Tour Packages — Premium Kashmir Holidays",
       },
     ],
@@ -57,7 +57,7 @@ export const metadata: Metadata = {
     title: "eKashmir Tour Packages | Premium Kashmir Holiday Packages",
     description:
       "Book premium Kashmir tour packages. Gulmarg, Dal Lake, Pahalgam & Sonamarg. Expert-crafted Kashmir holidays.",
-    images: ["/og-image.jpg"],
+    images: ["/og-image.webp"],
   },
   // NO `alternates.canonical` here on purpose. Next inherits metadata fields
   // into child segments, so a canonical set at the root becomes the canonical

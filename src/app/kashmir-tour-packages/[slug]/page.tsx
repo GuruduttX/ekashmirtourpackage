@@ -73,13 +73,13 @@ export async function generateMetadata({
           siteName: "eKashmir Tour Packages",
           images: hub.heroImage?.image
             ? [{ url: hub.heroImage.image, alt: hub.heroImage.alt || title }]
-            : [{ url: "/og-image.jpg", width: 1200, height: 630, alt: title }],
+            : [{ url: "/og-image.webp", width: 1734, height: 907, alt: title }],
         },
         twitter: {
           card: "summary_large_image",
           title,
           description,
-          images: hub.heroImage?.image ? [hub.heroImage.image] : ["/og-image.jpg"],
+          images: hub.heroImage?.image ? [hub.heroImage.image] : ["/og-image.webp"],
         },
       };
     }
@@ -107,13 +107,13 @@ export async function generateMetadata({
           siteName: "eKashmir Tour Packages",
           images: hub.heroImage?.image
             ? [{ url: hub.heroImage.image, alt: hub.heroImage.alt || title }]
-            : [{ url: "/og-image.jpg", width: 1200, height: 630, alt: title }],
+            : [{ url: "/og-image.webp", width: 1734, height: 907, alt: title }],
         },
         twitter: {
           card: "summary_large_image",
           title,
           description,
-          images: hub.heroImage?.image ? [hub.heroImage.image] : ["/og-image.jpg"],
+          images: hub.heroImage?.image ? [hub.heroImage.image] : ["/og-image.webp"],
         },
       };
     }
@@ -141,13 +141,13 @@ export async function generateMetadata({
           siteName: "eKashmir Tour Packages",
           images: hub.heroImage?.image
             ? [{ url: hub.heroImage.image, alt: hub.heroImage.alt || title }]
-            : [{ url: "/og-image.jpg", width: 1200, height: 630, alt: title }],
+            : [{ url: "/og-image.webp", width: 1734, height: 907, alt: title }],
         },
         twitter: {
           card: "summary_large_image",
           title,
           description,
-          images: hub.heroImage?.image ? [hub.heroImage.image] : ["/og-image.jpg"],
+          images: hub.heroImage?.image ? [hub.heroImage.image] : ["/og-image.webp"],
         },
       };
     }
@@ -178,13 +178,13 @@ export async function generateMetadata({
         siteName: "eKashmir Tour Packages",
         images: pkg.heroImage?.image
           ? [{ url: pkg.heroImage.image, alt: pkg.heroImage.alt || title }]
-          : [{ url: "/og-image.jpg", width: 1200, height: 630, alt: title }],
+          : [{ url: "/og-image.webp", width: 1734, height: 907, alt: title }],
       },
       twitter: {
         card: "summary_large_image",
         title,
         description,
-        images: pkg.heroImage?.image ? [pkg.heroImage.image] : ["/og-image.jpg"],
+        images: pkg.heroImage?.image ? [pkg.heroImage.image] : ["/og-image.webp"],
       },
     };
   } catch {

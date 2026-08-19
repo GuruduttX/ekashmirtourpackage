@@ -109,7 +109,7 @@ export async function generateMetadata({
         siteName: "eKashmir Tour Packages",
         images: blog.image
           ? [{ url: blog.image, alt: blog.alt || title }]
-          : [{ url: "/og-image.jpg", width: 1200, height: 630, alt: title }],
+          : [{ url: "/og-image.webp", width: 1734, height: 907, alt: title }],
         publishedTime: blog.createdAt
           ? new Date(blog.createdAt as Date).toISOString()
           : undefined,
@@ -123,7 +123,7 @@ export async function generateMetadata({
         card: "summary_large_image",
         title,
         description,
-        images: blog.image ? [blog.image] : ["/og-image.jpg"],
+        images: blog.image ? [blog.image] : ["/og-image.webp"],
       },
     };
   } catch {

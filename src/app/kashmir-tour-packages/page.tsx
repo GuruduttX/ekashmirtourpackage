@@ -35,14 +35,14 @@ export const metadata: Metadata = {
     description:
       "Honeymoon, family, adventure & luxury Kashmir packages with hotel, transfer & sightseeing included. Book at best prices with eKashmir.",
     url: `${SITE_URL}/kashmir-tour-packages`,
-    images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: "Kashmir Tour Packages by eKashmir" }],
+    images: [{ url: "/og-image.webp", width: 1734, height: 907, alt: "Kashmir Tour Packages by eKashmir" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Kashmir Tour Packages | All-Inclusive Holiday Deals",
     description:
       "Honeymoon, family, adventure & luxury Kashmir packages with hotel, transfer & sightseeing included.",
-    images: ["/og-image.jpg"],
+    images: ["/og-image.webp"],
   },
 };
 

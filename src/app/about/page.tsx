@@ -37,9 +37,9 @@ export const metadata: Metadata = {
     url: PAGE_URL,
     images: [
       {
-        url: "/og-image.jpg",
-        width: 1200,
-        height: 630,
+        url: "/og-image.webp",
+        width: 1734,
+        height: 907,
         alt: "About eKashmir Tour Packages",
       },
     ],

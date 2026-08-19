@@ -23,14 +23,14 @@ export const metadata: Metadata = {
     description:
       'Talk to our Kashmir travel experts for customized tour packages, booking assistance & travel advice. Available 24/7.',
     url: `${SITE_URL}/contact`,
-    images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: 'Contact eKashmir Tour Packages' }],
+    images: [{ url: '/og-image.webp', width: 1734, height: 907, alt: 'Contact eKashmir Tour Packages' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Contact eKashmir | Book Your Kashmir Tour Today',
     description:
       'Talk to our Kashmir travel experts for customized tour packages, booking assistance & travel advice. Available 24/7.',
-    images: ['/og-image.jpg'],
+    images: ['/og-image.webp'],
   },
 }
 

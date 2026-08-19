@@ -24,14 +24,14 @@ export const metadata: Metadata = {
     description:
       "Expert Kashmir travel tips, destination guides, itinerary ideas & real stories from the Valley. Plan your perfect Kashmir trip with eKashmir.",
     url: `${SITE_URL}/blog`,
-    images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: "Kashmir Travel Blog by eKashmir" }],
+    images: [{ url: "/og-image.webp", width: 1734, height: 907, alt: "Kashmir Travel Blog by eKashmir" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Kashmir Travel Blog | Expert Tips, Guides & Stories",
     description:
       "Expert Kashmir travel tips, destination guides, itinerary ideas & real stories from the Valley.",
-    images: ["/og-image.jpg"],
+    images: ["/og-image.webp"],
   },
 };
 

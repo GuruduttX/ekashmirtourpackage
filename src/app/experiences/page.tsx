@@ -36,9 +36,9 @@ export const metadata: Metadata = {
     siteName: "eKashmir Tour Packages",
     images: [
       {
-        url: "/og-image.jpg",
-        width: 1200,
-        height: 630,
+        url: "/og-image.webp",
+        width: 1734,
+        height: 907,
         alt: "Kashmir experiences — shikara rides, the Gulmarg Gondola, skiing and trekking",
       },
     ],
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: TITLE,
     description: DESCRIPTION,
-    images: ["/og-image.jpg"],
+    images: ["/og-image.webp"],
   },
 };
 
