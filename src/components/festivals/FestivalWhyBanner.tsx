@@ -92,7 +92,7 @@ export default function FestivalWhyBanner() {
             >
               <span className="h-px flex-1 bg-linear-to-r from-transparent to-white/70" />
               <Image
-                src="/festival/hero/explore-banner-icon.svg"
+                src="/festival/hero/explore-banner-icon.webp"
                 alt=""
                 width={47}
                 height={32}

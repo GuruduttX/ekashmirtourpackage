@@ -105,7 +105,7 @@ export default function TravellerReviews({
           -top-px closes the hairline gap sub-pixel rounding can leave. */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src="/TopDestination/TopDestinationUpPattern.svg"
+        src="/TopDestination/TopDestinationUpPattern.webp"
         alt=""
         aria-hidden="true"
         className="pointer-events-none absolute -top-px left-0 z-10 w-full select-none"

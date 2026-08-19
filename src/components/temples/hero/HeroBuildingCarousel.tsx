@@ -9,7 +9,7 @@ type BuildingKey = "temple" | "mosque";
 
 const BUILDINGS: Record<BuildingKey, { src: string; alt: string }> = {
   temple: {
-    src: "/temple-hub/temple-hub-building-1.svg",
+    src: "/temple-hub/temple-hub-building-1.webp",
     alt: "Shankaracharya-style stone temple overlooking Srinagar",
   },
   mosque: {

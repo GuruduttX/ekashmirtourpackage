@@ -225,13 +225,13 @@ export default function PopularPackagesCarousel() {
       <div className="mx-auto max-w-7xl px-3 lg:px-4">
         <div className="relative mb-8">
           <img
-            src="/LittleMountainRight.svg"
+            src="/LittleMountainRight.webp"
             alt=""
             aria-hidden="true"
             className="pointer-events-none absolute left-0 top-1/2 w-25 -translate-y-[55%] md:-translate-y-[80%] select-none sm:w-30 lg:w-50 hidden"
           />
           <img
-            src="/LittleMountainRight.svg"
+            src="/LittleMountainRight.webp"
             alt=""
             aria-hidden="true"
             className="pointer-events-none absolute right-0 top-1/2 w-25 -translate-y-[55%] md:-translate-y-[80%] select-none sm:w-30 lg:w-50 hidden"

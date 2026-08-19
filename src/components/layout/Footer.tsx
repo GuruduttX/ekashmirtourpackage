@@ -179,7 +179,7 @@ export default function Footer() {
           very bottom of every page on the site, so it must never compete with
           the content above it for bandwidth. */}
       <img
-        src="/footer-mountain.svg"
+        src="/footer-mountain.webp"
         alt=""
         aria-hidden="true"
         loading="lazy"

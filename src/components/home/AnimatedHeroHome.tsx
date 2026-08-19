@@ -15,8 +15,12 @@ export default function Hero() {
     <div className="relative w-full h-[80vh] md:h-[97vh] overflow-hidden bg-slate-900 mt-10">
       {/* 1. SKY */}
       <img
-        src="/Home/Hero/sky.svg"
+        src="/Home/Hero/sky.webp"
         alt="Sky Background"
+        // The hero is the LCP element, so the sky must not wait for the
+        // preload scanner to reach it via CSS.
+        fetchPriority="high"
+        decoding="async"
         // PLACEMENT & SIZE: Change these values
         className="absolute top-0 left-0 w-full h-full object-cover"
       />
@@ -35,7 +39,12 @@ export default function Hero() {
 
       {/* 3. FOREGROUND */}
       <motion.img
-        src="/Home/Hero/foreground.svg"
+        src="/Home/Hero/foreground.webp"
+        // Rendered at ~1.43x the viewport width (w-[110%] plus scale 1.3), so a
+        // phone would otherwise pull the full 2656px layer. Widths, not `sizes`
+        // fractions, because the element is wider than the viewport.
+        srcSet="/Home/Hero/foreground-1280.webp 1280w, /Home/Hero/foreground-1920.webp 1920w, /Home/Hero/foreground.webp 2656w"
+        sizes="143vw"
         alt="Foreground"
         // PLACEMENT & SIZE:
         // Make width slightly larger than 100% so when it moves left, we don't see the edge
@@ -48,7 +57,7 @@ export default function Hero() {
 
       {/* 4. CLOUD */}
       <motion.img
-        src="/Home/Hero/cloud.svg"
+        src="/Home/Hero/cloud.webp"
         alt="Cloud"
         // PLACEMENT & SIZE:
         className="absolute top-[8%] md:top-[-5%] left-[-10%] w-[45%] h-auto object-contain"
@@ -67,25 +76,20 @@ export default function Hero() {
           {Array.from({ length: 200 }).map((_, i) => {
             const size = Math.random() * 5 + 2;
             return (
-              <motion.div
+              <div
                 key={i}
-                className="absolute bg-white rounded-full opacity-80"
-                style={{
-                  width: size,
-                  height: size,
-                  left: `${Math.random() * 100}%`,
-                  top: -10,
-                }}
-                animate={{
-                  y: ["0vh", "100vh"],
-                  x: [(Math.random() - 0.5) * 60, (Math.random() - 0.5) * 120],
-                }}
-                transition={{
-                  duration: Math.random() * 3 + 3,
-                  repeat: Infinity,
-                  ease: "linear",
-                  delay: Math.random() * 3,
-                }}
+                className="hero-snowflake"
+                style={
+                  {
+                    width: size,
+                    height: size,
+                    left: `${Math.random() * 100}%`,
+                    "--sx": `${(Math.random() - 0.5) * 60}px`,
+                    "--ex": `${(Math.random() - 0.5) * 120}px`,
+                    "--dur": `${Math.random() * 3 + 3}s`,
+                    "--delay": `${Math.random() * 3}s`,
+                  } as React.CSSProperties
+                }
               />
             );
           })}
@@ -147,7 +151,7 @@ export default function Hero() {
 
       {/* 8. BOTTOM FADE */}
       <img
-        src="/Home/Hero/bottom-fade.svg"
+        src="/Home/Hero/bottom-fade.webp"
         alt="Fade transition"
         // PLACEMENT & SIZE:
         className="absolute bottom-[-10] md:bottom-0 left-0 w-full h-[15vh] object-cover pointer-events-none z-30"

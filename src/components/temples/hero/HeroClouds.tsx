@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 
-const CLOUD_IMAGE = "/temple-hub/temple-hub-bottom-cloud.svg";
+const CLOUD_IMAGE = "/temple-hub/temple-hub-bottom-cloud.webp";
 
 /** Bottom cloud strip — slow horizontal drift, fades in on mount. */
 export default function HeroClouds() {

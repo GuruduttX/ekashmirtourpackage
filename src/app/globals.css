@@ -904,3 +904,27 @@ body {
   background: linear-gradient(180deg, #38bdf8, #0ea5e9);
   border-radius: 10px;
 }
+
+/* ─── Homepage hero snowfall ─────────────────────────────
+   200 flakes used to be 200 framer-motion drivers ticking on the main
+   thread every frame. Same motion, expressed as one compositor-driven
+   keyframe; per-flake randomness rides in on custom properties. */
+
+@keyframes heroSnowFall {
+  from { transform: translate3d(var(--sx), 0, 0); }
+  to   { transform: translate3d(var(--ex), 100vh, 0); }
+}
+
+.hero-snowflake {
+  position: absolute;
+  top: -10px;
+  border-radius: 9999px;
+  background: #fff;
+  opacity: 0.8;
+  will-change: transform;
+  animation: heroSnowFall var(--dur) linear var(--delay) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-snowflake { animation: none; }
+}

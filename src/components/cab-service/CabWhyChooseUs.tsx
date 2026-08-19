@@ -89,7 +89,7 @@ export default function CabWhyChooseUs() {
         <div className="lg:hidden">
           <div className="relative mx-auto mt-6 w-full max-w-[280px]">
             <Image
-              src="/why-choose-us-cab.svg"
+              src="/why-choose-us-cab.webp"
               alt="Kashmir cab"
               width={646}
               height={430}
@@ -126,7 +126,7 @@ export default function CabWhyChooseUs() {
 
           <div className="relative w-72 xl:w-80">
             <Image
-              src="/why-choose-us-cab.svg"
+              src="/why-choose-us-cab.webp"
               alt="Kashmir cab"
               width={646}
               height={430}

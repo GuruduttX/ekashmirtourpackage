@@ -56,7 +56,7 @@ export default function TopDestinations() {
 
       <div className="relative">
         <img
-          src="/TopDestination/TopDestinationUpPattern.svg"
+          src="/TopDestination/TopDestinationUpPattern.webp"
           alt=""
           aria-hidden="true"
           className="absolute -top-px left-0 z-10 w-full select-none"
@@ -133,7 +133,7 @@ export default function TopDestinations() {
         </div>
 
         <img
-          src="/TopDestination/TopDestinationBottomPattern.svg"
+          src="/TopDestination/TopDestinationBottomPattern.webp"
           alt=""
           aria-hidden="true"
           className="absolute -bottom-px left-0 z-10 w-full select-none"

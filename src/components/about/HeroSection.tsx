@@ -57,7 +57,7 @@ export const HeroSection = () => {
          {/* Top Cloud Mask */}
          <div className="absolute top-[-1px] left-0 w-full h-16 sm:h-24 lg:h-32 z-20 pointer-events-none">
             <img 
-              src="/about/cloudTop.svg" 
+              src="/about/cloudTop.webp" 
               alt="top clouds" 
               className="w-full h-full scale-180 object-top opacity-100"
             />
@@ -83,7 +83,7 @@ export const HeroSection = () => {
          {/* Bottom Cloud Mask */}
          <div className="absolute bottom-[15px] left-0 w-full h-20 sm:h-24 lg:h-32 z-20 pointer-events-none">
             <img 
-              src="/about/cloudBottom.svg" 
+              src="/about/cloudBottom.webp" 
               alt="bottom clouds" 
               className="w-full h-full scale-180 object-bottom opacity-100 "
             />
