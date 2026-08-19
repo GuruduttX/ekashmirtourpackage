@@ -11,6 +11,7 @@ interface ReviewItem {
 	authorName: string;
 	authorEmail: string;
 	authorAvatar: string;
+	authorAvatarAlt?: string;
 	rating: number;
 	title: string;
 	content: string;

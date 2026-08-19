@@ -253,10 +253,24 @@ export default function ReviewsAdminPage() {
               ) : (
                 filteredReviews.map((review) => (
                   <div key={review._id} className="grid min-w-full grid-cols-[220px_120px_1fr_120px_120px] gap-4 px-4 py-4 items-center text-sm text-slate-200">
-                    <div className="space-y-1">
-                      <p className="font-medium text-white">{review.authorName}</p>
-                      <p className="text-slate-400 text-xs">{review.authorEmail}</p>
-                      <StatusBadge status={review.status} />
+                    <div className="flex items-start gap-3">
+                      {review.authorAvatar ? (
+                        /* eslint-disable-next-line @next/next/no-img-element */
+                        <img
+                          src={review.authorAvatar}
+                          alt=""
+                          className="h-10 w-10 shrink-0 rounded-full border border-[#19315d]/60 object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#19315d]/60 bg-[#0f1e3a] text-sm font-semibold text-slate-400">
+                          {review.authorName ? review.authorName.charAt(0).toUpperCase() : '?'}
+                        </div>
+                      )}
+                      <div className="space-y-1">
+                        <p className="font-medium text-white">{review.authorName}</p>
+                        <p className="text-slate-400 text-xs">{review.authorEmail}</p>
+                        <StatusBadge status={review.status} />
+                      </div>
                     </div>
                     <div className="text-slate-300">{packages.find((pkg) => pkg._id === review.packageId)?.title ?? 'Unknown'}</div>
                     <div className="text-slate-400 line-clamp-2">{review.content}</div>

@@ -7,6 +7,10 @@ interface CMSMediaSectionProps {
   image: string;
   alt: string;
   editorType?: string;
+  /** Heading above the drop zone. */
+  label?: string;
+  /** Hide the alt input for images the model stores without alt text. */
+  showAlt?: boolean;
   onChange: (field: 'image' | 'alt', value: string) => void;
 }
 
@@ -23,6 +27,8 @@ export default function CMSMediaSection({
   image,
   alt,
   editorType = 'ekashmir-blog',
+  label = 'Featured Image',
+  showAlt = true,
   onChange,
 }: CMSMediaSectionProps) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -88,7 +94,7 @@ export default function CMSMediaSection({
     <div className="space-y-5">
       {/* Drop zone / preview */}
       <div>
-        <label className="text-sm text-slate-400">Featured Image</label>
+        <label className="text-sm text-slate-400">{label}</label>
 
         <div
           className={`relative mt-2 rounded-xl border-2 border-dashed transition-all cursor-pointer overflow-hidden
@@ -174,15 +180,17 @@ export default function CMSMediaSection({
       </div>
 
       {/* Alt text */}
-      <div>
-        <label className="text-sm text-slate-400">Alt Text</label>
-        <input
-          value={alt}
-          placeholder="Descriptive alt text for SEO &amp; accessibility"
-          className={inp}
-          onChange={(e) => onChange('alt', e.target.value)}
-        />
-      </div>
+      {showAlt && (
+        <div>
+          <label className="text-sm text-slate-400">Alt Text</label>
+          <input
+            value={alt}
+            placeholder="Descriptive alt text for SEO &amp; accessibility"
+            className={inp}
+            onChange={(e) => onChange('alt', e.target.value)}
+          />
+        </div>
+      )}
     </div>
   );
 }

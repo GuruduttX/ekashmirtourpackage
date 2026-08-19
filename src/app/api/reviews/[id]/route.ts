@@ -39,11 +39,13 @@ export async function PATCH(
       authorName: body.authorName,
       authorEmail: body.authorEmail,
       authorAvatar: body.authorAvatar,
+      authorAvatarAlt: body.authorAvatarAlt ?? '',
       rating: body.rating,
       title: body.title,
       content: body.content,
       status: body.status,
       isVerifiedPurchase: body.isVerifiedPurchase,
+      images: body.images ?? [],
     };
 
     const review = await Review.findByIdAndUpdate(

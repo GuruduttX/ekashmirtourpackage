@@ -6,6 +6,7 @@ export interface IReview extends Document {
   authorName: string;
   authorEmail: string;
   authorAvatar: string;
+  authorAvatarAlt: string;
   rating: number;
   title: string;
   content: string;
@@ -37,6 +38,7 @@ const ReviewSchema = new Schema<IReview>(
     authorName: { type: String, required: true },
     authorEmail: { type: String, required: true },
     authorAvatar: { type: String, default: '' },
+    authorAvatarAlt: { type: String, default: '' },
     rating: { 
       type: Number, 
       required: true,

@@ -2,24 +2,29 @@
 
 import { useEffect, useState } from "react";
 import { Loader2, Save } from "lucide-react";
+import CMSMediaSection from "@/components/admin/cms/CMSMediaSection";
 
 export interface PackageOption {
   _id: string;
   title: string;
 }
 
+/** Cloudinary folder for everything uploaded from this form. */
+const EDITOR_TYPE = "review";
+
 export interface ReviewFormData {
   packageId: string;
   authorName: string;
   authorEmail: string;
   authorAvatar: string;
+  authorAvatarAlt: string;
   rating: number;
   title: string;
   content: string;
   status: "pending" | "approved" | "rejected";
   isVerifiedPurchase: boolean;
   /** Optional review photo. Empty array means a text-only review. */
-  images: Array<{ url: string; alt: string }>;
+  images: Array<{ id?: string; url: string; alt: string }>;
 }
 
 interface ReviewFormProps {
@@ -35,6 +40,7 @@ const defaultFormState: ReviewFormData = {
   authorName: "",
   authorEmail: "",
   authorAvatar: "",
+  authorAvatarAlt: "",
   rating: 5,
   title: "",
   content: "",
@@ -69,10 +75,13 @@ export default function ReviewForm({
 
   const photo = form.images[0] ?? { url: "", alt: "" };
 
-  const handlePhotoChange = (field: "url" | "alt", value: string) => {
+  /** CMSMediaSection speaks {image, alt}; the review model stores {id, url, alt}. */
+  const handlePhotoChange = (field: "image" | "alt", value: string) => {
     setForm((current) => {
-      const next = { ...(current.images[0] ?? { url: "", alt: "" }), [field]: value };
-      return { ...current, images: [next] };
+      const existing = current.images[0] ?? { id: crypto.randomUUID(), url: "", alt: "" };
+      const next = { ...existing, [field === "image" ? "url" : "alt"]: value };
+      // Submit drops the row if it never got a photo, so alt can be typed first.
+      return { ...current, images: next.url.trim() || next.alt.trim() ? [next] : [] };
     });
   };
 
@@ -127,7 +136,7 @@ export default function ReviewForm({
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid gap-6 lg:grid-cols-2">
         <div className="space-y-3">
           <label className="text-sm font-medium text-slate-200">Reviewer name</label>
           <input
@@ -146,16 +155,6 @@ export default function ReviewForm({
             onChange={(event) => handleChange("authorEmail", event.target.value)}
             className="w-full rounded-2xl border border-[#19315d] bg-[#07111f] px-4 py-3 text-sm text-slate-100 outline-none transition focus:border-blue-500"
             placeholder="Email"
-          />
-        </div>
-        <div className="space-y-3">
-          <label className="text-sm font-medium text-slate-200">Avatar URL</label>
-          <input
-            type="url"
-            value={form.authorAvatar}
-            onChange={(event) => handleChange("authorAvatar", event.target.value)}
-            className="w-full rounded-2xl border border-[#19315d] bg-[#07111f] px-4 py-3 text-sm text-slate-100 outline-none transition focus:border-blue-500"
-            placeholder="Image URL"
           />
         </div>
       </div>
@@ -197,30 +196,33 @@ export default function ReviewForm({
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <div className="space-y-3">
-          <label className="text-sm font-medium text-slate-200">
-            Review photo URL <span className="text-slate-500">(optional)</span>
-          </label>
-          <input
-            type="url"
-            value={photo.url}
-            onChange={(event) => handlePhotoChange("url", event.target.value)}
-            className="w-full rounded-2xl border border-[#19315d] bg-[#07111f] px-4 py-3 text-sm text-slate-100 outline-none transition focus:border-blue-500"
-            placeholder="Photo shared by the traveller"
+        <div className="space-y-2">
+          <CMSMediaSection
+            image={form.authorAvatar}
+            alt={form.authorAvatarAlt}
+            label="Reviewer avatar"
+            editorType={EDITOR_TYPE}
+            onChange={(field, value) =>
+              handleChange(field === "image" ? "authorAvatar" : "authorAvatarAlt", value)
+            }
           />
           <p className="text-xs text-slate-500">
-            Leave empty for a text-only review card.
+            Headshot shown on the review card. Leave empty to fall back to the
+            reviewer&apos;s initial.
           </p>
         </div>
-        <div className="space-y-3">
-          <label className="text-sm font-medium text-slate-200">Photo alt text</label>
-          <input
-            type="text"
-            value={photo.alt}
-            onChange={(event) => handlePhotoChange("alt", event.target.value)}
-            className="w-full rounded-2xl border border-[#19315d] bg-[#07111f] px-4 py-3 text-sm text-slate-100 outline-none transition focus:border-blue-500"
-            placeholder="Describe the photo"
+
+        <div className="space-y-2">
+          <CMSMediaSection
+            image={photo.url}
+            alt={photo.alt}
+            label="Tour photo (optional)"
+            editorType={EDITOR_TYPE}
+            onChange={handlePhotoChange}
           />
+          <p className="text-xs text-slate-500">
+            A photo of them on the tour. Leave empty for a text-only review card.
+          </p>
         </div>
       </div>
 

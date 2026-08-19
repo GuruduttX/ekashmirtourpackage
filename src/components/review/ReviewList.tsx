@@ -7,6 +7,7 @@ interface ReviewItem {
   _id: string;
   authorName: string;
   authorAvatar?: string;
+  authorAvatarAlt?: string;
   rating: number;
   title?: string;
   content: string;
@@ -75,7 +76,7 @@ export default function ReviewList() {
               <div className="relative h-16 w-16 overflow-hidden rounded-full bg-sky-50 border border-sky-100">
                 {review.authorAvatar ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={review.authorAvatar} alt={review.authorName} className="h-full w-full object-cover" />
+                  <img src={review.authorAvatar} alt={review.authorAvatarAlt || review.authorName} className="h-full w-full object-cover" />
                 ) : (
                   // Nice sky blue placeholder with the author's first initial
                   <div className="flex h-full w-full items-center justify-center bg-sky-100 text-sky-600 text-xl font-bold uppercase">
