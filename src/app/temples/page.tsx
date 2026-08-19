@@ -4,7 +4,6 @@ import { ArrowRight } from "lucide-react";
 import { connectDB } from "@/lib/db";
 import Temple from "@/models/Temple";
 import Navbar from "@/components/layout/Navbar";
-import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import Footer from "@/components/layout/Footer";
 import TempleHubHero from "@/components/temples/TempleHubHero";
 import TempleBookingSection from "@/components/temples/TempleBookingSection";
@@ -72,9 +71,8 @@ export default async function TemplesHubPage() {
       )}
 
       <Navbar />
-      <div className="mx-auto max-w-7xl px-4 pt-24 sm:px-6 lg:px-8">
-        <Breadcrumbs items={[{ label: "Temples & Shrines" }]} />
-      </div>
+      {/* Breadcrumbs (and their BreadcrumbList JSON-LD) live inside the hero,
+          over the background image — see TempleHubHero. */}
       <TempleHubHero />
       <TopTemplesSection />
       <TempleHubView temples={temples} />

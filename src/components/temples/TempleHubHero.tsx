@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import EnquiryPopupForm from "@/utils/EnquiryPopupForm";
 import HeroBackground from "@/components/temples/hero/HeroBackground";
 import HeroBuildingCarousel from "@/components/temples/hero/HeroBuildingCarousel";
@@ -19,6 +20,14 @@ export default function TempleHubHero() {
       <HeroBuildingCarousel />
 
       <div className="relative z-10 mx-auto max-w-7xl px-4 pb-24 sm:px-6 lg:px-8">
+        {/* Inside the hero, over the background — not stacked above it on the
+            page's white. The arbitrary variants re-tint the shared component
+            for a dark backdrop, where its own slate greys are invisible. */}
+        <Breadcrumbs
+          items={[{ label: "Temples & Shrines" }]}
+          className="mb-6 text-white/60 **:aria-[current]:text-sky-300 [&_a]:text-white/80 [&_a:hover]:text-white"
+        />
+
         <HeroContent onBookNow={() => setEnquiryOpen(true)} />
         <HeroPreviewCards onBookNow={() => setEnquiryOpen(true)} />
       </div>
